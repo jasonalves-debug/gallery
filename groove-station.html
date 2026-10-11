@@ -379,50 +379,33 @@ body{
 
   <div class="deck">
     <div class="fxgrp">
-      <span class="cap">ECHO OUT</span>
+      <span class="cap">PERFORMANCE FX — HOLD</span>
       <div class="fxrow">
-        <button class="fxb" id="fxEcho4">1/4<small>HOLD</small></button>
-        <button class="fxb" id="fxEcho8">3/8<small>HOLD</small></button>
-      </div>
-    </div>
-    <div class="fxgrp">
-      <span class="cap">BEAT ROLL</span>
-      <div class="fxrow">
-        <button class="fxb hot" id="fxRoll2">1/2<small>U</small></button>
-        <button class="fxb hot" id="fxRoll4">1/4<small>I</small></button>
-        <button class="fxb hot" id="fxRoll8">1/8<small>O</small></button>
-      </div>
-    </div>
-    <div class="fxgrp">
-      <span class="cap">LOOP HOLD</span>
-      <div class="fxrow">
-        <button class="fxb" id="fxLoop1">1<small>B</small></button>
-        <button class="fxb" id="fxLoop2">2<small>N</small></button>
-        <button class="fxb" id="fxLoop4">4<small>M</small></button>
-      </div>
-    </div>
-    <div class="fxgrp">
-      <span class="cap">THROW &amp; KILL</span>
-      <div class="fxrow">
-        <button class="fxb" id="fxThrow">VERB<small>/</small></button>
-        <button class="fxb hot" id="fxBass">BASS<small>L</small></button>
-        <button class="fxb" id="fxRiser">RISER<small>P</small></button>
-        <button class="fxb on" id="fxQuant">FX QUANT<small>SHIFT+F</small></button>
+        <button class="fxb" id="fxEcho">ECHO<small>H</small></button>
+        <button class="fxb" id="fxVerb">REVERB<small>J</small></button>
+        <button class="fxb" id="fxFlange">FLANGER<small>U</small></button>
+        <button class="fxb" id="fxPhase">PHASER<small>I</small></button>
+        <button class="fxb hot" id="fxRoll">ROLL<small>O</small></button>
+        <button class="fxb hot" id="fxBass">BASS CUT<small>L</small></button>
       </div>
     </div>
   </div>
+
   <div class="rule"></div>
+
   <div class="fx" id="fx"></div>
+
   <div class="rule"></div>
+
   <div class="editor">
     <div class="ehead">
       <span class="t" id="edTitle">EDIT — KICK · PATTERN A</span>
-      <span class="lenctl">STEPS <button class="mini" id="lenDn" aria-label="Fewer steps">−</button><b id="lenVal">16</b><button class="mini" id="lenUp" aria-label="More steps">+</button></span>
-      <span class="hint" id="edHint">Click a step to cycle: off → soft → hit → accent</span>
+      <span class="lenctl">STEPS <button class="mini" id="lenDn" aria-label="Fewer steps">&minus;</button><b id="lenVal">16</b><button class="mini" id="lenUp" aria-label="More steps">+</button></span>
+      <span class="hint" id="edHint">Click a step to cycle: off &rarr; soft &rarr; hit &rarr; accent</span>
       <span>
-        <button class="mini" id="edUndo">↶ UNDO</button>
-        <button class="mini" id="edRedo">↷ REDO</button>
-        <button class="mini" id="edDice">⚄ RANDOM</button>
+        <button class="mini" id="edUndo">&#8630; UNDO</button>
+        <button class="mini" id="edRedo">&#8631; REDO</button>
+        <button class="mini" id="edDice">&#9860; RANDOM</button>
         <button class="mini" id="edKeep">KEEP</button>
         <button class="mini" id="edClear">CLEAR</button>
       </span>
@@ -464,25 +447,20 @@ body{
     <dl>
       <dt>Pads A B C D</dt><dd>Each row is an instrument, each pad is a one-bar loop. Tap to bring it in, tap the lit pad to drop it out.</dd>
       <dt>Instant / Bar sync</dt><dd>Instant is the default: a pad takes effect the moment you press it, and anything already playing on that row is cut dead. Switch to Bar sync if you'd rather changes wait for the next barline so nothing can land off-grid.</dd>
-      <dt>Scene buttons</dt><dd>The A/B/C/D headers launch that whole column across every instrument — an instant arrangement change.</dd>
-      <dt>Editing</dt><dd>Click an instrument name to load it into the step editor. Drum steps cycle off → soft → hit → accent. Bass, chords and lead use a note grid: pick a row to place a note, click it again to clear, use the TIE row to hold a note across steps.</dd>
-      <dt>⚄ Random</dt><dd>Rewrites the selected pattern using rules that fit the current kit, so it stays in genre. Per-row dice do the same for that instrument.</dd>
-      <dt>Chance</dt><dd>The row under the steps sets how often each hit fires — blank is always, then 80, 60, 40, 20 percent. A couple of ghost snares at 40% and the bar stops repeating.</dd>
-      <dt>Steps</dt><dd>Each instrument can be shorter than a bar. Set the hats to 15 and they walk against a 16-step kick, landing together again every fifteen bars. The downbeat never moves.</dd>
-      <dt>Undo, redo, keep</dt><dd>Roll the dice as often as you like — undo walks back through every roll and edit, redo walks forward. Keep copies the current pattern to an empty pad in that row so you can carry on rolling.</dd>
-      <dt>DJ filter</dt><dd>One knob. Centre is off; turn left to sweep the low-pass down, right to sweep the high-pass up. Resonance comes in on its own as you leave centre.</dd>
-      <dt>Echo out</dt><dd>Hold 1/4 or 3/8. On the next bar the dry signal drops and the tempo-synced delay rings on by itself. Let go and the dry comes back on the following downbeat.</dd>
-      <dt>Beat roll and loop hold</dt><dd>Hold to stutter the master — rolls land on the next beat, loops on the next bar. Let go and you are back in the groove instantly, in time, because the sequencer never stopped underneath.</dd>
-      <dt>Verb, bass, riser</dt><dd>Verb throws one beat into a long tail on the next bar. Bass is a hold that ducks the kick and bass about 24 dB rather than muting them. Riser fires a noise sweep timed to finish exactly on the next 8-bar phrase.</dd>
-      <dt>FX quant</dt><dd>On by default: effects snap to the grid. Turn it off and they fire the instant you press. This is separate from the pad INSTANT toggle.</dd>
-      <dt>Changing an instrument's sound</dt><dd>Press and hold an instrument name (or right-click it) to pick a different engine for that row — Rhodes, piano, organ, filtered disco, pad or stab for the keys; deep sub, pluck, organ bass or acid for the bass; vocal chops, saw, blips or one-shots for the top line. The drum rows can be swapped too.</dd>
+      <dt>Performance FX</dt><dd>One row, all hold-to-use, all instant — nothing waits for a beat or a bar. Hold for as long as you want the effect, let go and you're straight back.
+        <br><b>Echo</b> tempo-synced dotted-eighth repeats with the groove ducked underneath, so it works for a drop as well as an exit. The tail rings out when you release.
+        <br><b>Reverb</b> opens a long hall. Release and the tail decays on its own.
+        <br><b>Flanger</b> and <b>Phaser</b> add sweeping movement — flanger is the jet whoosh, phaser the rotating-speaker swirl. Both run continuously under the hood, so the button is only a fader.
+        <br><b>Roll</b> grabs the last sixteenth and repeats it. The dry signal stays up just long enough to fill the line, so there's no gap going in and none coming out.
+        <br><b>Bass cut</b> ducks the kick and bass about 24 dB rather than muting them.</dd>
+      <dt>DJ filter</dt><dd>The knob below the row. Centre is off; turn left to sweep the low-pass down, right to sweep the high-pass up. Resonance comes in on its own as you leave centre.</dd>
       <dt>Remix</dt><dd>Swaps the keys or the bass for another style's engine — soulful piano over a dub tech groove, organ bass under deep house. Press it until something surprises you. <kbd>X</kbd> remixes, <kbd>C</kbd> puts the stock sounds back.</dd>
       <dt>Fill</dt><dd>Drops a one-bar snare and tom roll, then returns to the pattern.</dd>
       <dt>Rec</dt><dd>Captures live audio to a .webm file you can drop straight into a DAW.</dd>
       <dt>Audio: smooth or tight</dt><dd>Smooth is the default and uses a larger output buffer, which is what stops crackling — especially on Windows and on Bluetooth earbuds. Tight uses the smallest buffer the browser allows for the fastest possible response, at the risk of crackle. Reload the page after changing it.</dd>
       <dt>Your work is kept</dt><dd>Every pattern, chance value, step count, level and mute is saved as you go, per kit, and comes back when you reopen the page. Switching kits and back keeps your edits too. The button at the bottom restores the factory patterns for the kit you're on — it asks once before it does.</dd>
       <dt>Keys</dt><dd><kbd>Space</kbd> play/stop &nbsp; <kbd>1</kbd>–<kbd>7</kbd> select instrument &nbsp; <kbd>Q W E R</kbd> launch pad for it &nbsp; <kbd>A S D F</kbd> launch scene &nbsp; <kbd>G</kbd> roll the dice &nbsp; <kbd>Z</kbd> undo &nbsp; <kbd>Y</kbd> redo &nbsp; <kbd>K</kbd> keep &nbsp; <kbd>,</kbd> <kbd>.</kbd> step count &nbsp; <kbd>[</kbd> <kbd>]</kbd> tempo</dd>
-      <dt>FX keys</dt><dd><kbd>H</kbd> <kbd>J</kbd> echo 1/4, 3/8 &nbsp; <kbd>U</kbd> <kbd>I</kbd> <kbd>O</kbd> roll 1/2, 1/4, 1/8 &nbsp; <kbd>B</kbd> <kbd>N</kbd> <kbd>M</kbd> loop 1, 2, 4 &nbsp; <kbd>L</kbd> bass kill &nbsp; <kbd>/</kbd> reverb throw &nbsp; <kbd>P</kbd> riser &nbsp; <kbd>Shift+F</kbd> FX quant. Hold the effect keys; they release when you do.</dd>
+      <dt>FX keys</dt><dd><kbd>H</kbd> echo &nbsp; <kbd>J</kbd> reverb &nbsp; <kbd>U</kbd> flanger &nbsp; <kbd>I</kbd> phaser &nbsp; <kbd>O</kbd> roll &nbsp; <kbd>L</kbd> bass cut. Hold them; they release when you do.</dd>
     </dl>
     <p style="margin-top:18px"><button class="btn" id="helpClose">CLOSE</button></p>
   </div>
@@ -887,7 +865,8 @@ const AU = {ctx:null, ready:false, noise:null, ir:null};
 let master, drive, crushDry, crushWet, crushNode, mainFilter, comp, recDest;
 let delayNode, delayFb, delayFilt, delayIn, revIn, revNode;
 let limiter, safety, djHP, dryGain, echoSend, echoDly, echoFb, throwSend, throwVerb,
-    freezeSend, freezeDly, freezeFb, freezeOut, riserGain;
+    freezeSend, freezeDly, freezeFb, freezeOut,
+    flangeWet, phaseWet;
 const trackKill = {};
 const trackBus = {}, trackGate = {}, trackDelay = {}, trackVerb = {};
 
@@ -900,16 +879,28 @@ function makeNoise(ctx){
 /* Mono impulse responses: a stereo convolver does twice the work for a tail
    nobody can localise, and convolution runs continuously whether or not
    anything is being sent to it. */
-function makeIR(ctx, dur, decay){
+function makeIR(ctx, dur, decay, level){
   const n = Math.floor(ctx.sampleRate*dur);
   const b = ctx.createBuffer(1,n,ctx.sampleRate);
-  for(let ch=0;ch<1;ch++){
-    const d = b.getChannelData(ch);
-    for(let i=0;i<n;i++){
-      const t = i/n;
-      d[i] = (Math.random()*2-1) * Math.pow(1-t, decay) * (0.85 + 0.15*Math.sin(t*90+ch*1.7));
-    }
+  const d = b.getChannelData(0);
+  let energy = 0;
+  for(let i=0;i<n;i++){
+    const t = i/n;
+    d[i] = (Math.random()*2-1) * Math.pow(1-t, decay) * (0.85 + 0.15*Math.sin(t*90));
+    energy += d[i]*d[i];
   }
+  /* Normalise to unit energy. A convolver sums the whole impulse response for
+     every output sample, so an un-normalised tail of a hundred thousand noise
+     samples multiplies the signal by an enormous factor — measured at 2.9e38
+     on a fully open send, which is a hard runaway, not merely "too loud". The
+     per-track SPACE send never exploded only because its gain was tiny; it has
+     been far hotter than intended all the same. Unit energy makes a send of
+     1.0 mean "as loud as the dry signal", which is what a send should mean. */
+  /* Unit energy means "wet is as loud as dry" in theory; measured against the
+     real mix a unit-energy tail lands about 13dB under the dry signal, so
+     `level` is the measured makeup, not a guess. */
+  const g = (level === undefined ? 1 : level) / Math.sqrt(Math.max(1e-9, energy));
+  for(let i=0;i<n;i++) d[i] *= g;
   return b;
 }
 /* Curves are rebuilt constantly — once per kit load, and once per pointer move
@@ -1454,13 +1445,18 @@ function initAudio(){
   echoFb   = ctx.createGain(); echoFb.gain.value = 0;
   const echoTone = ctx.createBiquadFilter(); echoTone.type="bandpass";
   echoTone.frequency.value = 1300; echoTone.Q.value = 0.5;
+  /* The bandpass that shapes the repeats also costs level, and the measured
+     wet path sat about 17dB under the dry signal — inaudible as a performance
+     effect. This makeup is the measured correction. */
+  const echoMakeup = ctx.createGain(); echoMakeup.gain.value = 4.6;
   comp.connect(echoSend); echoSend.connect(echoDly);
   echoDly.connect(echoTone); echoTone.connect(echoFb); echoFb.connect(echoDly);
-  echoTone.connect(master);
+  echoTone.connect(echoMakeup); echoMakeup.connect(master);
 
   /* reverb throw — its own long tail, separate from the per-track SPACE send */
   throwSend = ctx.createGain(); throwSend.gain.value = 0;
-  throwVerb = ctx.createConvolver(); throwVerb.buffer = makeIR(ctx, 2.6, 2.2);
+  throwVerb = ctx.createConvolver(); throwVerb.normalize = false;
+  throwVerb.buffer = makeIR(ctx, 2.2, 2.2, 3.6);
   const throwTone = ctx.createBiquadFilter(); throwTone.type="highpass";
   throwTone.frequency.value = 300;
   comp.connect(throwSend); throwSend.connect(throwVerb);
@@ -1475,7 +1471,47 @@ function initAudio(){
   freezeDly.connect(freezeFb); freezeFb.connect(freezeDly);
   freezeDly.connect(freezeOut); freezeOut.connect(master);
 
-  riserGain = ctx.createGain(); riserGain.gain.value = 1; riserGain.connect(master);
+  /* Flanger and phaser are built once at startup and left running on silence.
+     Engaging one is then nothing but opening a gain — no node construction, no
+     LFO to start, no ramp-up. That is what "instant" has to mean: the effect is
+     already there, waiting, and the button only decides whether you hear it. */
+
+  /* Flanger: a very short delay swept by a slow LFO, fed back on itself. The
+     sweep through 1-7ms is what produces the jet-engine whoosh. */
+  flangeWet = ctx.createGain(); flangeWet.gain.value = 0;
+  const flDly = ctx.createDelay(0.05);
+  flDly.delayTime.value = 0.004;
+  const flFb = ctx.createGain(); flFb.gain.value = 0.62;
+  const flLfo = ctx.createOscillator(); flLfo.type = "sine"; flLfo.frequency.value = 0.28;
+  const flDepth = ctx.createGain(); flDepth.gain.value = 0.003;
+  flLfo.connect(flDepth); flDepth.connect(flDly.delayTime);
+  flLfo.start();
+  comp.connect(flDly);
+  flDly.connect(flFb); flFb.connect(flDly);        // feedback deepens the notches
+  flDly.connect(flangeWet); flangeWet.connect(master);
+
+  /* Phaser: four cascaded all-pass filters swept together. All-pass leaves the
+     magnitude alone and moves only phase, so the sweep is heard purely as
+     cancellation against the dry signal — the rotating-speaker effect. */
+  phaseWet = ctx.createGain(); phaseWet.gain.value = 0;
+  const phLfo = ctx.createOscillator(); phLfo.type = "sine"; phLfo.frequency.value = 0.42;
+  phLfo.start();
+  let phPrev = comp;
+  /* Each stage gets its own modulation depth, proportional to its own centre
+     frequency. One shared depth would drive the lowest stage negative at the
+     bottom of the sweep, and a biquad handed a negative frequency outputs NaN
+     — which then travels the whole master bus and silences everything,
+     because NaN multiplied by a zero wet gain is still NaN. Proportional
+     depth also sweeps the stages musically, each over its own octave. */
+  [340, 620, 1100, 2000].forEach(centre=>{
+    const ap = ctx.createBiquadFilter();
+    ap.type = "allpass"; ap.frequency.value = centre; ap.Q.value = 1.1;
+    const d = ctx.createGain(); d.gain.value = centre * 0.55;   // never reaches zero
+    phLfo.connect(d); d.connect(ap.frequency);
+    phPrev.connect(ap);
+    phPrev = ap;
+  });
+  phPrev.connect(phaseWet); phaseWet.connect(master);
 
   /* Seven instruments, parallel FX sends and a feedback delay all summing into
      one bus will go past full scale on loud pads — measured at +2.3 dBFS, which
@@ -1504,7 +1540,13 @@ function initAudio(){
   delayFilt.connect(drive);
 
   revIn = ctx.createGain();
-  revNode = ctx.createConvolver(); revNode.buffer = makeIR(ctx, 2.4, 2.6);
+  revNode = ctx.createConvolver();
+  /* A ConvolverNode applies its own equal-power normalisation unless told not
+     to, which stacked on top of makeIR's and left the reverb inaudible. Off
+     here so the only thing setting the level is makeIR's unit-energy scaling
+     plus the send gain — identical in every browser, and mine to tune. */
+  revNode.normalize = false;
+  revNode.buffer = makeIR(ctx, 2.4, 2.6, 2.5);
   const revTone = ctx.createBiquadFilter(); revTone.type="highpass"; revTone.frequency.value=260;
   revIn.connect(revNode); revNode.connect(revTone); revTone.connect(drive);
 
@@ -2787,57 +2829,55 @@ function makeKnob(parent, {label, min, max, val, fmt, onChange}){
   return {set, get:()=>value};
 }
 /* ======================================================= DJ PERFORMANCE FX
-   Hands-on mixer moves, not a studio rack: everything here is a hold or a
-   one-shot, and nothing has a settings page. The chain sits after the
-   compressor so these behave like a mixer's master section rather than
-   another layer of instrument processing.
+   One row of holds. No quantisation anywhere: every effect engages on the
+   press and releases on the release, because an effect you have to wait for
+   is an effect you cannot play.
 
-   Quantize is the thing that makes them feel played rather than clicked.
-   Rolls land on the next beat; throws, echo kills and loops land on the next
-   bar; the riser lands on the next 8-bar phrase. That is a separate control
-   from the pad INSTANT/BAR SYNC toggle, which still defaults to instant.   */
+   The previous version had two separate reasons for feeling late. Quantise
+   snapped the echo to the next BAR, which at house tempo is up to two
+   seconds of nothing happening. And the roll killed the dry signal at once
+   while its delay line could not output until a whole roll-length had been
+   captured — so it punched a hole in the audio and the stutter arrived
+   afterwards. Both are gone: there is no grid to wait for, and the roll now
+   keeps the dry signal up for exactly the one roll-length it needs to fill
+   the line, then hands over seamlessly.                                   */
 
 const FX = {
-  quant:true,            // snap triggers to the grid
-  echo:null,             // "4" or "8" (1/4 or 3/8) while held
-  freeze:null,           // beats held by a roll or loop
+  echo:false,
+  reverb:false,
+  flange:false,
+  phase:false,
+  roll:false,
   bassKill:false,
-  riserUntil:0,
-  pend:{}                // live timeouts, keyed, so a re-trigger cancels the old one
+  pend:{}                // live timeouts, keyed, so a re-trigger cancels the old
 };
-const DIV_BEAT = 4, DIV_BAR = 16, DIV_PHRASE = 128;
 
-/* Audio time of absolute step n. S.nextTime is the clock time of the next step
-   the scheduler will hand out, so this reads straight off the transport.    */
-function stepTimeAt(n){ return S.nextTime + (n - S.absStep) * spb(); }
-function quantTime(divSteps){
-  const now = AU.ctx.currentTime;
-  if(!S.playing || !FX.quant) return now + 0.004;
-  let n = Math.ceil(S.absStep / divSteps) * divSteps;
-  let t = stepTimeAt(n);
-  let guard = 0;
-  while(t < now + 0.012 && guard++ < 512){ n += divSteps; t = stepTimeAt(n); }
-  return t;
-}
-const nextBeat   = ()=>quantTime(DIV_BEAT);
-const nextBar    = ()=>quantTime(DIV_BAR);
-const nextPhrase = ()=>quantTime(DIV_PHRASE);
 function beatSec(){ return 60 / S.bpm; }
 
-/* A gain move that cannot be fought by whatever was scheduled before it. */
-function ramp(param, to, at, time){
-  const t = Math.max(AU.ctx.currentTime, at);
+/* A gain move that cannot be fought by whatever was scheduled before it.
+   Every FX move starts at `now`, never at a grid position. */
+function ramp(param, to, time, at){
+  const t = Math.max(AU.ctx.currentTime, at === undefined ? AU.ctx.currentTime : at);
   param.cancelScheduledValues(t);
   param.setValueAtTime(param.value, t);
-  param.linearRampToValueAtTime(Math.max(0.0001, to), t + (time||0.006));
+  param.linearRampToValueAtTime(Math.max(0.0001, to), t + (time || 0.008));
 }
-function later(key, at, fn){
+function later(key, delay, fn){
   if(FX.pend[key]) clearTimeout(FX.pend[key]);
-  const ms = Math.max(0, (at - AU.ctx.currentTime) * 1000);
-  FX.pend[key] = setTimeout(()=>{ delete FX.pend[key]; fn(); }, ms);
+  FX.pend[key] = setTimeout(()=>{ delete FX.pend[key]; fn(); }, Math.max(0, delay*1000));
+}
+function cancelLater(key){
+  if(FX.pend[key]){ clearTimeout(FX.pend[key]); delete FX.pend[key]; }
 }
 function fxBtn(id, on){
   const b = el(id); if(b) b.classList.toggle("on", !!on);
+}
+/* The dry path is shared: a roll kills it, an echo ducks it. Whichever is
+   more aggressive wins, so releasing one never un-mutes the other. */
+function restoreDry(){
+  if(!AU.ready) return;
+  const to = FX.roll ? 0.0001 : (FX.echo ? 0.34 : 1);
+  ramp(dryGain.gain, to, 0.012);
 }
 
 /* ---- bipolar DJ filter: centre off, left low-pass, right high-pass ---- */
@@ -2846,8 +2886,8 @@ function setDjFilter(v){
   const now = AU.ctx.currentTime, a = Math.abs(v);
   const lp = v < 0 ? 18000 * Math.pow(120/18000, a) : 18000;
   const hp = v > 0 ? 25 * Math.pow(7000/25, a) : 25;
-  mainFilter.frequency.setTargetAtTime(lp, now, 0.015);
-  djHP.frequency.setTargetAtTime(hp, now, 0.015);
+  mainFilter.frequency.setTargetAtTime(lp, now, 0.012);
+  djHP.frequency.setTargetAtTime(hp, now, 0.012);
   /* A touch of resonance as you leave centre — that lip on the sweep is most
      of what makes a DJ filter sound like one. Kept low so it never screams. */
   const q = 0.7 + a * 3.2;
@@ -2859,126 +2899,167 @@ function djFilterLabel(v){
   return (v < 0 ? "LP " : "HP ") + Math.round(Math.abs(v) * 100) + "%";
 }
 
-/* ---- echo out: dry dies on the bar, the delay rings on ---- */
-function echoOn(div){
-  if(!AU.ready) return;
-  FX.echo = div;
-  const at = nextBar();
-  /* A quarter note is one beat and a 3/8 note is a beat and a half — these
-     are note values, not fractions of a beat. 3/8 is the dub one: it lands
-     off the grid and pulls against the kick. */
-  const t = beatSec() * (div === "8" ? 1.5 : 1);
-  echoDly.delayTime.setValueAtTime(Math.min(1.9, t), Math.max(AU.ctx.currentTime, at - 0.02));
-  ramp(echoFb.gain, 0.72, at, 0.01);
-  ramp(echoSend.gain, 1, at, 0.01);
-  ramp(dryGain.gain, 0.0001, at, 0.02);
-  fxBtn("fxEcho"+div, true);
-  later("echo", at, ()=>msg("ECHO OUT " + (div==="8" ? "3/8" : "1/4")));
-  msg("ECHO ARMED");
+/* ---- ECHO: tempo-synced dotted-eighth repeats, dry ducked not killed ----
+   Ducking rather than muting is what keeps this usable as one button. A full
+   dry kill turns the echo into a mute with a tail, and needs a second press
+   to get the track back; ducking leaves the groove under the repeats, so it
+   works for a drop as well as an exit.                                     */
+function echoOn(){
+  if(!AU.ready || FX.echo) return;
+  FX.echo = true;
+  cancelLater("echoTail");
+  echoDly.delayTime.setTargetAtTime(Math.min(1.9, beatSec() * 0.75), AU.ctx.currentTime, 0.01);
+  ramp(echoFb.gain, 0.70, 0.01);
+  ramp(echoSend.gain, 1, 0.006);
+  restoreDry();
+  fxBtn("fxEcho", true);
+  msg("ECHO");
 }
 function echoOff(){
   if(!AU.ready || !FX.echo) return;
-  const div = FX.echo;
-  FX.echo = null;
-  const at = nextBar();                       // dry returns on the downbeat
-  ramp(dryGain.gain, 1, at, 0.02);
-  ramp(echoSend.gain, 0.0001, at, 0.02);
-  ramp(echoFb.gain, 0.0001, at + 0.9, 0.5);   // let the tail die under the dry
-  fxBtn("fxEcho"+div, false);
-  later("echoOff", at, ()=>msg("DRY BACK"));
+  FX.echo = false;
+  ramp(echoSend.gain, 0.0001, 0.02);      // stop feeding it, let the tail ring
+  restoreDry();
+  fxBtn("fxEcho", false);
+  /* Wind the feedback down over about a bar so the tail dies under the
+     returning dry signal instead of hanging around behind it. */
+  later("echoTail", 0.05, ()=>{ if(!FX.echo) ramp(echoFb.gain, 0.0001, beatSec()*2); });
 }
 
-/* ---- reverb throw: one beat into a long tail, then shut ---- */
-function reverbThrow(){
-  if(!AU.ready) return;
-  const at = nextBar();
-  ramp(throwSend.gain, 1, at, 0.008);
-  ramp(throwSend.gain, 0.0001, at + beatSec(), 0.03);
-  fxBtn("fxThrow", true);
-  later("throw", at, ()=>{ msg("REVERB THROW"); });
-  later("throwOff", at + beatSec(), ()=>fxBtn("fxThrow", false));
+/* ---- REVERB: a long tail on tap. Held open, decays on release. ---- */
+function reverbOn(){
+  if(!AU.ready || FX.reverb) return;
+  FX.reverb = true;
+  ramp(throwSend.gain, 1, 0.006);
+  fxBtn("fxVerb", true);
+  msg("REVERB");
+}
+function reverbOff(){
+  if(!AU.ready || !FX.reverb) return;
+  FX.reverb = false;
+  ramp(throwSend.gain, 0.0001, 0.05);     // the convolver's own tail finishes it
+  fxBtn("fxVerb", false);
 }
 
-/* ---- freeze: beat rolls and loop hold are the same machine ----
-   A delay line whose feedback is held at unity captures one pass of the
-   programme and repeats it. Opening the send for exactly one loop length is
-   what records the slice; closing it is what stops new audio contaminating
-   the repeat. Dry is cut for the duration. Release restores dry at once,
-   which is why a roll can be dropped anywhere without losing the groove.  */
-function freezeStart(beats, label){
-  if(!AU.ready) return;
-  if(FX.freeze) freezeEnd(true);
-  FX.freeze = {beats:beats, label:label};
-  const len = Math.min(1.9, beatSec() * beats);
-  const at  = beats < 1 ? nextBeat() : nextBar();
-  const set = Math.max(AU.ctx.currentTime, at - 0.02);
-  freezeDly.delayTime.cancelScheduledValues(set);
-  freezeDly.delayTime.setValueAtTime(len, set);
-  ramp(freezeFb.gain, 0.995, at, 0.004);
-  ramp(freezeSend.gain, 1, at, 0.004);
-  ramp(freezeSend.gain, 0.0001, at + len, 0.004);   // one pass only
-  ramp(freezeOut.gain, 1, at, 0.004);
-  ramp(dryGain.gain, 0.0001, at, 0.008);
-  fxBtn(label, true);
-  later("freeze", at, ()=>msg(beats < 1 ? "ROLL 1/"+Math.round(1/beats) : "LOOP "+beats));
+/* ---- FLANGER / PHASER: already running, so this is just a fader ---- */
+function flangeOn(){
+  if(!AU.ready || FX.flange) return;
+  FX.flange = true; ramp(flangeWet.gain, 0.85, 0.01);
+  fxBtn("fxFlange", true); msg("FLANGER");
 }
-function freezeEnd(silent){
-  if(!AU.ready || !FX.freeze) return;
-  const lbl = FX.freeze.label;
-  FX.freeze = null;
-  const now = AU.ctx.currentTime;             // release is always instant
-  if(FX.pend.freeze){ clearTimeout(FX.pend.freeze); delete FX.pend.freeze; }
-  ramp(freezeSend.gain, 0.0001, now, 0.004);
-  ramp(freezeFb.gain, 0.0001, now, 0.004);
-  ramp(freezeOut.gain, 0.0001, now, 0.008);
-  if(!FX.echo) ramp(dryGain.gain, 1, now, 0.008);
-  fxBtn(lbl, false);
-  if(!silent) msg("BACK IN");
+function flangeOff(){
+  if(!AU.ready || !FX.flange) return;
+  FX.flange = false; ramp(flangeWet.gain, 0.0001, 0.02);
+  fxBtn("fxFlange", false);
+}
+function phaseOn(){
+  if(!AU.ready || FX.phase) return;
+  FX.phase = true; ramp(phaseWet.gain, 0.9, 0.01);
+  fxBtn("fxPhase", true); msg("PHASER");
+}
+function phaseOff(){
+  if(!AU.ready || !FX.phase) return;
+  FX.phase = false; ramp(phaseWet.gain, 0.0001, 0.02);
+  fxBtn("fxPhase", false);
 }
 
-/* ---- bass kill: ducked, not muted, so the groove still breathes ---- */
+/* ---- ROLL: a sixteenth of the track, repeating, with no gap ----
+   A delay line with its feedback held at unity repeats whatever passed
+   through it. The trick is the handover. The line cannot output anything
+   until one delay period has elapsed, so the dry signal has to stay up for
+   exactly that long — filling the line with live audio — and only then step
+   aside. Cut the dry at the press instead and you get a hole, which is what
+   the old roll did.                                                        */
+function rollOn(){
+  if(!AU.ready || FX.roll) return;
+  FX.roll = true;
+  const len = Math.min(1.9, beatSec() * 0.25);      // a sixteenth
+  const now = AU.ctx.currentTime;
+  cancelLater("rollHand");
+
+  freezeDly.delayTime.cancelScheduledValues(now);
+  freezeDly.delayTime.setValueAtTime(len, now);
+  ramp(freezeFb.gain, 0.995, 0.002);                // unity: repeats forever
+  ramp(freezeSend.gain, 1, 0.002);                  // start filling the line
+  ramp(freezeOut.gain, 1, 0.002);                   // open the output now
+
+  /* One delay period later the line is full and looping. Hand over: dry out,
+     send shut so no new audio contaminates the captured slice. */
+  later("rollHand", len, ()=>{
+    if(!FX.roll) return;
+    ramp(freezeSend.gain, 0.0001, 0.004);
+    restoreDry();
+  });
+  fxBtn("fxRoll", true);
+  msg("ROLL");
+}
+function rollOff(){
+  if(!AU.ready || !FX.roll) return;
+  FX.roll = false;
+  cancelLater("rollHand");
+  const now = AU.ctx.currentTime;
+  ramp(freezeSend.gain, 0.0001, 0.004);
+  ramp(freezeFb.gain, 0.0001, 0.004);
+  ramp(freezeOut.gain, 0.0001, 0.008);
+  restoreDry();                                     // back in, immediately
+  fxBtn("fxRoll", false);
+}
+
+/* ---- BASS CUT: ducked about 24dB, not muted, so the groove still breathes ---- */
 function setBassKill(on){
   if(!AU.ready) return;
   FX.bassKill = !!on;
-  const now = AU.ctx.currentTime;
-  const g = FX.bassKill ? 0.063 : 1;          // about -24 dB
+  const g = FX.bassKill ? 0.063 : 1;                // about -24 dB
   ["KICK","BASS"].forEach(id=>{
     const node = trackKill[id];
-    if(node) ramp(node.gain, g, now, 0.012);
+    if(node) ramp(node.gain, g, 0.012);
   });
   fxBtn("fxBass", FX.bassKill);
-  msg(FX.bassKill ? "BASS KILL" : "BASS BACK");
+  if(FX.bassKill) msg("BASS CUT");
 }
 
-/* ---- riser: noise sweep that lands exactly on the next phrase ---- */
-function riser(){
+/* Stopping the transport must not leave the master muted by a held effect. */
+function fxPanic(){
   if(!AU.ready) return;
-  const ctx = AU.ctx, now = ctx.currentTime;
-  let end = nextPhrase();
-  const minLen = beatSec() * 2;
-  while(end - now < minLen) end += beatSec() * 4 * 8;
-  const dur = Math.min(16, end - now);
-  const t = now + 0.005;
-
-  const n = noiseSrc(t, dur + 0.1);
-  const bp = ctx.createBiquadFilter(); bp.type="bandpass"; bp.Q.value=5.5;
-  bp.frequency.setValueAtTime(300, t);
-  bp.frequency.exponentialRampToValueAtTime(9500, t + dur);
-  const g = ctx.createGain();
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.linearRampToValueAtTime(0.30, t + dur * 0.92);
-  g.gain.linearRampToValueAtTime(0.0001, t + dur);     // silent on the downbeat
-  n.connect(bp); bp.connect(g); g.connect(riserGain);
-
-  FX.riserUntil = end;
-  fxBtn("fxRiser", true);
-  later("riser", end, ()=>fxBtn("fxRiser", false));
-  msg("RISER — " + (dur).toFixed(1) + "s TO THE DROP");
+  Object.keys(FX.pend).forEach(k=>clearTimeout(FX.pend[k]));
+  FX.pend = {};
+  FX.echo = FX.reverb = FX.flange = FX.phase = FX.roll = false;
+  ramp(dryGain.gain, 1, 0.01);
+  [echoSend, echoFb, throwSend, freezeSend, freezeFb, freezeOut, flangeWet, phaseWet]
+    .forEach(n=>ramp(n.gain, 0.0001, 0.01));
+  ["fxEcho","fxVerb","fxFlange","fxPhase","fxRoll"].forEach(id=>fxBtn(id, false));
 }
 
-/* REMIX — the cheap version of mix-and-match. One button, no menus: it pulls
-   a chord or bass engine from a different style into the kit you are on, so
-   soulful piano can land on a dub tech groove without a patch bay.        */
+/* ---- wiring: every control in the row is a hold ---- */
+function holdBtn(id, down, up){
+  const b = el(id); if(!b) return;
+  const end = ()=>{ if(b.dataset.held){ delete b.dataset.held; up(); } };
+  b.addEventListener("pointerdown", e=>{ e.preventDefault(); b.dataset.held="1"; down(); });
+  b.addEventListener("pointerup", end);
+  b.addEventListener("pointerleave", end);
+  b.addEventListener("pointercancel", end);
+}
+const FX_ROW = [
+  ["fxEcho",   echoOn,   echoOff],
+  ["fxVerb",   reverbOn, reverbOff],
+  ["fxFlange", flangeOn, flangeOff],
+  ["fxPhase",  phaseOn,  phaseOff],
+  ["fxRoll",   rollOn,   rollOff],
+  ["fxBass",   ()=>setBassKill(true), ()=>setBassKill(false)]
+];
+function buildFxDeck(){
+  FX_ROW.forEach(([id,down,up])=>holdBtn(id,down,up));
+}
+const FX_KEYS = {
+  "h": FX_ROW[0],
+  "j": FX_ROW[1],
+  "u": FX_ROW[2],
+  "i": FX_ROW[3],
+  "o": FX_ROW[4],
+  "l": FX_ROW[5]
+};
+
+
 /* What each row can be swapped to. The melodic rows get the most choices,
    because that is where a house track's identity actually lives.          */
 const ENGINES = {
@@ -3048,60 +3129,6 @@ function unremix(){
   msg("STOCK SOUNDS RESTORED");
   scheduleSave();
 }
-function setFxQuant(on){
-  FX.quant = !!on;
-  const b = el("fxQuant");
-  if(b){ b.textContent = FX.quant ? "FX QUANT" : "FX FREE"; b.classList.toggle("on", FX.quant); }
-  msg(FX.quant ? "FX SNAP TO GRID" : "FX FIRE IMMEDIATELY");
-}
-/* Stopping the transport must not leave the master muted by a held effect. */
-function fxPanic(){
-  if(!AU.ready) return;
-  Object.keys(FX.pend).forEach(k=>clearTimeout(FX.pend[k]));
-  FX.pend = {};
-  FX.echo = null; FX.freeze = null;
-  const now = AU.ctx.currentTime;
-  ramp(dryGain.gain, 1, now, 0.01);
-  [echoSend, echoFb, throwSend, freezeSend, freezeFb, freezeOut].forEach(n=>ramp(n.gain, 0.0001, now, 0.01));
-  ["fxEcho4","fxEcho8","fxThrow","fxRoll2","fxRoll4","fxRoll8","fxLoop1","fxLoop2","fxLoop4","fxRiser"]
-    .forEach(id=>fxBtn(id, false));
-}
-
-/* ---- wiring: every control is a hold except throw, riser and the toggles -- */
-function holdBtn(id, down, up){
-  const b = el(id); if(!b) return;
-  const end = ()=>{ if(b.dataset.held){ delete b.dataset.held; up(); } };
-  b.addEventListener("pointerdown", e=>{ e.preventDefault(); b.dataset.held="1"; down(); });
-  b.addEventListener("pointerup", end);
-  b.addEventListener("pointerleave", end);
-  b.addEventListener("pointercancel", end);
-}
-function buildFxDeck(){
-  holdBtn("fxEcho4", ()=>echoOn("4"), echoOff);
-  holdBtn("fxEcho8", ()=>echoOn("8"), echoOff);
-  holdBtn("fxRoll2", ()=>freezeStart(0.5,"fxRoll2"), ()=>freezeEnd());
-  holdBtn("fxRoll4", ()=>freezeStart(0.25,"fxRoll4"), ()=>freezeEnd());
-  holdBtn("fxRoll8", ()=>freezeStart(0.125,"fxRoll8"), ()=>freezeEnd());
-  holdBtn("fxLoop1", ()=>freezeStart(1,"fxLoop1"), ()=>freezeEnd());
-  holdBtn("fxLoop2", ()=>freezeStart(2,"fxLoop2"), ()=>freezeEnd());
-  holdBtn("fxLoop4", ()=>freezeStart(4,"fxLoop4"), ()=>freezeEnd());
-  holdBtn("fxBass", ()=>setBassKill(true), ()=>setBassKill(false));
-  el("fxThrow").onclick = reverbThrow;
-  el("fxRiser").onclick = riser;
-  el("fxQuant").onclick = ()=>setFxQuant(!FX.quant);
-}
-const FX_KEYS = {
-  "h":["fxEcho4", ()=>echoOn("4"), echoOff],
-  "j":["fxEcho8", ()=>echoOn("8"), echoOff],
-  "u":["fxRoll2", ()=>freezeStart(0.5,"fxRoll2"), ()=>freezeEnd()],
-  "i":["fxRoll4", ()=>freezeStart(0.25,"fxRoll4"), ()=>freezeEnd()],
-  "o":["fxRoll8", ()=>freezeStart(0.125,"fxRoll8"), ()=>freezeEnd()],
-  "b":["fxLoop1", ()=>freezeStart(1,"fxLoop1"), ()=>freezeEnd()],
-  "n":["fxLoop2", ()=>freezeStart(2,"fxLoop2"), ()=>freezeEnd()],
-  "m":["fxLoop4", ()=>freezeStart(4,"fxLoop4"), ()=>freezeEnd()],
-  "l":["fxBass", ()=>setBassKill(true), ()=>setBassKill(false)]
-};
-
 
 function buildFx(){
   const c=el("fx"); c.innerHTML="";
@@ -3326,13 +3353,10 @@ function boot(){
     if(k==="y"){ redoStep(); }
     if(k==="k"){ keepPattern(); }
     if(k==="q"&&e.shiftKey){ setInstant(!S.instant); return; }
-    if(k==="f"&&e.shiftKey){ setFxQuant(!FX.quant); return; }
-    if(k==="p"){ riser(); return; }
     if(k==="x"){ remix(); return; }
     if(k==="c"){ unremix(); return; }
     if(k===","){ setLen(S.selTrack, trackLen(S.selTrack)-1); }
     if(k==="."){ setLen(S.selTrack, trackLen(S.selTrack)+1); }
-    if(k==="/"){ e.preventDefault(); reverbThrow(); return; }
     if(k==="escape"){ el("help").classList.remove("open"); closePicker(); }
   });
 
