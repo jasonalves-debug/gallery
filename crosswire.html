@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#150E24">
+<title>CROSSWIRE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#150E24; --surface:#241A3C; --surface-2:#2E2249;
+  --paper:#F6F2FF; --dim:#8878B0;
+  --pink:#FF3D8A; --cyan:#3DD6E8; --yellow:#FFC93D; --lime:#8BE84B;
+  --ink:var(--pink);
+  --display:'Archivo Black','Arial Black',system-ui,sans-serif;
+  --body:'Space Grotesk','Segoe UI',system-ui,sans-serif;
+  --pad:clamp(13px,4vw,22px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:var(--void);color:var(--paper);font-family:var(--body);
+  overflow:hidden;touch-action:manipulation;user-select:none}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:80;opacity:.07;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+#app{position:relative;height:100dvh;width:100%;max-width:520px;margin:0 auto;
+  display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top) + 8px) var(--pad) calc(env(safe-area-inset-bottom) + 12px)}
+
+/* hud */
+.hud{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex:0 0 auto}
+.meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.meta .k{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.meta .v{font-family:var(--display);font-size:clamp(19px,5.6vw,25px);line-height:1;letter-spacing:-.02em}
+.meta.right{align-items:flex-end;text-align:right}
+.streak .v{color:var(--yellow);transition:transform .12s}
+.streak.cold .v{color:var(--dim)}
+.streak.bump .v{transform:scale(1.35)}
+.mutebtn{appearance:none;border:1px solid #ffffff1a;background:transparent;color:var(--dim);
+  font-family:var(--body);font-size:10px;letter-spacing:.16em;padding:6px 9px;border-radius:999px;cursor:pointer}
+.mutebtn.off{color:#5C4E7D}
+.pips{display:flex;gap:2px;margin-top:8px;flex:0 0 auto}
+.pip{height:3px;flex:1;background:#3A2C5C;border-radius:2px;transition:background .18s}
+.pip.done{background:var(--lime)} .pip.fail{background:#5A3B57} .pip.now{background:var(--paper)}
+
+/* timer */
+.timer{margin-top:10px;height:11px;position:relative;flex:0 0 auto;background:#33265380;border-radius:3px;overflow:hidden}
+.timer-fill{position:absolute;inset:0;transform-origin:left center;background:var(--ink);
+  -webkit-mask-image:repeating-linear-gradient(90deg,#000 0 7px,transparent 7px 10px);
+  mask-image:repeating-linear-gradient(90deg,#000 0 7px,transparent 7px 10px)}
+body.pressure .timer-fill{background:var(--pink);animation:shudder .16s infinite}
+@keyframes shudder{0%,100%{transform:translateY(0) scaleX(var(--sx,1))}50%{transform:translateY(-1.5px) scaleX(var(--sx,1))}}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:40;opacity:0;
+  box-shadow:inset 0 0 90px 26px var(--pink);transition:opacity .2s}
+body.pressure .vignette{opacity:.34;animation:breathe .5s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.22}50%{opacity:.48}}
+
+/* bloom + shake */
+.bloom{position:fixed;inset:0;pointer-events:none;z-index:39;opacity:0;background:radial-gradient(circle at 50% 45%,#8BE84B55,transparent 62%)}
+.bloom.play{animation:bloomFade .42s ease-out}
+@keyframes bloomFade{0%{opacity:.9}100%{opacity:0}}
+#app.shake{animation:shk .3s}
+@keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}45%{transform:translateX(7px)}70%{transform:translateX(-4px)}}
+
+/* stage */
+.stage{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;padding-top:12px;gap:10px}
+.prompt{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:9px;text-align:center;background:var(--surface);border-radius:16px;padding:14px;border:1px solid #ffffff10}
+.task{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:500;line-height:1.5}
+.big{font-family:var(--display);font-size:clamp(36px,12.5vw,60px);line-height:1;letter-spacing:-.03em;word-break:break-word}
+.mid{font-family:var(--display);font-size:clamp(22px,7vw,34px);line-height:1.05;letter-spacing:.03em}
+.row{display:flex;gap:9px;align-items:center;justify-content:center;flex-wrap:wrap}
+.tile{width:clamp(44px,12.5vw,60px);height:clamp(44px,12.5vw,60px);border-radius:12px;
+  display:grid;place-items:center;font-size:clamp(23px,6.8vw,31px);background:var(--surface-2)}
+.arrows{display:flex;gap:clamp(4px,2vw,12px);font-family:var(--display);font-size:clamp(32px,10vw,50px);line-height:1}
+.stim{font-size:clamp(64px,22vw,110px);line-height:1;font-family:var(--display)}
+.rulepill{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper);
+  background:#ffffff12;border-radius:999px;padding:7px 13px}
+
+/* answers */
+.answers{flex:0 0 auto;display:grid;gap:8px}
+.answers.g2{grid-template-columns:1fr 1fr}
+.answers.g3{grid-template-columns:repeat(3,1fr)}
+.answers.g1{grid-template-columns:1fr}
+.opt{appearance:none;border:1px solid #ffffff1a;background:var(--surface);color:var(--paper);
+  font-family:var(--display);font-size:clamp(19px,5.6vw,25px);border-radius:14px;padding:15px 8px;
+  min-height:62px;cursor:pointer;display:grid;place-items:center;position:relative;
+  transition:transform .07s,background .12s,border-color .12s}
+.answers.g3 .opt{min-height:56px;font-size:clamp(21px,6.6vw,29px);padding:8px}
+.answers.g1 .opt{min-height:118px;font-size:clamp(24px,7.5vw,34px)}
+.opt:active{transform:scale(.96)}
+.opt:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.opt.hit{background:var(--lime);color:var(--void);border-color:var(--lime)}
+.opt.miss{background:#4A2440;border-color:var(--pink);color:var(--pink)}
+.opt.reveal{border-color:var(--lime);color:var(--lime)}
+.opt.hold{background:#2A2046;color:var(--dim);font-size:13px;letter-spacing:.24em}
+.swatch{width:100%;height:100%;min-height:42px;border-radius:8px}
+
+.float{position:fixed;left:50%;top:36%;transform:translateX(-50%);z-index:55;
+  font-family:var(--display);font-size:32px;color:var(--lime);pointer-events:none;opacity:0;text-align:center}
+.float.play{animation:pop .72s ease-out}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,10px) scale(.8)}
+  25%{opacity:1;transform:translate(-50%,-6px) scale(1.05)}
+  100%{opacity:0;transform:translate(-50%,-42px) scale(1)}}
+.banner{position:fixed;left:0;right:0;top:26%;z-index:56;text-align:center;pointer-events:none;opacity:0}
+.banner .t{font-family:var(--display);font-size:clamp(30px,10vw,46px);color:var(--yellow);letter-spacing:-.02em}
+.banner.play{animation:bn 1s ease-out}
+@keyframes bn{0%{opacity:0;transform:scale(.7)}18%{opacity:1;transform:scale(1.06)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1)}}
+
+/* overlays */
+.screen{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;padding:30px 22px;background:var(--void);text-align:center;overflow-y:auto}
+.screen.on{display:flex}
+.wordmark{font-family:var(--display);font-size:clamp(42px,14vw,70px);line-height:.9;letter-spacing:-.04em;position:relative}
+.wordmark span{display:block}
+.wordmark .a{color:var(--paper)}
+.wordmark .b{position:absolute;inset:0;color:var(--cyan);mix-blend-mode:screen;transform:translate(4px,3px);opacity:.85}
+.tagline{color:var(--dim);font-size:14px;max-width:24ch;line-height:1.5;margin:0}
+.cta{appearance:none;border:0;background:var(--pink);color:var(--void);font-family:var(--display);
+  font-size:20px;letter-spacing:.06em;padding:17px 40px;border-radius:999px;cursor:pointer;transition:transform .08s}
+.cta:active{transform:scale(.96)}
+.cta:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+.ghost{background:transparent;color:var(--dim);border:1px solid #ffffff20;font-size:12px;padding:11px 20px;letter-spacing:.14em}
+.legend{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;max-width:350px}
+.chip{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  border:1px solid #ffffff18;border-radius:999px;padding:5px 9px}
+.lifetime{display:flex;gap:22px;justify-content:center}
+
+#wipe{z-index:60;background:var(--ink);color:var(--void);gap:5px;clip-path:inset(0 0 100% 0)}
+#wipe.on{animation:wipeIn .5s cubic-bezier(.16,.84,.44,1) forwards}
+@keyframes wipeIn{0%{clip-path:inset(0 0 100% 0)}35%{clip-path:inset(0 0 0 0)}80%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(100% 0 0 0)}}
+.verb{font-family:var(--display);font-size:clamp(40px,15vw,78px);letter-spacing:-.04em;line-height:.9;position:relative}
+.verb .b{position:absolute;inset:0;color:var(--paper);mix-blend-mode:multiply;transform:translate(5px,4px);opacity:.55}
+.verb-sub{font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;font-weight:700;opacity:.7;max-width:26ch}
+
+.final{font-family:var(--display);font-size:clamp(52px,18vw,86px);line-height:.85;letter-spacing:-.04em;color:var(--yellow)}
+.rank{font-family:var(--display);font-size:15px;letter-spacing:.2em;color:var(--cyan)}
+.delta{font-size:12px;color:var(--dim);letter-spacing:.06em}
+.delta.up{color:var(--lime)}
+.stats{display:flex;gap:24px;justify-content:center}
+.stat .k{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.stat .v{font-family:var(--display);font-size:22px;margin-top:3px}
+.domains{width:100%;max-width:330px;display:flex;flex-direction:column;gap:6px}
+.dom{display:grid;grid-template-columns:82px 1fr 34px;align-items:center;gap:9px}
+.dom .n{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);text-align:left}
+.dom .bar{height:6px;background:#332653;border-radius:3px;overflow:hidden}
+.dom .bar i{display:block;height:100%;background:var(--cyan);border-radius:3px}
+.dom .p{font-size:11px;color:var(--dim);text-align:right;font-variant-numeric:tabular-nums}
+.weak{font-size:12px;color:var(--dim);max-width:30ch;line-height:1.5}
+.weak b{color:var(--pink);font-weight:700}
+.sectitle{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+
+.opt.flip{background:var(--yellow);color:var(--void);animation:flipPulse .45s}
+@keyframes flipPulse{0%{transform:scale(1)}40%{transform:scale(1.04)}100%{transform:scale(1)}}
+.twistbadge{font-family:var(--display);font-size:11px;letter-spacing:.24em;
+  background:var(--void);color:var(--yellow);padding:7px 14px;border-radius:999px;margin-top:4px}
+#wipe.phase{background:var(--void);color:var(--paper)}
+#wipe.phase .verb .b{color:var(--yellow);mix-blend-mode:screen;opacity:.8}
+#wipe.phase.on{animation:wipeIn .76s cubic-bezier(.16,.84,.44,1) forwards}
+.answers.g4{grid-template-columns:repeat(4,1fr)}
+.answers.g4 .opt{min-height:50px;font-size:clamp(18px,5.6vw,24px);padding:6px}
+.arrows.tight{gap:clamp(2px,1.2vw,7px);font-size:clamp(25px,8vw,40px)}
+
+/* entrance motion — the card and its options arrive, they don't just appear */
+.prompt{animation:promptIn .26s cubic-bezier(.2,.9,.3,1)}
+@keyframes promptIn{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:none}}
+.opt{animation:optIn .24s cubic-bezier(.2,.9,.3,1) backwards}
+@keyframes optIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+body.pressure .prompt{border-color:#FF3D8A55}
+
+/* drawn-icon sizing: one system, optically consistent at every size */
+.ico{display:block;width:34px;height:34px;flex:0 0 auto}
+.ico.big{width:clamp(30px,8.6vw,40px);height:clamp(30px,8.6vw,40px)}
+.ico.huge{width:clamp(56px,17vw,84px);height:clamp(56px,17vw,84px)}
+.ico.stim{width:clamp(64px,21vw,104px);height:clamp(64px,21vw,104px)}
+.ico.flk{width:clamp(26px,8vw,42px);height:clamp(26px,8vw,42px)}
+.tile .ico{width:58%;height:58%}
+.tile.blank{color:var(--dim);background:#ffffff08;font-family:var(--display);font-size:clamp(20px,6vw,26px)}
+.showcase{display:grid;place-items:center;padding:4px 0}
+.inline-ico{display:inline-block;vertical-align:-.22em}
+.inline-ico .ico{width:1.15em;height:1.15em;display:inline-block}
+.opt .ico{margin:0 auto}
+.arrows{display:flex;gap:clamp(4px,2vw,12px);align-items:center;justify-content:center}
+.flkchar{font-family:var(--display);font-size:clamp(32px,10vw,50px);line-height:1}
+.arrows.tight{gap:clamp(2px,1.2vw,7px)}
+.arrows.tight .flkchar{font-size:clamp(25px,8vw,40px)}
+.stim{display:grid;place-items:center;min-height:clamp(70px,22vw,110px)}
+.stimchar{font-family:var(--display);font-size:clamp(62px,21vw,104px);line-height:1;letter-spacing:-.02em}
+.restdot{display:block;width:12px;height:12px;border-radius:50%;background:var(--dim)}
+/* category accent on the card, so each round reads as its own thing */
+.prompt{border-top:3px solid var(--ink)}
+
+.trow{display:grid;grid-template-columns:62px 1fr 34px 40px;align-items:center;gap:8px;min-height:24px}
+.trow .n{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:left;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trow .sp{display:block;min-width:0}
+.trow .p{font-size:11px;color:var(--paper);text-align:right;font-variant-numeric:tabular-nums}
+.tdelta{font-size:9px;letter-spacing:.08em;text-align:right;font-weight:700}
+.tdelta.up{color:var(--lime)} .tdelta.down{color:var(--pink)} .tdelta.flat{color:#5C4E7D}
+.nodata{font-size:9px;color:#5C4E7D;letter-spacing:.1em}
+.weak b.up{color:var(--lime)}
+
+.btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.cta.alt{background:var(--cyan)}
+.tagline.small{font-size:11.5px;max-width:32ch;opacity:.8}
+.panel{width:100%;max-width:330px;display:flex;flex-direction:column;gap:8px;
+  background:var(--surface);border:1px solid #ffffff10;border-radius:14px;padding:14px}
+.sparkwrap{min-height:14px}
+.fineprint{font-size:10px;line-height:1.6;color:#6E5F93;max-width:34ch;margin:0}
+.fineprint em{color:var(--dim);font-style:normal;font-weight:700}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  #wipe.on{animation:none;clip-path:inset(0 0 0 0)}
+  body.pressure .vignette{opacity:.3}
+}
+</style>
+</head>
+<body>
+<div class="vignette"></div>
+<div class="bloom" id="bloom"></div>
+<div class="float" id="float"></div>
+<div class="banner" id="banner"><div class="t" id="bannerT"></div></div>
+
+<div id="app">
+  <div class="hud">
+    <div class="meta"><div class="k">Score</div><div class="v" id="score">0</div></div>
+    <button class="mutebtn" id="mute" type="button">SOUND ON</button>
+    <div class="meta right streak cold"><div class="k">Streak</div><div class="v" id="streak">&times;1</div></div>
+  </div>
+  <div class="pips" id="pips"></div>
+  <div class="timer"><div class="timer-fill" id="fill"></div></div>
+  <div class="stage">
+    <div class="prompt" id="prompt"></div>
+    <div class="answers g2" id="answers"></div>
+  </div>
+</div>
+
+<div class="screen on" id="title">
+  <div class="wordmark"><span class="a">CROSS<br>WIRE</span><span class="b">CROSS<br>WIRE</span></div>
+  <p class="tagline">Twenty rounds. Eleven wires. The clock keeps shrinking.</p>
+  <div class="lifetime">
+    <div class="stat"><div class="k">Best run</div><div class="v" id="tBest">0</div></div>
+    <div class="stat"><div class="k">Runs</div><div class="v" id="tRuns">0</div></div>
+    <div class="stat"><div class="k">Day streak</div><div class="v" id="dayStreak">0</div></div>
+  </div>
+  <div class="btns">
+    <button class="cta" id="daily" type="button">Daily run</button>
+    <button class="cta alt" id="free" type="button">Free run</button>
+  </div>
+  <p class="tagline small">Daily is the same twenty rounds for everyone today. Free runs lean toward your weakest wires.</p>
+  <div class="panel">
+    <div class="sectitle">Last 30 runs</div>
+    <div class="sparkwrap" id="sparkT"></div>
+    <div class="sectitle">Wire trend &mdash; weakest first</div>
+    <div class="domains" id="lifeDomains"></div>
+  </div>
+  <div class="legend" id="legend"></div>
+  <p class="fineprint">These tasks are modelled on standard cognitive measures. Practice reliably improves your scores <em>on these tasks</em>; there is no good evidence it improves thinking in general.</p>
+  <button class="cta ghost" id="reset" type="button">Reset history</button>
+</div>
+
+<div class="screen" id="wipe">
+  <div class="verb"><span class="a" id="verbA"></span><span class="b" id="verbB"></span></div>
+  <div class="verb-sub" id="verbSub"></div>
+  <div class="twistbadge" id="twistBadge" style="display:none">RULE FLIPPED</div>
+</div>
+
+<div class="screen" id="results">
+  <div class="sectitle" id="modeTag">FREE RUN</div>
+  <div class="sectitle">Final score</div>
+  <div class="final" id="finalScore">0</div>
+  <div class="rank" id="finalRank"></div>
+  <div class="delta" id="finalDelta"></div>
+  <div class="stats">
+    <div class="stat"><div class="k">Best streak</div><div class="v" id="finalStreak">0</div></div>
+    <div class="stat"><div class="k">Correct</div><div class="v" id="finalAcc">0/20</div></div>
+    <div class="stat"><div class="k">Personal best</div><div class="v" id="finalBest">0</div></div>
+  </div>
+  <div class="sectitle">This run, by wire</div>
+  <div class="domains" id="domains"></div>
+  <p class="weak" id="weak"></p>
+  <p class="weak" id="mover"></p>
+  <div class="sparkwrap" id="sparkR" style="max-width:330px;width:100%"></div>
+  <button class="cta" id="again">Run again &mdash; free</button>
+  <button class="cta ghost" id="backTitle" type="button">Back to menu</button>
+</div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+let RNG = Math.random;
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0;
+  let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t;
+  return ((t^t>>>14)>>>0)/4294967296; }; }
+const rnd = n => Math.floor(RNG()*n);
+const pick = a => a[rnd(a.length)];
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; };
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ---------------- persistence (same pattern as the BP app) ---------------- */
+const KEY = "crosswire.v1";
+const DEFAULT_STORE = { best:0, bestStreak:0, runs:0, last:0, dom:{},
+  log:[], recent:{}, dailyDate:null, dailyScore:0, dayStreak:0, dailyBest:0 };
+let store = DEFAULT_STORE, canPersist = true;
+try{
+  const raw = localStorage.getItem(KEY);
+  if(raw) store = Object.assign({}, DEFAULT_STORE, JSON.parse(raw));
+}catch(e){ canPersist=false; }
+/* migrate the old flat score array into the per-wire run log */
+if(Array.isArray(store.history)){
+  store.log=(store.log||[]).concat(store.history.map(v=>
+    typeof v==="number" ? {score:v,d:null} : v));
+  delete store.history;
+}
+if(!Array.isArray(store.log)) store.log=[];
+
+function save(){ if(!canPersist) return; try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){ canPersist=false; } }
+
+/* ---------------- audio ---------------- */
+let actx=null, muted=false;
+function AC(){
+  if(muted) return null;
+  if(!actx){ const C=window.AudioContext||window.webkitAudioContext; if(!C) return null; actx=new C(); }
+  if(actx.state==="suspended") actx.resume();
+  return actx;
+}
+function tone(freq,dur,{type="triangle",gain=.16,slide=null,delay=0}={}){
+  const c=AC(); if(!c) return;
+  const t=c.currentTime+delay;
+  const o=c.createOscillator(), g=c.createGain();
+  o.type=type; o.frequency.setValueAtTime(freq,t);
+  if(slide) o.frequency.exponentialRampToValueAtTime(slide,t+dur);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(gain,t+0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+.05);
+}
+function noise(dur=.22,gain=.2){
+  const c=AC(); if(!c) return;
+  const n=Math.floor(c.sampleRate*dur), buf=c.createBuffer(1,n,c.sampleRate), d=buf.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
+  const s=c.createBufferSource(); s.buffer=buf;
+  const f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.value=520;
+  const g=c.createGain(); g.gain.value=gain;
+  s.connect(f).connect(g).connect(c.destination); s.start();
+}
+const LADDER=[392,440,494,523,587,659,740,784,880,988,1047,1175];
+function sfxHit(streak){
+  const f=LADDER[Math.min(streak-1,LADDER.length-1)];
+  tone(f,.13,{type:"triangle",gain:.15});
+  tone(f*2,.09,{type:"sine",gain:.06,delay:.02});
+}
+function sfxMiss(){ noise(.26,.22); tone(146,.3,{type:"sawtooth",gain:.11,slide:78}); }
+function sfxWipe(){ tone(300,.14,{type:"square",gain:.05,slide:620}); }
+function sfxTick(){ tone(1500,.03,{type:"square",gain:.045}); }
+function sfxMilestone(n){
+  [0,.07,.14,.23].forEach((d,i)=>tone([523,659,784,1047][i],.22,{type:"triangle",gain:.13,delay:d}));
+}
+function sfxBest(){ [523,659,784,1047,1319].forEach((f,i)=>tone(f,.4,{type:"triangle",gain:.15,delay:i*.09})); }
+function sfxEnd(){ [440,392,330].forEach((f,i)=>tone(f,.35,{type:"triangle",gain:.12,delay:i*.13})); }
+
+/* ---------------- content banks ---------------- */
+const WORDS = ("about above actor acute adopt after agent alarm album alert alien align alive alley allow alone along amber among ample angel anger angle ankle apple apply arena argue arise armor aroma array arrow aside asset atlas audio audit avoid awake award aware badge baker balmy banjo basic basin batch beach beard beast begin being belly bench berry birch birth blade blame blank blast blaze bleak blend bless blind block bloom blunt blush board boast bonus boost booth brace braid brain brake brand brass brave bread break breed brick bride brief bring brink brisk broad broke brook broom brown brush buddy build built burst cabin cable cameo canal candy canoe cargo carve catch cause cedar chain chair chalk charm chart chase cheap cheek cheer chess chest chief child chill choir chord chose chunk cider civic civil claim clamp clash clasp class clean clear clerk cliff climb cling cloak clock close cloth cloud clove clown coach coast cobra cocoa comet comic coral couch cough count court cover crack craft crane crash crate crawl crazy cream creek crest crisp cross crowd crown crumb crush crust curve cycle daisy dance dealt debut decay decor delay delta dense depth diary digit diner dirty dizzy dodge donor doubt dough dozen draft drain drama drape dream dress dried drift drill drink drive drove drown eager eagle early earth easel eight elbow elder elite ember empty enact enemy enjoy enter entry equal equip erase error essay event every exact exile exist extra fable fairy faith false fancy fatal fault feast fence ferry fetch fever fiber field fiery fifty fight final finch first flame flash fleet flesh flick fling float flock flood floor flour fluid flush focus foggy force forge forth forty forum found frame fraud fresh fried frost frown fruit fudge fully funny gauge ghost giant given glare glass gleam globe gloom glory glove grace grade grain grand grant grape graph grasp grass grave graze great green greet grief grill grind groan groom group grove growl guard guess guest guide gully habit handy happy harsh haste hatch haunt heart heavy hedge hefty hinge hobby hoist honey honor horse hotel hound house hover human humid humor hurry ideal image imply index inlet inner input irony ivory jelly jewel joint jolly judge juice jumbo knack knife knock label labor lance lapse large larva laser latch later laugh layer leaky learn lease leash least leave ledge lemon level lever light lilac limit linen liver llama lobby local lodge lofty logic loose lorry lotus lower loyal lucid lucky lunar lunch lurch lyric magic major maker mango maple march marsh match maybe mayor meant medal media melon mercy merge merit metal meter midst might miner minor mirth mixer model moist molar money month moral motor mound mount mouse mouth movie mulch mural music nasal naval nerve never newly night noble noise north notch novel nurse nylon oasis occur ocean offer often olive omega onion opera orbit order organ otter ounce outer owner oxide ozone paint panel panic paper parka party pasta patch pause peach pearl pedal penny perch petal phase phone photo piano piece pilot pinch pitch pivot pixel pizza place plaid plain plane plank plant plate plaza plead pluck plumb plush point polar porch pouch pound power prank press price pride prime print prism prize probe prone proof proud prove prune pulse punch pupil puree purse quart queen query quest queue quick quiet quilt quirk quota radar radio rally ranch range rapid ratio raven reach ready realm rebel refer reign relax relay renew repay reply rider ridge rifle right rigid rinse risky rival river roast robin robot rocky rogue roost rotor rough round route royal rugby ruler rumor rural saber salad salon salty sandy sauce scale scarf scene scent scoop scope score scout scrap screw scrub seize sense serve setup seven shade shaft shake shale shame shape share shark sharp shear sheep sheet shelf shell shift shine shirt shock shore short shout shove shown shrub shrug sight silky since siren sixty skate skiff skill skirt slate sleek sleep slice slide slope small smart smash smile smoke snack snake sneak solar solid solve sonic sound south space spare spark speak spear speed spell spend spice spike spine spiny spire spite splat split spoke spoon sport spout spray spree squad squat stack staff stage stain stair stake stalk stall stamp stand stare stark start state stave steak steal steam steel steep steer stern stick stiff still sting stock stole stone stood stool store storm story stout stove strap straw stray strip stuck study stuff style sugar suite sunny super surge swamp swarm swear sweat sweep sweet swell swift swing sword syrup table tacit taken tally tango taper taste teach tempo tenor tense tepid thank theme there thick thief thigh thing think third thorn those three throw thumb tidal tiger tight timer title toast today token tonic tooth topic torch total touch tough towel tower toxic trace track trade trail train trait tramp trash treat trend trial tribe trick tried tripe troop trout truck truly trunk trust truth tulip tumor tunic turbo tutor twice twist ultra uncle under unify union unite unity until upper upset urban usage usher usual utter vague valid value valve vapor vault venue verse video vigor villa vinyl viola vital vivid vocal vodka vogue voice voter vowel wagon waist waltz waste watch water weary weave wedge weigh whale wheat wheel where which while whirl whisk white whole widow width wield windy witty woken woman world worry worse worth wound woven wrist write wrong yacht yeast yield young yours youth zebra zesty").split(" ");
+const W5 = WORDS.filter(w=>w.length===5);
+
+const COLORS = [{n:"RED",h:"#FF4B4B"},{n:"BLUE",h:"#4B8DFF"},{n:"GREEN",h:"#4BE07A"},
+  {n:"YELLOW",h:"#FFD24B"},{n:"PINK",h:"#FF63C4"},{n:"CYAN",h:"#43E0E8"},
+  {n:"ORANGE",h:"#FF8A3D"},{n:"PURPLE",h:"#B166FF"},{n:"WHITE",h:"#F2EEFF"},{n:"LIME",h:"#B6F03C"}];
+const SHAPE_INKS=["var(--pink)","var(--cyan)","var(--yellow)","var(--lime)"];
+const CONFUSE=[["b","d"],["p","q"],["M","W"],["N","Z"],["6","9"],["C","G"],["E","F"],["u","n"],
+  ["i","l"],["O","Q"],["V","Y"],["S","5"],["h","n"],["m","n"],["8","B"],["1","7"],["c","e"],["g","q"],
+  ["r","n"],["t","f"],["D","O"],["I","J"],["P","R"],["U","V"],["X","K"],["a","o"],["3","8"],["0","O"],
+  ["A","R"],["G","Q"],["T","I"],["W","V"],["2","Z"],["5","S"],["9","g"],["k","h"]];
+
+/* ---------------- categories ---------------- */
+/* ---------------- drawn icon system ----------------
+   Everything pictorial is drawn here on one 24x24 grid: solid shapes at fill,
+   line icons at stroke-width 2 with round caps. No emoji, no font glyphs as art —
+   that is what made it read as assembled clip art. Colour comes from currentColor. */
+const SOLID = {
+  disc:    '<circle cx="12" cy="12" r="8.5"/>',
+  square:  '<rect x="4" y="4" width="16" height="16" rx="2.5"/>',
+  triangle:'<path d="M12 3.2 21 20.2H3z"/>',
+  diamond: '<path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/>',
+  star:    '<path d="M12 2.6l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.7 6.1 20.8l1.2-6.6L2.5 9.6l6.6-.9z"/>',
+  hex:     '<path d="M12 2.6l8.2 4.75v9.4L12 21.4 3.8 16.75v-9.4z"/>',
+  bar:     '<rect x="3.5" y="8" width="17" height="8" rx="4"/>',
+  plus:    '<path d="M9.8 3h4.4v6.8H21v4.4h-6.8V21H9.8v-6.8H3V9.8h6.8z"/>',
+  ring:    '<circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="5"/>',
+  arch:    '<path d="M3 17.5a9 9 0 0 1 18 0z"/>',
+  drop:    '<path d="M12 2.6c4 5.2 7 8.2 7 11.6a7 7 0 0 1-14 0c0-3.4 3-6.4 7-11.6z"/>',
+  chevL:   '<path d="M17 2.6 20.6 6 14.5 12l6.1 6-3.6 3.4L7.8 12z"/>',
+  chevR:   '<path d="M7 2.6 3.4 6l6.1 6-6.1 6L7 21.4 16.2 12z"/>',
+  chevU:   '<path d="M2.6 17 6 20.6 12 14.5l6 6.1 3.4-3.6L12 7.8z"/>',
+  chevD:   '<path d="M2.6 7 6 3.4 12 9.5l6-6.1L21.4 7 12 16.2z"/>'
+};
+const LINE = {
+  key:    '<circle cx="8.5" cy="8.5" r="4.5"/><path d="M11.8 11.8 20.5 20.5M16.5 17.2l2.2-2.2M19 20l2-2"/>',
+  leaf:   '<path d="M20 4c0 9-4 15.2-11 16A5 5 0 0 1 5 11.6C9 5.8 14 4 20 4z"/><path d="M5.5 19.2 13.5 11"/>',
+  bolt:   '<path d="M13.5 2 4.5 14h6l-1 8 9-12h-6z"/>',
+  anchor: '<circle cx="12" cy="4.6" r="2.6"/><path d="M12 7.4V21M4 12.8a8 8 0 0 0 16 0"/><path d="M3.4 12.8h2.4M18.2 12.8h2.4M8.6 10.4h6.8"/>',
+  moon:   '<path d="M20.2 14.6A8.6 8.6 0 0 1 9.4 3.8 8.6 8.6 0 1 0 20.2 14.6z"/>',
+  flame:  '<path d="M12 2.2s5.2 4.6 5.2 9.2a5.2 5.2 0 0 1-10.4 0c0-2 1-3.2 1-3.2s.2 2.2 1.7 2.2S12 6.4 12 2.2z"/>',
+  bell:   '<path d="M6 16.2V11a6 6 0 0 1 12 0v5.2l2 2.2H4z"/><path d="M9.8 20.4a2.4 2.4 0 0 0 4.4 0"/>',
+  eye:    '<path d="M2.2 12S6.2 5.8 12 5.8 21.8 12 21.8 12 17.8 18.2 12 18.2 2.2 12 2.2 12z"/><circle cx="12" cy="12" r="2.6"/>',
+  gear:   '<circle cx="12" cy="12" r="3.6"/><path d="M12 2.2v3M12 18.8v3M2.2 12h3M18.8 12h3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M18.9 5.1l-2.1 2.1M7.2 16.8l-2.1 2.1"/>',
+  tag:    '<path d="M3 11.4V4.4a1.4 1.4 0 0 1 1.4-1.4h7L21 12.6 12.6 21z"/><circle cx="7.6" cy="7.6" r="1.5"/>',
+  cup:    '<path d="M4.5 6.5h12.5v7.2a6.2 6.2 0 0 1-12.5 0z"/><path d="M17 8.6h1.8a2.6 2.6 0 0 1 0 5.2H17"/><path d="M3.4 20.8h15"/>',
+  flag:   '<path d="M6 2.8v18.4"/><path d="M6 4h13.2l-3.2 4.2 3.2 4.2H6z"/>',
+  peak:   '<path d="M2 19.4 9 8.2l4.2 6.2 2.6-3.6L22 19.4z"/>',
+  cloud:  '<path d="M7.2 18.4a4.6 4.6 0 0 1 .6-9.2 6.1 6.1 0 0 1 11.4 1.6 3.9 3.9 0 0 1-.8 7.6z"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="M15.8 8.2 13.6 14 7.8 16.2 10 10.4z"/>',
+  house:  '<path d="M2.8 11.2 12 3.8l9.2 7.4"/><path d="M5.4 9.4V20.4h13.2V9.4"/>',
+  clip:   '<path d="M17 8v8.2a5 5 0 0 1-10 0V7a3 3 0 0 1 6 0v9.2a1.6 1.6 0 0 1-3.2 0V8.4"/>',
+  mail:   '<rect x="2.6" y="5" width="18.8" height="14" rx="2.2"/><path d="M3.2 6.6 12 13.2l8.8-6.6"/>',
+  lock:   '<rect x="4" y="10" width="16" height="11" rx="2.4"/><path d="M8 10V6.8a4 4 0 0 1 8 0V10"/>',
+  shears: '<circle cx="6.2" cy="6.2" r="2.6"/><circle cx="6.2" cy="17.8" r="2.6"/><path d="M8.4 7.6 20.4 18M8.4 16.4 20.4 6"/>',
+  crown:  '<path d="M3 7.6 7.2 12 12 4.6 16.8 12 21 7.6 19 19.4H5z"/>',
+  star:   '<path d="M12 3.2l2.8 5.7 6.3.9-4.6 4.4 1.1 6.2L12 17.5l-5.6 2.9 1.1-6.2-4.6-4.4 6.3-.9z"/>',
+  pin:    '<path d="M12 21.4s7-6.6 7-11.4a7 7 0 0 0-14 0c0 4.8 7 11.4 7 11.4z"/><circle cx="12" cy="9.8" r="2.6"/>'
+};
+/* asymmetric blocks for mental rotation — mirroring these is detectable, unlike a rotated letter */
+const BLOCKS = [
+  '<path d="M4 3h12.5v5.2H9.4v3h5.2v5.2H9.4V21H4z"/>',
+  '<path d="M3 3h9.2v6.2h8.6V21h-6.2v-5.8H3z"/>',
+  '<path d="M4.2 3.6h13.6l-4 6.2h4.4L12 21l-2.2-7.4H4.2z"/>',
+  '<path d="M5 3h10.4v4.4h-5.2v3.8h7.4V21H5z"/>',
+  '<path d="M3.2 7.2 11.4 3l9.6 6-4 3.8 2.8 5-8.8 3.2-2.8-6-5.6 2z"/>',
+  '<path d="M6.2 2.4 16.6 5.6l-2 6 6.2 4.2-5 6.8-9-3.2 2-6.2-6-4z"/>'
+];
+const LINE_KEYS = Object.keys(LINE);
+const SOLID_SHAPES = ["disc","square","triangle","diamond","star","hex","bar","plus","ring","arch","drop"];
+
+function solid(name,cls){
+  return `<svg class="ico ${cls||""}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${SOLID[name]}</svg>`;
+}
+function line(name,cls){
+  return `<svg class="ico ${cls||""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LINE[name]}</svg>`;
+}
+function block(i,angle,mirror,cls){
+  return `<svg class="ico ${cls||""}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+    style="transform:rotate(${angle}deg)${mirror?" scaleX(-1)":""}">${BLOCKS[i]}</svg>`;
+}
+
+const W6 = ("abroad absent accept access accuse across action active actual advice advise affect afford afraid agency agenda almost always amount animal annual answer anyone anyway appeal appear around arrive artist aspect assess assist assume attack attend author autumn avenue awards backup ballot banner barrel basket battle beacon beauty become before behalf behind belief belong beside better beyond bishop bitter bolder border bottle bottom bought bounce branch brandy breath breeze bridge bright broken bronze brutal bubble bucket budget bullet bundle burden bureau butter button camera cancel candle canvas canyon carbon career castle casual caught cellar cement census center chance change chapel charge cheese cherry choice choose chosen church circle client closer cobalt coffee collar colour column combat comedy commit common copper corner cotton county couple course cousin cradle create credit crisis critic crowds cruise custom damage danger dealer debate decade decide defeat defend define degree delete demand depart depend deploy desert design desire detail detect device devote dinner direct divide doctor dollar domain double dragon drawer driver during easily eating editor effect effort eighth either elbows eleven emerge employ enable ending energy engage engine enough ensure entire entity equity escape estate ethics events evolve exceed except excess excuse expand expect expert export expose extend extent fabric facade factor family famous farmer fasten father fellow female fierce figure filter finger finish fiscal flavor flight flower follow forest forget formal format former fossil foster fought fourth freeze french friend frozen future gadget galaxy garage garden gather gentle gifted glance global golden gospel govern grader grants ground growth guilty gutter handle happen harbor hardly hazard header health hidden holder honest hunger hunter hybrid ignore impact import impose income indeed indoor infant inform injury inside insist intend invest invite island itself jacket jigsaw jungle junior kernel kidney kindly kitten ladder lately latter launch lawyer leader league legacy legend length lesson letter liable likely linear liquid listen little lively locate lonely longer lookup lovely loving lumber magnet mainly makeup manage manner manual marble margin marine marker market mascot master matter mature meadow medium member memory mental mentor merely method middle mighty miller mining minute mirror mobile modern modest modify moment monkey mostly mother motion motive museum mutual narrow nation native nature nearby nearly needle nephew nerves neural nickel nobody normal notice notion number object obtain occupy offend office offset online onward openly option orange orbits origin outfit outlet output oxygen packet palace panels parade pardon parent parish parked partly patent patrol pebble pencil people pepper period permit person phrase picked picnic pillar pilots pirate pistol planet plasma plenty pocket poetry poison police policy polish portal porter praise prefer pretty prince prison profit prompt proper proven public punish purple pursue puzzle python quartz quiver quoted radius random rarely rather rating reader really reason recall recent recipe record reduce reform refuse regard regime region regret reject relate relief remain remark remedy remind remote remove render rental repair repeat report rescue resent resort result retail retain retire return reveal review reward ribbon riddle ripple rising ritual rocket roller roster rotate rubber rugged runner rustic saddle safely salary salmon sample sandal satire savage saving scarce scenic scheme school scores screen script search season second secret sector secure seldom select senior sensor series served settle severe shadow shaped shared shield shifts shiver should shovel shrimp signal silent silver simple single sister sketch slight smooth social socket soften solute sought source speech sphere spider spirit splash spoken sponge spread spring sprint square stable stance staple starch static statue status steady sticky stolen stormy strain strand streak stream street stress strict strike string stroke strong studio stupid subtle suburb sudden suffer summer summit supply surely survey switch symbol system tackle talent target tariff tavern temple tenant tender tennis thanks theory thirty thread threat thrive throat throne thrown thrust ticket timber timing tissue toilet tomato tongue topple toward towels trader tragic trauma travel treaty trends tribal trophy tropic trough trover trying tucked tunnel turkey turtle twelve twenty unable unfair unique unites unlike unload update uphold upload upward urgent useful valley vanish varied vendor verify versus vessel victim viewer virtue vision visual volume voyage wallet walnut wander warmth wealth weapon weekly weight wholly widely window winner winter wisdom within wonder wooden worker worthy writer yearly yellow yogurt zigzag zipper").split(" ");
+const tierOf = r => r<7 ? 1 : (r<14 ? 2 : 3);
+
+const CATS = [
+{ id:"calc", repeatWindow:40, verb:"ADD UP", sub:"tap the answer", dom:"Number", ink:"var(--cyan)",
+  build(r,t){
+    let a,b,c,ans,face;
+    if(t===1){
+      const k=rnd(3);
+      if(k===0){a=2+rnd(20);b=2+rnd(20);ans=a+b;face=`${a} + ${b}`;}
+      else if(k===1){a=12+rnd(30);b=2+rnd(9);ans=a-b;face=`${a} − ${b}`;}
+      else {a=2+rnd(6);b=2+rnd(6);ans=a*b;face=`${a} × ${b}`;}
+    } else if(t===2){
+      const k=rnd(4);
+      if(k===0){a=18+rnd(60);b=18+rnd(60);ans=a+b;face=`${a} + ${b}`;}
+      else if(k===1){a=40+rnd(60);b=6+rnd(28);ans=a-b;face=`${a} − ${b}`;}
+      else if(k===2){a=3+rnd(10);b=3+rnd(10);ans=a*b;face=`${a} × ${b}`;}
+      else {b=2+rnd(8);ans=2+rnd(12);a=b*ans;face=`${a} ÷ ${b}`;}
+    } else {
+      const k=rnd(3);
+      if(k===0){a=2+rnd(9);b=2+rnd(9);c=3+rnd(24);ans=a*b+c;face=`${a} × ${b} + ${c}`;}
+      else if(k===1){a=30+rnd(60);b=5+rnd(22);c=5+rnd(22);ans=a-b+c;face=`${a} − ${b} + ${c}`;}
+      else {a=2+rnd(8);b=2+rnd(8);c=2+rnd(8);ans=(a+b)*c;face=`(${a} + ${b}) × ${c}`;}
+    }
+    const set=new Set([ans]);
+    while(set.size<4){ const d=ans+(rnd(2)?1:-1)*(1+rnd(t===3?13:8)); if(d>0) set.add(d); }
+    const o=shuffle([...set]);
+    return { prompt:`<div class="task">what is it</div><div class="big">${face}</div>`,
+      grid:"g2", options:o.map(String), correct:o.indexOf(ans), key:face };
+  }},
+
+{ id:"word", repeatWindow:60, verb:"UNSCRAMBLE", sub:"find the real word", dom:"Word", ink:"var(--yellow)",
+  build(r,t){
+    const bank = t===1 ? W5 : W6;
+    const w=pick(bank); let sc=w; while(sc===w) sc=shuffle(w.split("")).join("");
+    let pool;
+    if(t<3){ const st=new Set([w]); while(st.size<4) st.add(pick(bank)); pool=[...st]; }
+    else {
+      // tier 3: decoys share the opening letter — you can't shortcut on first-letter alone
+      const near=bank.filter(x=>x[0]===w[0]&&x!==w);
+      const st=new Set([w]);
+      while(st.size<4) st.add(near.length>=3 ? pick(near) : pick(bank));
+      pool=[...st];
+    }
+    const o=shuffle(pool);
+    return { prompt:`<div class="task">these letters make</div><div class="big" style="letter-spacing:.12em">${sc.toUpperCase()}</div>`,
+      grid:"g2", options:o.map(v=>`<span style="font-size:.74em;letter-spacing:.04em">${v.toUpperCase()}</span>`),
+      correct:o.indexOf(w), key:w };
+  }},
+
+{ id:"color", repeatWindow:40, verb:"INK, NOT WORD", sub:"tap the colour it is printed in", dom:"Focus", ink:"var(--pink)", twistable:true,
+  build(r,t,twist){
+    const count = t===1?4:6;
+    const set=shuffle(COLORS).slice(0,count); const word=pick(set);
+    let ink=pick(set); while(ink.n===word.n) ink=pick(set);
+    const o=shuffle(set);
+    const target = twist ? word : ink;
+    return { prompt:`<div class="task">${twist?"tap the colour this word NAMES":"what colour is this printed in"}</div>
+        <div class="big" style="color:${ink.h}">${word.n}</div>`,
+      grid:count===4?"g2":"g3", options:o.map(c=>`<span class="swatch" style="background:${c.h}"></span>`),
+      correct:o.findIndex(c=>c.n===target.n), key:`${word.n}>${ink.n}${twist?"T":""}`,
+      verbOverride:twist?"WORD, NOT INK":null, subOverride:twist?"flipped — read the word this time":null };
+  }},
+
+{ id:"flank", repeatWindow:14, verb:"MIDDLE ONE", sub:"read the centre, ignore its neighbours", dom:"Attention", ink:"var(--cyan)", twistable:true,
+  build(r,t,twist){
+    const SETS=[
+      {a:"chevL",b:"chevR",n:"bar",draw:true},
+      {a:"chevU",b:"chevD",n:"bar",draw:true},
+      {a:"H",b:"S",n:"+",draw:false},
+      {a:"N",b:"X",n:"·",draw:false}
+    ];
+    const S=pick(SETS);
+    const centre = RNG()<0.5?S.a:S.b; const other = centre===S.a?S.b:S.a;
+    const roll=RNG();
+    const cond = twist ? "incongruent" : (roll<0.55?"incongruent":(roll<0.8?"congruent":"neutral"));
+    const flank = cond==="incongruent" ? other : (cond==="congruent" ? centre : S.n);
+    const width = t===1?5:7;
+    const draw = v => S.draw ? solid(v,"flk") : `<span class="flkchar">${v}</span>`;
+    const row=[]; for(let i=0;i<width;i++) row.push(i===Math.floor(width/2)?centre:flank);
+    const o=shuffle([S.a,S.b]);
+    const target = twist ? flank : centre;
+    return { prompt:`<div class="task">${twist?"tap what the OUTER ones show":"ignore the outer ones"}</div>
+        <div class="arrows${width>5?" tight":""}">${row.map(draw).join("")}</div>`,
+      grid:"g2", options:o.map(v=>S.draw?solid(v,"big"):`<span style="font-size:1.4em">${v}</span>`),
+      correct:o.indexOf(target),
+      key:`${S.a}${centre}${cond}${width}${twist?"T":""}`,
+      verbOverride:twist?"OUTER ONES":null, subOverride:twist?"flipped — ignore the centre":null };
+  }},
+
+{ id:"next", repeatWindow:30, verb:"WHAT'S NEXT", sub:"continue the run", dom:"Pattern", ink:"var(--lime)", twistable:true,
+  build(r,t,twist){
+    let seq=[],answer;
+    if(t===3){
+      const gs=shuffle(SOLID_SHAPES).slice(0,3), cs=shuffle(SHAPE_INKS).slice(0,2);
+      const at=i=>({g:gs[((i%3)+3)%3], c:cs[((i%2)+2)%2]});
+      for(let i=0;i<4;i++) seq.push(at(i));
+      answer = twist ? at(-1) : at(4);
+    } else if(t===2 || rnd(2)){
+      const g=pick(SOLID_SHAPES); const cs=shuffle(SHAPE_INKS).slice(0,3);
+      const at=i=>({g,c:cs[((i%3)+3)%3]});
+      for(let i=0;i<4;i++) seq.push(at(i));
+      answer = twist ? at(-1) : at(4);
+    } else {
+      const gs=shuffle(SOLID_SHAPES).slice(0,2+rnd(2));
+      const at=i=>({g:gs[((i%gs.length)+gs.length)%gs.length], c:"var(--paper)"});
+      for(let i=0;i<4;i++) seq.push(at(i));
+      answer = twist ? at(-1) : at(4);
+    }
+    const cell=o=>`<span class="tile" style="color:${o.c}">${solid(o.g)}</span>`;
+    const q=`<span class="tile blank">?</span>`;
+    const pool=[answer];
+    while(pool.length<4){ const c={g:pick(SOLID_SHAPES),c:pick(SHAPE_INKS)};
+      if(!pool.some(x=>x.g===c.g&&x.c===c.c)) pool.push(c); }
+    const o=shuffle(pool);
+    return { prompt:`<div class="task">${twist?"what came just BEFORE this run":"what comes next"}</div>
+        <div class="row">${twist?q:""}${seq.map(cell).join("")}${twist?"":q}</div>`,
+      grid:"g2", options:o.map(x=>`<span style="color:${x.c}">${solid(x.g,"big")}</span>`),
+      correct:o.indexOf(answer), key:seq.map(x=>x.g+x.c).join("")+(twist?"T":""),
+      verbOverride:twist?"WHAT CAME FIRST":null, subOverride:twist?"flipped — run it backwards":null };
+  }},
+
+{ id:"rule", repeatWindow:24, verb:"BREAK THE RULE", sub:"three obey it, one doesn't", dom:"Logic", ink:"var(--yellow)", twistable:true,
+  build(r,t,twist){
+    const EASY=[
+      {t:"all even",     ok:n=>n%2===0,  gen:()=>2*(2+rnd(24)),  bad:()=>2*(2+rnd(24))+1},
+      {t:"all odd",      ok:n=>n%2===1,  gen:()=>2*(2+rnd(24))+1,bad:()=>2*(2+rnd(24))},
+      {t:"multiples of 3",ok:n=>n%3===0, gen:()=>3*(2+rnd(15)),  bad:()=>{let x;do{x=6+rnd(45)}while(x%3===0);return x}},
+      {t:"multiples of 5",ok:n=>n%5===0, gen:()=>5*(2+rnd(15)),  bad:()=>{let x;do{x=6+rnd(70)}while(x%5===0);return x}},
+      {t:"under 30",     ok:n=>n<30,     gen:()=>4+rnd(25),      bad:()=>32+rnd(60)},
+      {t:"two digits",   ok:n=>n>=10&&n<100, gen:()=>10+rnd(89), bad:()=>RNG()<0.5?1+rnd(8):101+rnd(80)}
+    ];
+    const HARD=[
+      {t:"square numbers",ok:n=>Number.isInteger(Math.sqrt(n)), gen:()=>{const b=2+rnd(10);return b*b},
+        bad:()=>{let x;do{x=5+rnd(90)}while(Number.isInteger(Math.sqrt(x)));return x}},
+      {t:"multiples of 7",ok:n=>n%7===0, gen:()=>7*(2+rnd(11)),  bad:()=>{let x;do{x=8+rnd(70)}while(x%7===0);return x}},
+      {t:"digits add to 10",ok:n=>String(n).split("").reduce((a,b)=>a+ +b,0)===10,
+        gen:()=>pick([19,28,37,46,55,64,73,82,91,109,118,127]),
+        bad:()=>{let x;do{x=11+rnd(110)}while(String(x).split("").reduce((a,b)=>a+ +b,0)===10);return x}},
+      {t:"even AND over 40",ok:n=>n%2===0&&n>40, gen:()=>2*(21+rnd(25)),
+        bad:()=>{let x;do{x=8+rnd(90)}while(x%2===0&&x>40);return x}},
+      {t:"odd AND under 50",ok:n=>n%2===1&&n<50, gen:()=>2*rnd(24)+1,
+        bad:()=>{let x;do{x=4+rnd(90)}while(x%2===1&&x<50);return x}},
+      {t:"multiples of 9",ok:n=>n%9===0, gen:()=>9*(2+rnd(10)),  bad:()=>{let x;do{x=10+rnd(80)}while(x%9===0);return x}}
+    ];
+    const R = t===1 ? pick(EASY) : (t===2 ? pick(EASY.concat(HARD)) : pick(HARD));
+    const many=new Set(), g=()=>twist?R.bad():R.gen(), okTest=v=>twist?!R.ok(v):R.ok(v);
+    let guard=0; while(many.size<3&&guard++<400){ const v=g(); if(okTest(v)) many.add(v); }
+    let odd = twist?R.gen():R.bad(), g2=0;
+    while((okTest(odd)||many.has(odd))&&g2++<400) odd = twist?R.gen():R.bad();
+    const o=shuffle([...many,odd]);
+    return { prompt:`<div class="task">${twist?"three BREAK this rule":"three share a rule"}</div>
+        <div class="rulepill">${R.t}</div><div class="mid">${twist?"tap the one that obeys":"tap the outsider"}</div>`,
+      grid:"g2", options:o.map(String), correct:o.indexOf(odd),
+      key:`${R.t}|${[...many].sort().join(",")}|${odd}`,
+      verbOverride:twist?"KEEP THE RULE":null, subOverride:twist?"flipped — find the one that obeys":null };
+  }},
+
+{ id:"odd", repeatWindow:50, verb:"ODD ONE", sub:"tap the one that differs", dom:"Search", ink:"var(--pink)",
+  build(r,t){
+    const [a,b]=shuffle(pick(CONFUSE));
+    const n = t===1?9:(t===2?12:16);
+    const at=rnd(n), cells=[];
+    for(let i=0;i<n;i++) cells.push(i===at?b:a);
+    return { prompt:`<div class="task">${n-1} are identical</div><div class="mid">find the stranger</div>`,
+      grid:n===16?"g4":"g3", options:cells, correct:at, key:`${a}${b}${at}${n}` };
+  }},
+
+{ id:"recall", repeatWindow:40, verb:"REMEMBER", sub:"hold these in your head", dom:"Memory", ink:"var(--cyan)",
+  build(r,t){
+    const count = t===1?4:(t===2?5:6);
+    const set=shuffle(LINE_KEYS).slice(0,count+1);
+    const shown=set.slice(0,count), fresh=set[count];
+    const o=shuffle([...shuffle(shown).slice(0,3),fresh]);
+    return { preroll:Math.max(900,1600-r*32),
+      prerollPrompt:`<div class="task">memorise ${count}</div><div class="row">${shown.map(k=>`<span class="tile">${line(k)}</span>`).join("")}</div>`,
+      prompt:`<div class="task">one of these was not there</div><div class="mid">which is new?</div>`,
+      grid:"g2", options:o.map(k=>line(k,"big")), correct:o.indexOf(fresh),
+      key:shown.slice().sort().join("")+fresh };
+  }},
+
+{ id:"spin", repeatWindow:16, verb:"TURNED", sub:"same shape, only rotated", dom:"Space", ink:"var(--yellow)",
+  build(r,t){
+    const bi=rnd(BLOCKS.length); const ang=()=>35+rnd(290);
+    const count = t===3?6:4; const ci=rnd(count); const options=[];
+    for(let i=0;i<count;i++) options.push(block(bi,ang(),i!==ci,"big"));
+    return { prompt:`<div class="task">${count-1} are mirrored — one is only turned</div>
+        <div class="showcase">${block(bi,0,false,"huge")}</div>`,
+      grid:count===6?"g3":"g2", options, correct:ci, key:`${bi}${ci}${count}` };
+  }},
+
+{ id:"gonogo", repeatWindow:24, verb:"HOLD FIRE", sub:"read the rule — it flips every round", dom:"Inhibition", ink:"var(--lime)",
+  build(r,t){
+    const pair=shuffle(SOLID_SHAPES).slice(0,2);
+    const go=pair[0], no=pair[1];
+    const inks=shuffle(["#8BE84B","#FF3D8A","#3DD6E8","#FFC93D"]).slice(0,2);
+    const goC=inks[0], noC=inks[1];
+    const n = t===1?6:(t===2?7:8);
+    const flipAt = t===3 ? 3+rnd(2) : -1;
+    const kinds=[]; for(let i=0;i<n;i++) kinds.push(RNG()<0.62?1:0);
+    if(!kinds.includes(0)) kinds[rnd(n)]=0;
+    if(!kinds.includes(1)) kinds[rnd(n)]=1;
+    const mk=()=>kinds.map((k,i)=>{
+      const flipped = flipAt>=0 && i>=flipAt;
+      const isGoSym = !!k;
+      return { g:`<span style="color:${isGoSym?goC:noC}">${solid(isGoSym?go:no,"stim")}</span>`,
+               target: flipped ? !isGoSym : isGoSym, flag:(flipAt>=0&&i===flipAt) };
+    });
+    let stream=mk(), guard=0;
+    while(guard++<40){
+      const hits=stream.filter(x=>x.target).length;
+      if(hits>0 && hits<stream.length) break;
+      kinds[rnd(n)] ^= 1; stream=mk();
+    }
+    const tag=(name,col)=>`<span class="inline-ico" style="color:${col}">${solid(name)}</span>`;
+    return { stream, window:Math.max(450,830-r*17), gap:t===3?170:180, fixedFrac:0.55,
+      key:`${go}${no}${goC}|${kinds.join("")}|${flipAt}`,
+      zoneLabel:`TAP ONLY ON ${tag(go,goC)}`,
+      flipNote: flipAt>=0 ? `NOW TAP ONLY ON ${tag(no,noC)}` : null,
+      head:`<div class="task">tap on ${tag(go,goC)} &nbsp;·&nbsp; hold on ${tag(no,noC)}${flipAt>=0?`<br><span style="color:var(--yellow)">the rule flips partway — watch for it</span>`:`<br><span style="opacity:.6">colour means nothing — go by the shape</span>`}</div>` };
+  }},
+
+{ id:"nback", repeatWindow:40, verb:"TWO BACK", sub:"tap when it repeats from two ago", dom:"Updating", ink:"var(--pink)",
+  build(r,t){
+    const back = t===3 ? 3 : 2;
+    const pool=shuffle(["A","K","T","M","R","S","P","L","F","G"]).slice(0,4);
+    const n = t===1?8:9, seq=[];
+    for(let i=0;i<n;i++){
+      if(i>=back && RNG()<0.32) seq.push(seq[i-back]);
+      else { let v=pick(pool),g=0; while(i>=back&&v===seq[i-back]&&g++<10) v=pick(pool); seq.push(v); }
+    }
+    let hits=seq.filter((v,i)=>i>=back&&v===seq[i-back]).length;
+    if(hits<2){ seq[back+1]=seq[1]; seq[back+4]=seq[4]; }
+    const stream=seq.map((g,i)=>({g:`<span class="stimchar">${g}</span>`,target:i>=back&&g===seq[i-back]}));
+    return { stream, window:Math.max(580,920-r*15), gap:150, fixedFrac:0.6, key:seq.join("")+back,
+      verbOverride: back===3?"THREE BACK":null,
+      subOverride: back===3?"now three places back — harder":null,
+      zoneLabel:`TAP ON A MATCH`,
+      head:`<div class="task">tap only when a letter matches the one <b style="color:var(--pink)">${back===3?"three":"two"} places back</b></div>` };
+  }}
+];
+
+const ROUNDS=20;
+const RANKS=[[0,"FRAYED"],[1400,"PATCHED"],[2400,"WIRED"],[3400,"LIVE"],[4400,"SUPERCONDUCTOR"]];
+function rankFor(s){ let r=RANKS[0][1]; RANKS.forEach(([t,n])=>{ if(s>=t) r=n; }); return r; }
+
+/* ---------------- state ---------------- */
+let round=0,score=0,streak=0,bestStreak=0,correct=0;
+let lastCat=null,log=[],rafId=null,timeoutId=null,locked=true,currentPuzzle=null,currentCat=null;
+let lastTick=0,tickGap=260;
+
+const el={prompt:$("#prompt"),answers:$("#answers"),fill:$("#fill"),score:$("#score"),
+  streak:$("#streak"),pips:$("#pips"),float:$("#float")};
+
+$("#legend").innerHTML=[...new Set(CATS.map(c=>c.dom))].map(d=>`<span class="chip">${d}</span>`).join("");
+
+function refreshTitle(){
+  $("#tBest").textContent=store.best; $("#tRuns").textContent=store.runs;
+}
+refreshTitle();
+
+function buildPips(){ el.pips.innerHTML=Array.from({length:ROUNDS},()=>`<span class="pip"></span>`).join(""); }
+function markPip(i,c){ const p=el.pips.children[i]; if(p) p.className="pip "+c; }
+function setTimerScale(f){ el.fill.style.setProperty("--sx",f); el.fill.style.transform=`scaleX(${f})`; }
+function stopClock(){ cancelAnimationFrame(rafId); clearTimeout(timeoutId); document.body.classList.remove("pressure"); }
+function roundDuration(){ return Math.max(2300, 5400-round*165); }
+
+function runClock(dur,onEnd){
+  const t0=performance.now(); lastTick=0;
+  const step=()=>{
+    const el2=performance.now()-t0, f=1-el2/dur;
+    if(f<=0){ setTimerScale(0); stopClock(); onEnd(); return; }
+    setTimerScale(f);
+    const hot=f<0.32;
+    document.body.classList.toggle("pressure",hot);
+    if(hot){ const gap=180+f*420; if(el2-lastTick>gap){ lastTick=el2; sfxTick(); } }
+    rafId=requestAnimationFrame(step);
+  };
+  rafId=requestAnimationFrame(step);
+}
+function remainingFraction(){
+  const m=/scaleX\(([\d.]+)\)/.exec(el.fill.style.transform||"");
+  return m?clamp(parseFloat(m[1]),0,1):0;
+}
+
+/* ---------------- run flow ---------------- */
+let mode="free";
+function startRun(m){
+  AC(); mode = (m==="daily") ? "daily" : "free";
+  RNG = (mode==="daily") ? mulberry32(todayKey()*2654435761 % 4294967296) : Math.random;
+  round=0;score=0;streak=0;bestStreak=0;correct=0;log=[];
+  el.score.textContent="0"; setStreak(0); buildPips();
+  $("#title").classList.remove("on"); $("#results").classList.remove("on");
+  nextRound();
+}
+function setStreak(s){
+  el.streak.textContent="×"+(1+Math.min(s,8)*0.25).toFixed(2).replace(/\.00$/,"").replace(/0$/,"");
+  const w=el.streak.parentElement;
+  w.classList.toggle("cold",s===0);
+  if(s>0){ w.classList.add("bump"); setTimeout(()=>w.classList.remove("bump"),140); }
+}
+/* free runs bias toward your weakest wires; daily runs stay uniform so everyone gets the same set */
+function catWeight(c){
+  if(mode==="daily") return 1;
+  const d=store.dom[c.dom];
+  if(!d||d.n<6) return 1.15;                 // slight bias toward untested wires
+  const acc=d.ok/d.n;
+  return 1 + 2.4*Math.max(0, 0.85-acc);      // up to ~3x for a wire you keep dropping
+}
+function pickCat(){
+  const pool=CATS.filter(c=>c.id!==lastCat);
+  const w=pool.map(catWeight);
+  const total=w.reduce((a,b)=>a+b,0);
+  let t=RNG()*total, c=pool[pool.length-1];
+  for(let i=0;i<pool.length;i++){ t-=w[i]; if(t<=0){ c=pool[i]; break; } }
+  lastCat=c.id; return c;
+}
+function todayKey(){ const d=new Date(); return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate(); }
+function daysBetween(a,b){
+  const p=k=>new Date(Math.floor(k/10000),Math.floor(k/100)%100-1,k%100);
+  return Math.round((p(b)-p(a))/86400000);
+}
+
+/* Anti-repeat: every generator returns a content key. A puzzle whose key is still in that
+   category's recent window gets rerolled. The window persists to storage, so "you saw that
+   one already" survives a page reload. Daily runs bypass it — the seed has to stay canonical. */
+let recent = (store.recent && typeof store.recent==="object") ? store.recent : {};
+function buildPuzzle(cat,r){
+  const t=tierOf(r);
+  // rule inversions start in phase 2 and get more likely in phase 3
+  const twist = !!cat.twistable && t>=2 && RNG() < (t===3?0.30:0.16);
+  if(mode==="daily"){ const p=cat.build(r,t,twist); p.twist=twist; return p; }
+  const win=cat.repeatWindow||24;
+  const seen=recent[cat.id]=recent[cat.id]||[];
+  let p=cat.build(r,t,twist);
+  for(let i=0;i<16 && p.key && seen.indexOf(p.key)!==-1;i++) p=cat.build(r,t,twist);
+  p.twist=twist;
+  if(p.key){ seen.push(p.key); while(seen.length>win) seen.shift(); }
+  return p;
+}
+
+function nextRound(){
+  if(round>=ROUNDS) return endRun();
+  markPip(round,"now");
+  const cat=pickCat(); const p=buildPuzzle(cat,round);
+  currentCat=cat; currentPuzzle=p;
+  const go=()=>{
+    document.documentElement.style.setProperty("--ink", p.twist?"var(--yellow)":cat.ink);
+    showWipe(cat,p,()=>runRound(cat,p));
+  };
+  if(round===7||round===14) showPhase(tierOf(round),go); else go();
+}
+const PHASES=[null,{n:"PHASE TWO",s:"faster · harder · the rules start flipping"},
+                   {n:"PHASE THREE",s:"no more warm-up"}];
+function showPhase(t,done){
+  const w=$("#wipe"), ph=PHASES[t-1];
+  document.documentElement.style.setProperty("--ink","var(--yellow)");
+  $("#verbA").textContent=ph.n; $("#verbB").textContent=ph.n; $("#verbSub").textContent=ph.s;
+  $("#twistBadge").style.display="none";
+  [0,.1,.2].forEach((d,i)=>tone([392,523,659][i],.3,{type:"triangle",gain:.13,delay:d}));
+  w.classList.remove("on"); void w.offsetWidth; w.classList.add("phase"); w.classList.add("on"); w.style.display="flex";
+  timeoutId=setTimeout(()=>{ w.classList.remove("on","phase"); w.style.display=""; done(); },760);
+}
+
+function showWipe(cat,p,done){
+  const w=$("#wipe");
+  const verb=p.verbOverride||cat.verb, sub=p.subOverride||cat.sub;
+  $("#verbA").textContent=verb; $("#verbB").textContent=verb; $("#verbSub").textContent=sub;
+  $("#twistBadge").style.display = p.twist ? "block" : "none";
+  if(p.twist){ tone(220,.16,{type:"sawtooth",gain:.1,slide:520}); tone(880,.1,{type:"square",gain:.06,delay:.1}); }
+  else sfxWipe();
+  w.classList.remove("on"); void w.offsetWidth; w.classList.add("on"); w.style.display="flex";
+  timeoutId=setTimeout(()=>{ w.classList.remove("on"); w.style.display=""; done(); },500);
+}
+function runRound(cat,p){
+  locked=true; setTimerScale(1);
+  if(p.stream) return runStream(cat,p);
+  if(p.preroll){
+    el.prompt.innerHTML=p.prerollPrompt; el.answers.innerHTML="";
+    timeoutId=setTimeout(()=>showPuzzle(cat,p),p.preroll);
+  } else showPuzzle(cat,p);
+}
+function showPuzzle(cat,p){
+  el.prompt.innerHTML=p.prompt;
+  el.answers.className="answers "+(p.grid||"g2");
+  el.answers.innerHTML=p.options.map((o,i)=>
+    `<button class="opt" data-i="${i}" type="button" style="animation-delay:${i*32}ms">${o}</button>`).join("");
+  locked=false;
+  runClock(roundDuration(),()=>resolve(-1));
+}
+
+/* streaming rounds: go/no-go and n-back share this engine */
+function runStream(cat,p){
+  el.answers.className="answers g1";
+  el.answers.innerHTML=`<button class="opt hold" id="zone" type="button">${p.zoneLabel}</button>`;
+  const zone=$("#zone");
+  let idx=-1, errors=0, tapped=false, dead=false, isTarget=false;
+  const total=300+p.stream.length*(p.window+p.gap)+250;
+  el.prompt.innerHTML=p.head+`<div class="stim" id="stim" style="opacity:.15"><span class="restdot"></span></div>`;
+
+  const finish=()=>{ if(dead) return; dead=true; stopClock();
+    zone.className="opt "+(errors===0?"hit":"miss");
+    zone.textContent=errors===0?"CLEAN":(errors===1?"1 SLIP":errors+" SLIPS");
+    resolve(errors===0?0:-1,{forced:true,ok:errors===0}); };
+  runClock(total,finish);
+
+  const step=()=>{
+    if(dead) return;
+    idx++;
+    if(idx>=p.stream.length) return finish();
+    const item=p.stream[idx]; isTarget=item.target; tapped=false;
+    const st=$("#stim");
+    if(item.flag && p.flipNote){
+      zone.innerHTML=p.flipNote; zone.classList.add("flip");
+      tone(180,.2,{type:"sawtooth",gain:.13,slide:700});
+      setTimeout(()=>zone.classList.remove("flip"),450);
+    }
+    st.style.opacity="1"; st.innerHTML=item.g;
+    tone(isTarget?660:330,.05,{type:"square",gain:.04});
+    timeoutId=setTimeout(()=>{
+      if(dead) return;
+      if(isTarget&&!tapped){ errors++; flashMiss(); }
+      st.style.opacity=".15"; st.innerHTML=`<span class="restdot"></span>`;
+      timeoutId=setTimeout(step,p.gap);
+    },p.window);
+  };
+  zone.onclick=()=>{
+    if(dead) return;
+    const st=$("#stim");
+    if(idx<0||!st||st.style.opacity!=="1"){ errors++; flashMiss(); return; }
+    if(isTarget){ if(!tapped){ tapped=true; tone(880,.06,{type:"triangle",gain:.09}); } }
+    else { errors++; flashMiss(); }
+  };
+  locked=false;
+  timeoutId=setTimeout(step,300);
+}
+function flashMiss(){ noise(.1,.14); $("#app").classList.add("shake"); setTimeout(()=>$("#app").classList.remove("shake"),300); }
+
+/* ---------------- answering ---------------- */
+el.answers.addEventListener("click",e=>{
+  const b=e.target.closest(".opt");
+  if(!b||locked||b.id==="zone") return;
+  resolve(Number(b.dataset.i));
+});
+
+function resolve(choice,meta){
+  if(locked&&!meta) return;
+  locked=true; stopClock();
+  const p=currentPuzzle,cat=currentCat;
+  const ok = meta ? meta.ok : (choice===p.correct);
+  const frac = p.fixedFrac!=null ? p.fixedFrac : remainingFraction();
+
+  if(ok){
+    correct++; streak++; bestStreak=Math.max(bestStreak,streak);
+    const mult=1+Math.min(streak-1,8)*0.25;
+    const gained=Math.round((100+frac*120)*mult);
+    score+=gained; el.score.textContent=score;
+    floatScore("+"+gained+(mult>1?`  ×${mult}`:""));
+    markPip(round,"done");
+    sfxHit(streak); bloom();
+    if(streak>0&&streak%5===0){ banner(streak+" IN A ROW"); sfxMilestone(streak); }
+  } else {
+    streak=0; markPip(round,"fail"); sfxMiss();
+    $("#app").classList.add("shake"); setTimeout(()=>$("#app").classList.remove("shake"),300);
+  }
+  setStreak(streak);
+  log.push({dom:cat.dom,ok});
+
+  if(!meta){
+    [...el.answers.children].forEach((b,i)=>{
+      if(i===p.correct) b.classList.add(ok?"hit":"reveal");
+      else if(i===choice) b.classList.add("miss");
+    });
+  }
+  round++;
+  timeoutId=setTimeout(()=>{ setTimerScale(0); nextRound(); }, ok?430:820);
+}
+
+function bloom(){ const b=$("#bloom"); b.classList.remove("play"); void b.offsetWidth; b.classList.add("play"); }
+function floatScore(t){ el.float.textContent=t; el.float.classList.remove("play"); void el.float.offsetWidth; el.float.classList.add("play"); }
+function banner(t){ const b=$("#banner"); $("#bannerT").textContent=t; b.classList.remove("play"); void b.offsetWidth; b.classList.add("play"); }
+
+/* ---------------- results ---------------- */
+function endRun(){
+  stopClock(); setTimerScale(0);
+  const prev=store.last, prevBest=store.best;
+  const isBest=score>store.best;
+
+  store.runs++; store.last=score;
+  store.best=Math.max(store.best,score);
+  store.bestStreak=Math.max(store.bestStreak,bestStreak);
+  const runDom={};
+  log.forEach(r=>{ const e=runDom[r.dom]=runDom[r.dom]||[0,0]; e[1]++; if(r.ok) e[0]++; });
+  store.log=(store.log||[]).concat({score, d:runDom, m:mode, t:todayKey()}).slice(-40);
+
+  let dailyFirst=false;
+  if(mode==="daily"){
+    const tk=todayKey();
+    if(store.dailyDate!==tk){
+      dailyFirst=true;
+      const gap = store.dailyDate ? daysBetween(store.dailyDate,tk) : null;
+      store.dayStreak = (gap===1) ? (store.dayStreak||0)+1 : 1;
+      store.dailyDate=tk; store.dailyScore=score;
+    }
+    store.dailyBest=Math.max(store.dailyBest||0,score);
+  }
+  log.forEach(r=>{ const d=store.dom[r.dom]=store.dom[r.dom]||{ok:0,n:0}; d.n++; if(r.ok) d.ok++; });
+  store.recent=recent;
+  save(); refreshTitle(); refreshProgress();
+
+  $("#finalScore").textContent=score;
+  $("#finalRank").textContent=rankFor(score);
+  $("#finalStreak").textContent=bestStreak;
+  $("#finalAcc").textContent=correct+"/"+ROUNDS;
+  $("#finalBest").textContent=store.best;
+
+  const d=$("#finalDelta");
+  if(isBest){ d.textContent="NEW PERSONAL BEST"; d.className="delta up"; }
+  else if(prevBest-score>0 && prevBest-score<250){ d.textContent=(prevBest-score)+" short of your best"; d.className="delta"; }
+  else if(prev){ const diff=score-prev; d.textContent=(diff>=0?"+":"")+diff+" vs last run"; d.className="delta"+(diff>=0?" up":""); }
+  else d.textContent="";
+
+  const byDom={};
+  log.forEach(r=>{ byDom[r.dom]=byDom[r.dom]||{ok:0,n:0}; byDom[r.dom].n++; if(r.ok) byDom[r.dom].ok++; });
+  $("#domains").innerHTML=Object.entries(byDom).sort((a,b)=>(b[1].ok/b[1].n)-(a[1].ok/a[1].n))
+    .map(([k,v])=>{ const pct=Math.round(v.ok/v.n*100);
+      return `<div class="dom"><span class="n">${k}</span><span class="bar"><i style="width:${pct}%"></i></span><span class="p">${pct}%</span></div>`;
+    }).join("");
+
+  const life=Object.entries(store.dom).filter(([,v])=>v.n>=4).sort((a,b)=>(a[1].ok/a[1].n)-(b[1].ok/b[1].n));
+  $("#weak").innerHTML = life.length
+    ? `Weakest wire across ${store.runs} run${store.runs===1?"":"s"}: <b>${life[0][0]}</b> at ${Math.round(life[0][1].ok/life[0][1].n*100)}%.`
+    : "Play a few more runs to see which wire is weakest.";
+
+  const movers=[...new Set(log.map(r=>r.dom))].map(w=>{
+    const ser=wireSeries(w);
+    return ser.length>1 ? {w, d:Math.round((ser[ser.length-1]-ser[0])*100), now:ser[ser.length-1]} : null;
+  }).filter(Boolean).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
+  const mv=$("#mover");
+  if(movers.length && Math.abs(movers[0].d)>=4){
+    const m=movers[0];
+    mv.innerHTML = m.d>0
+      ? `<b class="up">${m.w}</b> is up ${m.d} points since you started tracking — now ${Math.round(m.now*100)}%.`
+      : `<b>${m.w}</b> has slipped ${Math.abs(m.d)} points — now ${Math.round(m.now*100)}%.`;
+  } else mv.innerHTML = store.log.length<4
+    ? `Trends need a few more runs before they mean anything.`
+    : `No wire has moved much lately.`;
+
+  $("#modeTag").textContent = mode==="daily"
+    ? (dailyFirst ? `DAILY · DAY STREAK ${store.dayStreak}` : "DAILY · REPLAY (not counted)")
+    : "FREE RUN";
+  $("#sparkR").innerHTML = spark(store.log.map(r=>r.score));
+
+  if(isBest) sfxBest(); else sfxEnd();
+  $("#results").classList.add("on");
+}
+
+function spark(vals){
+  if(!vals||vals.length<2) return "";
+  const w=300,h=42,pad=3;
+  const mn=Math.min(...vals), mx=Math.max(...vals), rng=(mx-mn)||1;
+  const pts=vals.map((v,i)=>{
+    const x=pad+i*(w-pad*2)/(vals.length-1);
+    const y=h-pad-((v-mn)/rng)*(h-pad*2);
+    return x.toFixed(1)+","+y.toFixed(1);
+  });
+  const last=pts[pts.length-1].split(",");
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" aria-hidden="true">
+    <polyline points="${pts.join(" ")}" fill="none" stroke="var(--cyan)" stroke-width="2"
+      stroke-linejoin="round" stroke-linecap="round" opacity=".85"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="3.5" fill="var(--yellow)"/></svg>`;
+}
+/* rolling accuracy per wire. one run gives 1-3 samples of a wire, far too noisy to
+   plot directly, so each point is a 5-run window and only plots once it has 4+ attempts. */
+const TREND_WIN=5, TREND_MIN=4;
+function wireSeries(wire){
+  const q=[], pts=[];
+  for(const r of store.log){
+    q.push((r.d&&r.d[wire])||[0,0]);
+    if(q.length>TREND_WIN) q.shift();
+    let ok=0,n=0; q.forEach(e=>{ok+=e[0];n+=e[1];});
+    if(n>=TREND_MIN) pts.push(ok/n);
+  }
+  return pts;
+}
+function miniSpark(vals){
+  if(vals.length<2) return `<span class="nodata">—</span>`;
+  const w=100,h=22,pad=2;
+  const pts=vals.map((v,i)=>{
+    const x=pad+i*(w-pad*2)/(vals.length-1);
+    const y=h-pad-v*(h-pad*2);
+    return x.toFixed(1)+","+y.toFixed(1);
+  });
+  const first=vals[0], last=vals[vals.length-1];
+  const col = last>first+0.04 ? "var(--lime)" : (last<first-0.04 ? "var(--pink)" : "var(--cyan)");
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none" aria-hidden="true">
+    <polyline points="${pts.join(" ")}" fill="none" stroke="${col}" stroke-width="2"
+      stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function trendRows(){
+  const wires=[...new Set(CATS.map(c=>c.dom))];
+  const rows=wires.map(w=>{
+    const life=store.dom[w];
+    const series=wireSeries(w);
+    const now = series.length ? series[series.length-1] : (life&&life.n?life.ok/life.n:null);
+    const then = series.length>1 ? series[0] : null;
+    return {w, series, now, delta: (then==null||now==null)?null:Math.round((now-then)*100)};
+  });
+  const ranked=rows.filter(r=>r.now!=null).sort((a,b)=>a.now-b.now);
+  const untested=rows.filter(r=>r.now==null);
+  if(!ranked.length) return `<p class="weak">Your per-wire trend builds up over the first few runs.</p>`;
+  const row=r=>{
+    const pct=Math.round(r.now*100);
+    const d=r.delta;
+    const chip = d==null ? `<span class="tdelta flat">new</span>`
+      : d>=4 ? `<span class="tdelta up">▲${d}</span>`
+      : d<=-4 ? `<span class="tdelta down">▼${Math.abs(d)}</span>`
+      : `<span class="tdelta flat">flat</span>`;
+    return `<div class="trow"><span class="n">${r.w}</span>
+      <span class="sp">${miniSpark(r.series)}</span>
+      <span class="p">${pct}%</span>${chip}</div>`;
+  };
+  return ranked.map(row).join("") + untested.map(r=>
+    `<div class="trow"><span class="n">${r.w}</span><span class="sp"><span class="nodata">not seen yet</span></span><span class="p">—</span><span class="tdelta flat"></span></div>`
+  ).join("");
+}
+
+function refreshProgress(){
+  $("#lifeDomains").innerHTML = trendRows();
+  $("#sparkT").innerHTML = spark(store.log.map(r=>r.score));
+  $("#dayStreak").textContent = store.dayStreak||0;
+  const done = store.dailyDate===todayKey();
+  $("#daily").textContent = done ? `Daily done · ${store.dailyScore}` : "Daily run";
+  $("#daily").classList.toggle("ghost", done);
+}
+
+/* ---------------- boot ---------------- */
+$("#daily").onclick=()=>startRun("daily");
+$("#free").onclick=()=>startRun("free");
+$("#again").onclick=()=>startRun("free");   // never replay a daily seed — same date, same 20 rounds
+$("#backTitle").onclick=()=>{ $("#results").classList.remove("on"); refreshTitle(); refreshProgress(); $("#title").classList.add("on"); };
+$("#reset").onclick=()=>{
+  store=JSON.parse(JSON.stringify(DEFAULT_STORE)); recent={}; save(); refreshTitle(); refreshProgress();
+  $("#reset").textContent="History cleared"; setTimeout(()=>$("#reset").textContent="Reset history",1400);
+};
+$("#mute").onclick=()=>{
+  muted=!muted;
+  $("#mute").textContent=muted?"SOUND OFF":"SOUND ON";
+  $("#mute").classList.toggle("off",muted);
+  if(!muted) AC();
+};
+buildPips(); setTimerScale(0); refreshProgress();
+
+document.addEventListener("keydown",e=>{
+  if(locked) return;
+  const n=Number(e.key);
+  if(n>=1&&n<=9){ const b=el.answers.children[n-1]; if(b&&b.id!=="zone") b.click(); }
+  if(e.key===" "){ const z=$("#zone"); if(z){ e.preventDefault(); z.click(); } }
+});
+</script>
+</body>
+</html>

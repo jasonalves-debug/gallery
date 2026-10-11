@@ -107,6 +107,38 @@
   @keyframes bob{to{transform:translateY(-4px)}}
   .tfscore{position:absolute;right:12px;top:10px;font-family:"Press Start 2P",monospace;font-size:9px;color:#fff;text-shadow:2px 2px 0 #000}
 
+  /* Crosswire art */
+  .cw{--c:#3ff0ff}
+  .cw .art{background:radial-gradient(circle at 50% 50%,#12203a,#06070f 75%)}
+  .tiles{position:absolute;left:50%;top:18px;transform:translateX(-50%);display:grid;grid-template-columns:repeat(4,46px);gap:8px}
+  .tiles b{height:46px;border-radius:8px;display:grid;place-items:center;font-family:"Press Start 2P",monospace;font-size:13px;
+    color:#3ff0ff;background:#0d1a2e;border:1px solid #1f3d5c;animation:flash 2.4s infinite}
+  .tiles b:nth-child(2){animation-delay:.6s}.tiles b:nth-child(3){animation-delay:1.2s}.tiles b:nth-child(4){animation-delay:1.8s}
+  @keyframes flash{0%,70%,100%{background:#0d1a2e;color:#3ff0ff}8%,20%{background:#3ff0ff;color:#06070f;box-shadow:0 0 18px #3ff0ff}}
+  .timer{position:absolute;left:24px;right:24px;bottom:22px;height:8px;border-radius:4px;background:#1a2238;overflow:hidden}
+  .timer i{display:block;height:100%;background:linear-gradient(90deg,#ff2e88,#ffd23f,#3ff0ff);animation:drain 2.4s linear infinite;transform-origin:left}
+  @keyframes drain{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+
+  /* Big Board art */
+  .bb{--c:#ffcc33}
+  .bb .art{background:radial-gradient(ellipse at 50% 50%,#2a0d3d,#0a0510 75%)}
+  .board{position:absolute;left:50%;top:12px;transform:translateX(-50%);display:grid;grid-template-columns:repeat(5,52px);grid-template-rows:repeat(3,34px);gap:5px}
+  .board b{border-radius:5px;display:grid;place-items:center;font-family:"Press Start 2P",monospace;font-size:8px;color:#fff;
+    background:#1c2f8a;border:2px solid #3a55d0;animation:chase 2s steps(1) infinite}
+  .board b.x{background:#8a1c3a;border-color:#d03a5a}
+  .board .mid{grid-column:2/5;grid-row:2;background:#0a0510;border:1px solid #ffcc3355;color:#ffcc33;font-size:11px;text-shadow:0 0 8px #ffcc33;animation:none}
+  @keyframes chase{0%,7%{background:#ffcc33;color:#0a0510;border-color:#fff;box-shadow:0 0 16px #ffcc33}8%,100%{}}
+
+  /* Scorched Earth art */
+  .se{--c:#ff6f3c}
+  .se .art{background:linear-gradient(#2b1640 0%,#7a2e3a 55%,#e0763a 100%)}
+  .shell{stroke-dasharray:4 5;animation:dash 2.6s linear infinite}
+  @keyframes dash{from{stroke-dashoffset:90;opacity:1}75%{opacity:1}to{stroke-dashoffset:0;opacity:0}}
+  .ball{offset-path:path("M70 92 Q160 -10 252 96");animation:shoot 2.6s ease-in infinite}
+  @keyframes shoot{0%{offset-distance:0%;opacity:1}75%{offset-distance:100%;opacity:1}76%,100%{offset-distance:100%;opacity:0}}
+  .blast{transform-box:fill-box;transform-origin:center;animation:blast 2.6s infinite;opacity:0}
+  @keyframes blast{0%,74%{opacity:0;transform:scale(.2)}78%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2.6)}}
+
   footer{text-align:center;color:var(--dim);font-size:12px;margin-top:30px;font-family:"Press Start 2P",monospace;line-height:2}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
@@ -210,6 +242,62 @@
     <div class="row"><div class="t">TRACK &amp; FIELD</div><span class="play">PLAY</span></div>
     <div class="d">8-bit arcade athletics, ten events from the 100m dash to pole vault. Spin the dial to run, flick to jump, throw or vault. Miss the qualifying mark and it's game over.</div>
     <div class="tags"><span class="tag">Game</span><span class="tag">Arcade</span><span class="tag">Sports</span></div>
+  </div>
+</a>
+
+<a class="card cw" href="crosswire.html">
+  <div class="art" aria-hidden="true">
+    <div class="tiles"><b>7×8</b><b>CAT</b><b>?</b><b>56</b></div>
+    <div class="timer"><i></i></div>
+  </div>
+  <div class="body">
+    <div class="row"><div class="t">CROSSWIRE</div><span class="play">PLAY</span></div>
+    <div class="d">A rapid-fire brain gauntlet. Ten kinds of micro-challenges (math, words, logic and more) thrown at you seconds apart. Think fast, don't crack, beat your best.</div>
+    <div class="tags"><span class="tag">Game</span><span class="tag">Brain</span><span class="tag">Puzzle</span></div>
+  </div>
+</a>
+
+<a class="card bb" href="press-your-luck.html">
+  <div class="art" aria-hidden="true">
+    <div class="board">
+      <b style="grid-area:1/1;animation-delay:0s">$500</b>
+      <b style="grid-area:1/2;animation-delay:.167s">$2K</b>
+      <b class="x" style="grid-area:1/3;animation-delay:.333s">BUST</b>
+      <b style="grid-area:1/4;animation-delay:.5s">$750</b>
+      <b style="grid-area:1/5;animation-delay:.667s">$5K</b>
+      <b style="grid-area:2/5;animation-delay:.833s">+SPIN</b>
+      <b style="grid-area:3/5;animation-delay:1s">$1K</b>
+      <b class="x" style="grid-area:3/4;animation-delay:1.167s">BUST</b>
+      <b style="grid-area:3/3;animation-delay:1.333s">$10K</b>
+      <b style="grid-area:3/2;animation-delay:1.5s">$300</b>
+      <b style="grid-area:3/1;animation-delay:1.667s">$2.5K</b>
+      <b style="grid-area:2/1;animation-delay:1.833s">$800</b>
+      <b class="mid">STOP!</b>
+    </div>
+  </div>
+  <div class="body">
+    <div class="row"><div class="t">BIG BOARD</div><span class="play">PLAY</span></div>
+    <div class="d">Game-show cash board. The light races around, you hit STOP. Land on money, dodge the busts. Play classic rounds, or Endless mode where the bank climbs into the billions until you go broke.</div>
+    <div class="tags"><span class="tag">Game</span><span class="tag">Game Show</span></div>
+  </div>
+</a>
+
+<a class="card se" href="scorched-earth-modern.html">
+  <div class="art" aria-hidden="true">
+    <svg viewBox="0 0 320 132" preserveAspectRatio="xMidYMid slice">
+      <circle cx="270" cy="30" r="14" fill="#ffd9a0" opacity=".7"/>
+      <path class="shell" d="M70 92 Q160 -10 252 96" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.5"/>
+      <circle class="ball" r="3.5" fill="#fff"/>
+      <circle class="blast" cx="252" cy="96" r="14" fill="#ffcf5a"/>
+      <path d="M0 132 L0 100 Q30 88 60 98 Q95 108 120 84 Q150 60 175 86 Q200 110 230 102 Q260 94 290 106 Q305 112 320 104 L320 132 Z" fill="#1a0f12"/>
+      <g fill="#7fae5a"><rect x="58" y="88" width="20" height="8" rx="2"/><rect x="64" y="84" width="9" height="5" rx="2"/><rect x="71" y="82" width="12" height="2.5" transform="rotate(-38 71 83)"/></g>
+      <g fill="#c8b07a"><rect x="242" y="96" width="20" height="8" rx="2"/><rect x="247" y="92" width="9" height="5" rx="2"/></g>
+    </svg>
+  </div>
+  <div class="body">
+    <div class="row"><div class="t">SCORCHED EARTH</div><span class="play">PLAY</span></div>
+    <div class="d">The classic DOS artillery duel, rebuilt. Drag back to aim, then unleash 16 over-the-top weapons like the orbital lance, singularity and drone swarm, and carve the terrain apart. The CPU learns how you play. Turn-based or simultaneous mode.</div>
+    <div class="tags"><span class="tag">Game</span><span class="tag">Artillery</span><span class="tag">Strategy</span></div>
   </div>
 </a>
 
