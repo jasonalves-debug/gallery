@@ -1,0 +1,3401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GROOVE STATION GS-90</title>
+<style>
+:root{
+  --chassis:#2b2f2c;
+  --panel:#3a403b;
+  --panel-hi:#4a514a;
+  --panel-lo:#222623;
+  --silk:#b9b7a6;
+  --silk-dim:#7d8079;
+  --lcd-bg:#101a10;
+  --lcd:#8ee85a;
+  --hot:#e8622a;
+  --hot-dim:#7a3418;
+  --pink:#d63c8f;
+  --amber:#f0a830;
+  --rule:#1b1e1b;
+  --pad:#454c46;
+  --disp:"Arial Narrow","Haettenschweiler","Franklin Gothic Medium",Impact,sans-serif;
+  --mono:ui-monospace,"DejaVu Sans Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:#111312;
+  background:radial-gradient(120% 80% at 50% 0%,#25282a 0%,#111312 60%,#08090a 100%);
+  min-height:100vh;
+  font-family:var(--mono);
+  color:var(--silk);
+  padding:18px 12px 40px;
+  -webkit-text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+}
+.silk{font-family:var(--disp);text-transform:uppercase;letter-spacing:.14em;font-weight:700}
+
+/* ---------- chassis ---------- */
+.machine{
+  max-width:1000px;margin:0 auto;position:relative;
+  background:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 3px),
+    linear-gradient(178deg,var(--panel-hi) 0%,var(--panel) 6%,var(--panel) 94%,var(--panel-lo) 100%);
+  border-radius:10px;
+  border:1px solid #171a17;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.13),
+    inset 0 -2px 0 rgba(0,0,0,.45),
+    0 24px 60px rgba(0,0,0,.65),
+    0 2px 0 #101210;
+  padding:14px 16px 20px;
+}
+.screw{position:absolute;width:11px;height:11px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#6d736c,#2e322e 70%);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.25),0 1px 2px rgba(0,0,0,.6);}
+.screw::after{content:"";position:absolute;inset:0;margin:auto;width:7px;height:1.5px;background:#191c19;transform:rotate(35deg)}
+.screw.tl{top:8px;left:8px}.screw.tr{top:8px;right:8px}.screw.bl{bottom:8px;left:8px}.screw.br{bottom:8px;right:8px}
+
+.rule{height:2px;margin:12px 2px;border-radius:2px;
+  background:linear-gradient(180deg,rgba(0,0,0,.5),rgba(255,255,255,.07));}
+
+/* ---------- header ---------- */
+.top{display:flex;gap:14px;align-items:stretch;flex-wrap:wrap}
+.brand{flex:0 0 auto;padding:2px 4px 0 10px;min-width:180px}
+.brand h1{
+  font-family:var(--disp);font-size:26px;line-height:1;margin:0;letter-spacing:.1em;
+  color:#cfcdba;
+  text-shadow:0 1px 0 rgba(255,255,255,.18),0 -1px 0 rgba(0,0,0,.7);
+}
+.brand .sub{font-size:9px;letter-spacing:.32em;color:var(--silk-dim);margin-top:5px}
+.brand .strap{display:inline-block;margin-top:8px;font-size:8.5px;letter-spacing:.2em;
+  color:#20241f;background:var(--hot);padding:2px 6px;border-radius:2px}
+
+/* ---------- LCD ---------- */
+.lcd{
+  flex:1 1 320px;min-width:260px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#0c140c,#152015);
+  border-radius:4px;border:1px solid #0a0d0a;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.08);
+  padding:9px 12px;color:var(--lcd);
+  text-shadow:0 0 6px rgba(142,232,90,.5);
+}
+.lcd::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px);}
+.lcd-row{display:flex;justify-content:space-between;gap:10px;font-size:11px;letter-spacing:.1em}
+.lcd-kit{font-family:var(--disp);font-size:21px;letter-spacing:.1em;line-height:1.15;margin:1px 0 3px}
+.lcd-dim{color:#4d7a3a}
+.lcd-msg{font-size:10px;letter-spacing:.08em;min-height:13px;color:var(--amber);text-shadow:0 0 6px rgba(240,168,48,.4)}
+
+/* ---------- generic control ---------- */
+.btn{
+  font-family:var(--disp);text-transform:uppercase;letter-spacing:.12em;font-size:11px;
+  color:#d5d3c2;cursor:pointer;user-select:none;border:1px solid #171a17;border-radius:3px;
+  background:linear-gradient(180deg,#525a52,#3b423c 55%,#333833);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 2px 0 #1c1f1c,0 3px 5px rgba(0,0,0,.5);
+  padding:8px 12px;transition:transform .04s,box-shadow .04s,background .12s;
+}
+.btn:hover{background:linear-gradient(180deg,#5b645b,#424941 55%,#383e38)}
+.btn:active,.btn.down{transform:translateY(2px);box-shadow:inset 0 2px 4px rgba(0,0,0,.55),0 0 0 #1c1f1c}
+.btn.on{background:linear-gradient(180deg,#f07a3e,#d2551f 55%,#b8461a);color:#1a1c18;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 0 #6d2a0d,0 0 14px rgba(232,98,42,.45)}
+.btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+
+/* ---------- transport ---------- */
+.transport{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn.big{font-size:15px;padding:11px 20px;min-width:66px}
+.btn.rec.armed{background:linear-gradient(180deg,#e8506e,#b8264a);color:#fff;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{filter:brightness(.6)}}
+.readout{font-family:var(--disp);font-size:22px;letter-spacing:.06em;color:var(--amber);
+  text-shadow:0 0 8px rgba(240,168,48,.35);min-width:58px;text-align:center}
+.readout small{display:block;font-size:8px;letter-spacing:.22em;color:var(--silk-dim);text-shadow:none}
+.nudge{display:flex;flex-direction:column;gap:3px}
+.nudge .btn{padding:3px 8px;font-size:10px;line-height:1}
+
+/* ---------- kit rail ---------- */
+.kits{display:flex;gap:6px;flex-wrap:wrap}
+.kits .btn{flex:1 1 auto;min-width:104px;padding:9px 8px;font-size:11px}
+.kits .btn.on{background:linear-gradient(180deg,#e85fa8,#b82b74 55%,#96205e);color:#1a1218;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 0 #5e1440,0 0 14px rgba(214,60,143,.4)}
+
+/* ---------- LED bar ---------- */
+.ledbar{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;padding:0 2px}
+.led{height:9px;border-radius:2px;background:#242824;box-shadow:inset 0 1px 2px rgba(0,0,0,.7)}
+.led.beat{background:#2e3a2c}
+.led.lit{background:var(--hot);box-shadow:0 0 9px rgba(232,98,42,.85),inset 0 1px 0 rgba(255,255,255,.4)}
+
+/* ---------- launch grid ---------- */
+.gridwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.grid{width:100%;min-width:330px;border-collapse:separate;border-spacing:0 5px}
+.grid th{font-family:var(--disp);font-size:9.5px;letter-spacing:.2em;color:var(--silk-dim);
+  font-weight:700;text-align:center;padding-bottom:2px}
+.grid th.lbl{text-align:left;padding-left:4px}
+.tname{
+  font-family:var(--disp);font-size:12px;letter-spacing:.14em;color:#cbc9b8;cursor:pointer;
+  padding:6px 8px;border-radius:3px;border:1px solid transparent;white-space:nowrap;
+  display:flex;align-items:center;gap:7px;
+}
+.tname:hover{background:rgba(255,255,255,.05)}
+.tname.sel{border-color:var(--amber);background:rgba(240,168,48,.1);color:var(--amber)}
+.tname .dot{width:7px;height:7px;border-radius:50%;background:#262a26;box-shadow:inset 0 1px 2px #000;flex:0 0 auto}
+.tname.live .dot{background:var(--lcd);box-shadow:0 0 8px var(--lcd)}
+.grid td{padding:0 3px}
+.pad{
+  width:100%;height:44px;border-radius:5px;cursor:pointer;border:1px solid #161916;
+  background:linear-gradient(180deg,#565e56,#3d443e 60%,#333833);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 2px 0 #1b1e1b,0 3px 6px rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--disp);font-size:13px;letter-spacing:.1em;color:#8d9089;
+  transition:background .1s,box-shadow .1s,transform .05s;
+}
+.pad:active{transform:translateY(2px)}
+.pad.on{background:linear-gradient(180deg,#f2854a,#d2551f 60%,#ad4318);color:#1c1a16;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 0 #66280c,0 0 16px rgba(232,98,42,.5)}
+.pad.queued{background:linear-gradient(180deg,#6b7460,#4a5344 60%,#414a3d);color:var(--lcd);
+  animation:pulse .38s ease-in-out infinite alternate}
+@keyframes pulse{to{box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 0 #1b1e1b,0 0 15px rgba(142,232,90,.5)}}
+.pad:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.mini{
+  border:1px solid #161916;border-radius:3px;background:linear-gradient(180deg,#4d554d,#363c37);
+  color:#b8b6a5;font-family:var(--disp);font-size:12px;letter-spacing:.08em;cursor:pointer;
+  padding:6px 7px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 #1b1e1b;
+}
+.mini:hover{color:var(--amber)}
+.mini:active{transform:translateY(2px);box-shadow:inset 0 2px 3px rgba(0,0,0,.5)}
+.mini.mute{color:var(--hot)}
+.vol{width:70px;height:22px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+.vol::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:#222622;box-shadow:inset 0 1px 2px #000}
+.vol::-moz-range-track{height:5px;border-radius:3px;background:#222622}
+.vol::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:19px;margin-top:-7px;border-radius:2px;
+  background:linear-gradient(180deg,#cfcdba,#83867d);border:1px solid #14170f;box-shadow:0 1px 2px rgba(0,0,0,.6)}
+.vol::-moz-range-thumb{width:11px;height:19px;border-radius:2px;background:#b8b6a5;border:1px solid #14170f}
+
+/* ---------- step editor ---------- */
+.editor{background:rgba(0,0,0,.22);border:1px solid #1c1f1c;border-radius:5px;padding:10px 11px;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.4)}
+.ehead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.ehead .t{font-family:var(--disp);font-size:12px;letter-spacing:.18em;color:var(--amber)}
+.ehead .hint{font-size:9.5px;letter-spacing:.06em;color:var(--silk-dim)}
+.steps{display:grid;grid-template-columns:repeat(16,1fr);gap:3px}
+.cell{
+  height:30px;border-radius:3px;border:1px solid #191c19;cursor:pointer;
+  background:linear-gradient(180deg,#3b423c,#2c312d);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--disp);font-size:11px;color:#71756e;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+.cell.q{background:linear-gradient(180deg,#454d45,#343a35)}
+.cell.v1{background:linear-gradient(180deg,#8a5a3a,#6a4126);color:#f2dcc8}
+.cell.v2{background:linear-gradient(180deg,#f2854a,#c94f1c);color:#1c1a16}
+.cell.v3{background:linear-gradient(180deg,#5c6a52,#465239);color:#d6e6c4}
+.cell.play{outline:2px solid var(--lcd);outline-offset:-2px}
+.cell:focus-visible{outline:2px solid var(--amber);outline-offset:-2px}
+.cell.off,.pk.off{opacity:.22}
+.cell.maybe{border-color:var(--lcd)}
+.pk.maybe{border-color:var(--lcd)}
+.chlab{font-family:var(--disp);font-size:8.5px;letter-spacing:.18em;color:var(--silk-dim);margin:8px 0 3px}
+.chrow{display:grid;grid-template-columns:repeat(16,1fr);gap:3px}
+.ch{height:17px;border-radius:2px;border:1px solid #191c19;cursor:pointer;padding:0;
+  background:linear-gradient(180deg,#31372f,#262b25);color:#5f6b57;
+  font-family:var(--disp);font-size:8.5px;display:flex;align-items:center;justify-content:center}
+.ch.set{background:linear-gradient(180deg,#4d5f3f,#39482f);color:var(--lcd)}
+.ch.off{opacity:.22}
+.ch:focus-visible{outline:2px solid var(--amber);outline-offset:-2px}
+.lenctl{display:flex;align-items:center;gap:5px;font-family:var(--disp);font-size:9px;letter-spacing:.16em;color:var(--silk-dim)}
+.lenctl b{color:var(--amber);font-size:13px;min-width:22px;text-align:center;display:inline-block}
+.lenctl .mini{padding:4px 8px;font-size:11px;line-height:1}
+.polylen{color:var(--lcd);font-size:9px;margin-left:3px}
+.pianoWrap{overflow-x:auto}
+.piano{display:grid;grid-template-columns:26px repeat(16,minmax(20px,1fr));gap:3px;min-width:420px}
+.pk{height:20px;border-radius:2px;border:1px solid #191c19;cursor:pointer;
+  background:linear-gradient(180deg,#363c37,#2a2f2b)}
+.pk.q{background:linear-gradient(180deg,#3f463f,#313632)}
+.pk.on{background:linear-gradient(180deg,#f2854a,#c94f1c);box-shadow:0 0 8px rgba(232,98,42,.5)}
+.pk.acc{background:linear-gradient(180deg,#ffd07a,#f0a830);box-shadow:0 0 10px rgba(240,168,48,.6)}
+.pk.tie{background:linear-gradient(180deg,#5c6a52,#3f4a35)}
+.pk.play{outline:2px solid var(--lcd);outline-offset:-2px}
+.prow{font-family:var(--disp);font-size:8.5px;letter-spacing:.06em;color:var(--silk-dim);
+  display:flex;align-items:center;justify-content:flex-end;padding-right:3px}
+
+/* ---------- knobs ---------- */
+.fx{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between}
+.knobwrap{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:60px;flex:1 1 60px}
+.knob{width:50px;height:50px;border-radius:50%;position:relative;cursor:ns-resize;touch-action:none;
+  background:
+    radial-gradient(circle at 50% 42%,#5a615a 0%,#41473f 58%,#2c302c 100%);
+  border:1px solid #14170f;
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.14),inset 0 -3px 6px rgba(0,0,0,.5),0 3px 6px rgba(0,0,0,.55);
+}
+.knob::before{content:"";position:absolute;inset:8px;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,#464d45 0 4deg,#3c423b 4deg 8deg);opacity:.5}
+.knob i{position:absolute;left:50%;top:5px;width:3px;height:16px;margin-left:-1.5px;border-radius:2px;
+  background:var(--amber);box-shadow:0 0 6px rgba(240,168,48,.7);transform-origin:50% 20px}
+.knob:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.knobwrap label{font-family:var(--disp);font-size:9px;letter-spacing:.18em;color:var(--silk-dim)}
+.knobwrap .val{font-size:9.5px;color:var(--amber);letter-spacing:.05em}
+
+.deck{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.fxgrp{display:flex;flex-direction:column;gap:5px}
+.fxgrp .cap{font-family:var(--disp);font-size:8px;letter-spacing:.2em;color:var(--silk-dim)}
+.fxrow{display:flex;gap:5px}
+.fxb{
+  font-family:var(--disp);text-transform:uppercase;letter-spacing:.1em;font-size:11px;
+  color:#d5d3c2;cursor:pointer;border:1px solid #171a17;border-radius:3px;
+  background:linear-gradient(180deg,#525a52,#3b423c 55%,#333833);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 2px 0 #1c1f1c,0 3px 5px rgba(0,0,0,.5);
+  padding:9px 11px;min-width:46px;touch-action:none;user-select:none;
+  transition:transform .04s,box-shadow .04s,background .1s;
+}
+.fxb small{display:block;font-size:7.5px;letter-spacing:.16em;color:#878b83;margin-top:2px}
+.fxb:active{transform:translateY(2px);box-shadow:inset 0 2px 4px rgba(0,0,0,.55)}
+.fxb.on{background:linear-gradient(180deg,#5fe0d8,#1fb3a8 55%,#179188);color:#0e1a19;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 0 #0d5b55,0 0 16px rgba(31,179,168,.5)}
+.fxb.on small{color:#0e1a19}
+.fxb.hot.on{background:linear-gradient(180deg,#f2854a,#c94f1c 55%,#ad4318);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 0 #66280c,0 0 16px rgba(232,98,42,.5)}
+.fxb:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+@media (max-width:720px){ .fxb{padding:8px 8px;min-width:40px;font-size:10px} .deck{gap:10px} }
+.foot{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.foot .grp{display:flex;gap:8px;flex-wrap:wrap}
+.tag{font-size:9px;letter-spacing:.14em;color:var(--silk-dim);font-family:var(--disp)}
+
+/* ---------- power overlay ---------- */
+.power{position:fixed;inset:0;background:rgba(6,8,7,.93);display:flex;align-items:center;justify-content:center;
+  z-index:50;padding:20px;text-align:center}
+.power .box{max-width:420px}
+.power h2{font-family:var(--disp);font-size:34px;letter-spacing:.14em;margin:0 0 6px;color:#cfcdba}
+.power p{font-size:12px;line-height:1.7;color:var(--silk-dim);margin:0 0 22px}
+.pbtn{font-family:var(--disp);font-size:16px;letter-spacing:.2em;padding:16px 34px;border-radius:6px;
+  border:1px solid #14170f;cursor:pointer;color:#1a1c18;
+  background:linear-gradient(180deg,#f2854a,#c94f1c);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 0 #6d2a0d,0 6px 20px rgba(232,98,42,.35)}
+.pbtn:active{transform:translateY(3px);box-shadow:inset 0 2px 4px rgba(0,0,0,.4),0 1px 0 #6d2a0d}
+
+/* ---------- help ---------- */
+.picker{position:fixed;inset:0;background:rgba(6,8,7,.86);z-index:70;display:none;
+  align-items:center;justify-content:center;padding:20px}
+.picker.open{display:flex}
+.pickcard{width:100%;max-width:340px;background:var(--panel);border:1px solid #171a17;border-radius:8px;
+  padding:16px 16px 14px;box-shadow:0 20px 50px rgba(0,0,0,.7)}
+.pickcard h3{font-family:var(--disp);letter-spacing:.18em;font-size:13px;margin:0 0 12px;color:var(--amber)}
+.pickbody{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.pickopt{font-family:var(--disp);letter-spacing:.12em;font-size:12px;text-align:left;
+  padding:11px 12px;border-radius:4px;border:1px solid #171a17;cursor:pointer;color:#d5d3c2;
+  background:linear-gradient(180deg,#4d554d,#383e38);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 #1c1f1c}
+.pickopt:active{transform:translateY(2px);box-shadow:inset 0 2px 4px rgba(0,0,0,.5)}
+.pickopt.on{background:linear-gradient(180deg,#5fe0d8,#1fb3a8 55%,#179188);color:#0e1a19}
+.pickopt:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.tname{position:relative}
+.tname::after{content:"\25BE";position:absolute;right:3px;top:50%;transform:translateY(-50%);
+  font-size:8px;color:#5e635c}
+.help{position:fixed;inset:0;background:rgba(6,8,7,.9);z-index:60;display:none;padding:24px 14px;overflow:auto}
+.help.open{display:block}
+.help .card{max-width:600px;margin:0 auto;background:var(--panel);border:1px solid #171a17;border-radius:8px;
+  padding:20px 22px;box-shadow:0 20px 50px rgba(0,0,0,.7)}
+.help h3{font-family:var(--disp);letter-spacing:.16em;font-size:16px;margin:0 0 12px;color:var(--amber)}
+.help dl{margin:0;font-size:12px;line-height:1.75}
+.help dt{font-family:var(--disp);letter-spacing:.14em;color:#cbc9b8;margin-top:11px;font-size:11px}
+.help dd{margin:1px 0 0;color:var(--silk-dim)}
+.help kbd{font-family:var(--mono);background:#222622;border:1px solid #14170f;border-radius:3px;padding:1px 5px;color:var(--lcd)}
+
+@media (max-width:720px){
+  body{padding:10px 6px 30px}
+  .machine{padding:12px 10px 16px}
+  .brand h1{font-size:21px}
+  .pad{height:38px;font-size:11px}
+  .tname{font-size:10px;letter-spacing:.08em;padding:5px 4px;gap:5px}
+  .grid td{padding:0 2px}
+  .vol{width:52px}
+  .knob{width:42px;height:42px}
+  .knob i{height:13px;transform-origin:50% 17px}
+  .cell{height:26px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="machine" id="machine">
+  <span class="screw tl"></span><span class="screw tr"></span>
+  <span class="screw bl"></span><span class="screw br"></span>
+
+  <div class="top">
+    <div class="brand">
+      <h1>GROOVE STATION</h1>
+      <div class="sub">GS-90 &nbsp;/&nbsp; HOUSE RHYTHM COMPOSER</div>
+      <div class="strap">6 STYLES &middot; 28 PADS</div>
+    </div>
+    <div class="lcd">
+      <div class="lcd-row"><span class="lcd-dim" id="lcdSlot">KIT 1/7</span><span class="lcd-dim" id="lcdPos">BAR 1 &middot; 1</span></div>
+      <div class="lcd-kit" id="lcdKit">MINIMAL TECHNO</div>
+      <div class="lcd-row"><span id="lcdTempo">128.0 BPM</span><span id="lcdKey">A MIN</span><span id="lcdSwing">SWING 50%</span></div>
+      <div class="lcd-msg" id="lcdMsg">READY</div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="transport">
+    <button class="btn big" id="btnPlay">▶ PLAY</button>
+    <button class="btn big" id="btnStop">■ STOP</button>
+    <div class="nudge">
+      <button class="btn" id="bpmUp" aria-label="Tempo up">+</button>
+      <button class="btn" id="bpmDn" aria-label="Tempo down">−</button>
+    </div>
+    <div class="readout" id="roTempo">128<small>TEMPO</small></div>
+    <div class="nudge">
+      <button class="btn" id="swUp" aria-label="Swing up">+</button>
+      <button class="btn" id="swDn" aria-label="Swing down">−</button>
+    </div>
+    <div class="readout" id="roSwing">50<small>SWING</small></div>
+    <button class="btn on" id="btnQuant">INSTANT</button>
+    <button class="btn" id="btnRemix">REMIX</button>
+    <button class="btn" id="btnFill">FILL</button>
+    <button class="btn" id="btnAll">ALL ON</button>
+    <button class="btn" id="btnNone">CLEAR</button>
+    <button class="btn rec" id="btnRec">● REC</button>
+    <button class="btn" id="btnHelp">?</button>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="kits" id="kits"></div>
+
+  <div class="rule"></div>
+
+  <div class="ledbar" id="ledbar"></div>
+
+  <div class="rule"></div>
+
+  <div class="gridwrap"><table class="grid" id="grid"></table></div>
+
+  <div class="rule"></div>
+
+  <div class="deck">
+    <div class="fxgrp">
+      <span class="cap">ECHO OUT</span>
+      <div class="fxrow">
+        <button class="fxb" id="fxEcho4">1/4<small>HOLD</small></button>
+        <button class="fxb" id="fxEcho8">3/8<small>HOLD</small></button>
+      </div>
+    </div>
+    <div class="fxgrp">
+      <span class="cap">BEAT ROLL</span>
+      <div class="fxrow">
+        <button class="fxb hot" id="fxRoll2">1/2<small>U</small></button>
+        <button class="fxb hot" id="fxRoll4">1/4<small>I</small></button>
+        <button class="fxb hot" id="fxRoll8">1/8<small>O</small></button>
+      </div>
+    </div>
+    <div class="fxgrp">
+      <span class="cap">LOOP HOLD</span>
+      <div class="fxrow">
+        <button class="fxb" id="fxLoop1">1<small>B</small></button>
+        <button class="fxb" id="fxLoop2">2<small>N</small></button>
+        <button class="fxb" id="fxLoop4">4<small>M</small></button>
+      </div>
+    </div>
+    <div class="fxgrp">
+      <span class="cap">THROW &amp; KILL</span>
+      <div class="fxrow">
+        <button class="fxb" id="fxThrow">VERB<small>/</small></button>
+        <button class="fxb hot" id="fxBass">BASS<small>L</small></button>
+        <button class="fxb" id="fxRiser">RISER<small>P</small></button>
+        <button class="fxb on" id="fxQuant">FX QUANT<small>SHIFT+F</small></button>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+  <div class="fx" id="fx"></div>
+  <div class="rule"></div>
+  <div class="editor">
+    <div class="ehead">
+      <span class="t" id="edTitle">EDIT — KICK · PATTERN A</span>
+      <span class="lenctl">STEPS <button class="mini" id="lenDn" aria-label="Fewer steps">−</button><b id="lenVal">16</b><button class="mini" id="lenUp" aria-label="More steps">+</button></span>
+      <span class="hint" id="edHint">Click a step to cycle: off → soft → hit → accent</span>
+      <span>
+        <button class="mini" id="edUndo">↶ UNDO</button>
+        <button class="mini" id="edRedo">↷ REDO</button>
+        <button class="mini" id="edDice">⚄ RANDOM</button>
+        <button class="mini" id="edKeep">KEEP</button>
+        <button class="mini" id="edClear">CLEAR</button>
+      </span>
+    </div>
+    <div id="edBody"></div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="foot">
+    <span class="tag">FULLY SYNTHESISED — NO SAMPLES, NO NETWORK</span>
+    <span class="grp">
+      <button class="mini" id="btnAudio">AUDIO: SMOOTH</button>
+      <button class="mini" id="btnReset">RESET THIS KIT TO FACTORY</button>
+      <span class="tag" id="statTag">STOPPED</span>
+    </span>
+  </div>
+</div>
+
+<div class="power" id="power">
+  <div class="box">
+    <h2>GROOVE STATION</h2>
+    <p>Six styles of house, start to finish in your browser. Every sound is generated live — there are no audio files to load. Tap a pad, get a loop; tap four, get a groove.</p>
+    <button class="pbtn" id="powerBtn">POWER ON</button>
+  </div>
+</div>
+
+<div class="picker" id="picker">
+  <div class="pickcard">
+    <h3 id="pickTitle">SOUND</h3>
+    <div class="pickbody" id="pickBody"></div>
+    <button class="btn" id="pickClose">CLOSE</button>
+  </div>
+</div>
+
+<div class="help" id="help">
+  <div class="card">
+    <h3>How it works</h3>
+    <dl>
+      <dt>Pads A B C D</dt><dd>Each row is an instrument, each pad is a one-bar loop. Tap to bring it in, tap the lit pad to drop it out.</dd>
+      <dt>Instant / Bar sync</dt><dd>Instant is the default: a pad takes effect the moment you press it, and anything already playing on that row is cut dead. Switch to Bar sync if you'd rather changes wait for the next barline so nothing can land off-grid.</dd>
+      <dt>Scene buttons</dt><dd>The A/B/C/D headers launch that whole column across every instrument — an instant arrangement change.</dd>
+      <dt>Editing</dt><dd>Click an instrument name to load it into the step editor. Drum steps cycle off → soft → hit → accent. Bass, chords and lead use a note grid: pick a row to place a note, click it again to clear, use the TIE row to hold a note across steps.</dd>
+      <dt>⚄ Random</dt><dd>Rewrites the selected pattern using rules that fit the current kit, so it stays in genre. Per-row dice do the same for that instrument.</dd>
+      <dt>Chance</dt><dd>The row under the steps sets how often each hit fires — blank is always, then 80, 60, 40, 20 percent. A couple of ghost snares at 40% and the bar stops repeating.</dd>
+      <dt>Steps</dt><dd>Each instrument can be shorter than a bar. Set the hats to 15 and they walk against a 16-step kick, landing together again every fifteen bars. The downbeat never moves.</dd>
+      <dt>Undo, redo, keep</dt><dd>Roll the dice as often as you like — undo walks back through every roll and edit, redo walks forward. Keep copies the current pattern to an empty pad in that row so you can carry on rolling.</dd>
+      <dt>DJ filter</dt><dd>One knob. Centre is off; turn left to sweep the low-pass down, right to sweep the high-pass up. Resonance comes in on its own as you leave centre.</dd>
+      <dt>Echo out</dt><dd>Hold 1/4 or 3/8. On the next bar the dry signal drops and the tempo-synced delay rings on by itself. Let go and the dry comes back on the following downbeat.</dd>
+      <dt>Beat roll and loop hold</dt><dd>Hold to stutter the master — rolls land on the next beat, loops on the next bar. Let go and you are back in the groove instantly, in time, because the sequencer never stopped underneath.</dd>
+      <dt>Verb, bass, riser</dt><dd>Verb throws one beat into a long tail on the next bar. Bass is a hold that ducks the kick and bass about 24 dB rather than muting them. Riser fires a noise sweep timed to finish exactly on the next 8-bar phrase.</dd>
+      <dt>FX quant</dt><dd>On by default: effects snap to the grid. Turn it off and they fire the instant you press. This is separate from the pad INSTANT toggle.</dd>
+      <dt>Changing an instrument's sound</dt><dd>Press and hold an instrument name (or right-click it) to pick a different engine for that row — Rhodes, piano, organ, filtered disco, pad or stab for the keys; deep sub, pluck, organ bass or acid for the bass; vocal chops, saw, blips or one-shots for the top line. The drum rows can be swapped too.</dd>
+      <dt>Remix</dt><dd>Swaps the keys or the bass for another style's engine — soulful piano over a dub tech groove, organ bass under deep house. Press it until something surprises you. <kbd>X</kbd> remixes, <kbd>C</kbd> puts the stock sounds back.</dd>
+      <dt>Fill</dt><dd>Drops a one-bar snare and tom roll, then returns to the pattern.</dd>
+      <dt>Rec</dt><dd>Captures live audio to a .webm file you can drop straight into a DAW.</dd>
+      <dt>Audio: smooth or tight</dt><dd>Smooth is the default and uses a larger output buffer, which is what stops crackling — especially on Windows and on Bluetooth earbuds. Tight uses the smallest buffer the browser allows for the fastest possible response, at the risk of crackle. Reload the page after changing it.</dd>
+      <dt>Your work is kept</dt><dd>Every pattern, chance value, step count, level and mute is saved as you go, per kit, and comes back when you reopen the page. Switching kits and back keeps your edits too. The button at the bottom restores the factory patterns for the kit you're on — it asks once before it does.</dd>
+      <dt>Keys</dt><dd><kbd>Space</kbd> play/stop &nbsp; <kbd>1</kbd>–<kbd>7</kbd> select instrument &nbsp; <kbd>Q W E R</kbd> launch pad for it &nbsp; <kbd>A S D F</kbd> launch scene &nbsp; <kbd>G</kbd> roll the dice &nbsp; <kbd>Z</kbd> undo &nbsp; <kbd>Y</kbd> redo &nbsp; <kbd>K</kbd> keep &nbsp; <kbd>,</kbd> <kbd>.</kbd> step count &nbsp; <kbd>[</kbd> <kbd>]</kbd> tempo</dd>
+      <dt>FX keys</dt><dd><kbd>H</kbd> <kbd>J</kbd> echo 1/4, 3/8 &nbsp; <kbd>U</kbd> <kbd>I</kbd> <kbd>O</kbd> roll 1/2, 1/4, 1/8 &nbsp; <kbd>B</kbd> <kbd>N</kbd> <kbd>M</kbd> loop 1, 2, 4 &nbsp; <kbd>L</kbd> bass kill &nbsp; <kbd>/</kbd> reverb throw &nbsp; <kbd>P</kbd> riser &nbsp; <kbd>Shift+F</kbd> FX quant. Hold the effect keys; they release when you do.</dd>
+    </dl>
+    <p style="margin-top:18px"><button class="btn" id="helpClose">CLOSE</button></p>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================================
+   GROOVE STATION GS-90
+   Everything below is synthesised at runtime through the Web Audio API. There
+   are no sample files, so the whole instrument is one portable HTML document.
+
+   Timing uses a lookahead scheduler against the audio clock, not setInterval
+   against the display clock. Each tick schedules every sixteenth that falls
+   inside the next LOOKAHEAD seconds. That is the difference between a groove
+   that sits still and one that stutters whenever the page repaints.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- pattern
+   Drum rows are 16-character strings, one char per sixteenth:
+     .  rest        o  ghost / soft      x  hit        X  accent
+   Hats also use:  O  open hat           s  pedal / shaker
+   Perc uses:      r rim  s shaker  c conga  d ride  t tom  b bell
+   Melodic rows use one char per step:
+     .  rest        -  hold previous     0-9  scale degree
+     A-J            the same degrees, accented
+   -------------------------------------------------------------------------*/
+
+const TRACKS = [
+  {id:"KICK",  kind:"drum",  label:"KICK"},
+  {id:"SNARE", kind:"drum",  label:"SNARE"},
+  {id:"HATS",  kind:"drum",  label:"HATS"},
+  {id:"PERC",  kind:"drum",  label:"PERC"},
+  {id:"BASS",  kind:"mel",   label:"BASS"},
+  {id:"CHORD", kind:"chord", label:"CHORD"},
+  {id:"LEAD",  kind:"mel",   label:"LEAD"}
+];
+const VARS = ["A","B","C","D"];
+const STEPS = 16;
+
+/* Semitone sets. Minor scales for the house/techno family, minor pentatonic
+   for the acid line so random generation cannot land on a wrong note.        */
+const SC_MIN  = [0,2,3,5,7,8,10,12,14,15];
+const SC_DOR  = [0,2,3,5,7,9,10,12,14,15];
+const SC_PENT = [0,3,5,7,10,12,15,17,19,22];
+
+/* ===================================================== HOUSE CHORD ENGINE
+   House lives or dies on the chords, so they get the most machinery here.
+   Three things separate a house chord from a synth playing three notes:
+
+   1. Extensions. Sevenths and ninths are the default, not decoration. A bare
+      triad sounds like a ringtone; a m9 sounds like a record.
+   2. Voice leading. When the chord changes, the notes should move as little
+      as possible — the top of the chord stays put while the middle shifts a
+      semitone. Jumping every voice to root position is the single most
+      obvious giveaway of a programmed chord.
+   3. Spread. Root in the bass, a gap, then the extensions bunched up high.
+      Thirds and ninths low down turn to mud.                                */
+
+/* Voicings are semitones from the key root. Written spread, low to high. */
+const V = {
+  m9:    [0,10,15,19,26],      // minor 9 — the deep house chord
+  m7:    [0,10,15,19],
+  m11:   [0,10,15,22,26],
+  maj9:  [0,11,16,19,26],
+  maj7:  [0,11,16,19],
+  sus9:  [0,10,17,19,26],      // sus with the 9 on top, very Chicago
+  m6:    [0,9,15,19],
+  dom9:  [0,10,16,19,26],
+  m7b5:  [0,10,15,18],
+  tri:   [0,15,19],            // plain minor triad, kept for jack tracks
+  oct:   [0,12,19]             // root/fifth/octave — filter-house fodder
+};
+function chord(deg, type){ return {deg:deg, type:type}; }
+
+/* Pick the octave placement for each note that moves least from the chord
+   before it. The root stays where it is so the bass end never wanders.    */
+function voiceLead(semis, prev){
+  if(!prev || !prev.length) return semis.slice();
+  const out = [semis[0]];                       // the bass never gets re-voiced
+  for(let i=1;i<semis.length;i++){
+    /* Each voice keeps its place in the chord and moves to the octave nearest
+       where that same voice was. Letting a voice chase the nearest note of the
+       whole previous chord lets voices leapfrog and collapse onto each other,
+       which inverts the chord instead of leading it. */
+    const target = (i < prev.length) ? prev[i] : prev[prev.length-1];
+    let cand = semis[i] + 12 * Math.round((target - semis[i]) / 12);
+    while(cand <= out[i-1]) cand += 12;         // keep the voicing ascending
+    while(cand > 46) cand -= 12;
+    if(cand <= out[i-1]) cand = semis[i];       // give up rather than invert
+    out.push(cand);
+  }
+  return out;
+}
+/* Resolve a chord-row degree into actual frequencies for this kit. */
+function chordFreqs(k, deg, prevSemis){
+  const prog = k.prog || [chord(0,"m9")];
+  const c = prog[Math.min(prog.length-1, Math.max(0, deg))] || prog[0];
+  const base = (V[c.type] || V.m9).map(s => s + c.deg);
+  const led = voiceLead(base, prevSemis);
+  return {semis:led, freqs:led.map(s => k.root * Math.pow(2, s/12) * 2)};
+}
+
+/* ---- chord voices ---- */
+function vEPiano(t,out,freqs,dur){           // Rhodes: FM bell over a soft body
+  const ctx=AU.ctx;
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(0.15,t+0.014);
+  expTo(g.gain,0.0001,t+Math.max(0.3,dur*1.1));
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=2800;
+  freqs.forEach((f,i)=>{
+    const c=ctx.createOscillator(); c.type="sine"; c.frequency.value=num(f,220);
+    const m=ctx.createOscillator(); m.type="sine"; m.frequency.value=num(f,220)*2.004;
+    const mg=ctx.createGain();
+    mg.gain.setValueAtTime(num(f,220)*(1.7-i*0.18),t);
+    expTo(mg.gain,1,t+0.26);
+    m.connect(mg); mg.connect(c.frequency);
+    const vg=ctx.createGain(); vg.gain.value=1/(1+i*0.35);
+    c.connect(vg); vg.connect(lp);
+    c.start(t); c.stop(t+dur+0.4); m.start(t); m.stop(t+dur+0.4);
+  });
+  lp.connect(g); g.connect(out);
+}
+function vHousePiano(t,out,freqs,dur){       // bright hammered piano stab
+  const ctx=AU.ctx;
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(0.17,t+0.004);
+  expTo(g.gain,0.0001,t+Math.max(0.28,dur));
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass";
+  lp.frequency.setValueAtTime(5200,t); expTo(lp.frequency,1500,t+0.22);
+  freqs.forEach((f,i)=>{
+    [1,2,3.01].forEach((h,hi)=>{
+      const o=ctx.createOscillator();
+      o.type = hi===0 ? "triangle" : "sine";
+      o.frequency.value=num(f,220)*h;
+      const hg=ctx.createGain(); hg.gain.value=(1/(hi+1.5))/(1+i*0.3);
+      o.connect(hg); hg.connect(lp);
+      o.start(t); o.stop(t+dur+0.3);
+    });
+  });
+  /* The hammer thud — a piano without it sounds like an organ. */
+  const n=noiseSrc(t,0.02);
+  const bp=ctx.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=2600; bp.Q.value=1.2;
+  const ng=env(t,0.0008,0.016,0.05);
+  n.connect(bp); bp.connect(ng); ng.connect(out);
+  lp.connect(g); g.connect(out);
+}
+function vDiscoChord(t,out,freqs,dur){       // filtered loop-style chord, French house
+  const ctx=AU.ctx;
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=4;
+  lp.frequency.setValueAtTime(900,t);
+  lp.frequency.linearRampToValueAtTime(3600,t+Math.min(0.4,dur*0.5));
+  expTo(lp.frequency,800,t+Math.max(0.2,dur));
+  const sh=ctx.createWaveShaper(); sh.curve=satCurve(2.2);
+  const g=env(t,0.006,Math.max(0.16,dur*0.95),0.13);
+  freqs.forEach((f,i)=>{
+    [-0.09,0.09].forEach(det=>{
+      const o=ctx.createOscillator(); o.type= i===0?"sawtooth":"square";
+      o.frequency.value=num(f,220)*Math.pow(2,det/12);
+      const vg=ctx.createGain(); vg.gain.value=1/(1+i*0.4);
+      o.connect(vg); vg.connect(lp);
+      o.start(t); o.stop(t+dur+0.25);
+    });
+  });
+  lp.connect(sh); sh.connect(g); g.connect(out);
+}
+function vHouseOrgan(t,out,freqs,dur){       // drawbar organ with a touch of key click
+  const ctx=AU.ctx;
+  const g=env(t,0.005,Math.max(0.16,dur*0.9),0.12);
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=3600;
+  freqs.forEach((f,i)=>{
+    [1,2,3,4].forEach((h,hi)=>{
+      const o=ctx.createOscillator(); o.type= hi>=2?"triangle":"sine";
+      o.frequency.value=num(f,220)*h;
+      const hg=ctx.createGain(); hg.gain.value=(1/(hi+1.3))/(1+i*0.3);
+      o.connect(hg); hg.connect(lp);
+      o.start(t); o.stop(t+dur+0.2);
+    });
+  });
+  const click=noiseSrc(t,0.012);
+  const chp=ctx.createBiquadFilter(); chp.type="highpass"; chp.frequency.value=3000;
+  const cg=env(t,0.0005,0.009,0.04);
+  click.connect(chp); chp.connect(cg); cg.connect(out);
+  lp.connect(g); g.connect(out);
+}
+
+/* ---- vocal chop: formants on a detuned saw, which is as close as synthesis
+   gets to a sampled diva without a sample. Vowel shifts with the degree. ---- */
+const VOWELS = [[620,1180,2600],[400,1700,2500],[320,900,2400],[700,1220,2600],[500,1800,2550]];
+function vVox(t,out,f,dur,deg){
+  const ctx=AU.ctx, base=num(f,330);
+  const vw = VOWELS[Math.abs(deg||0) % VOWELS.length];
+  const src=ctx.createGain(); src.gain.value=0.5;
+  [-0.08,0.08].forEach(det=>{
+    const o=ctx.createOscillator(); o.type="sawtooth";
+    o.frequency.setValueAtTime(base*Math.pow(2,det/12),t);
+    /* A little scoop into the note and vibrato on the tail: without these it
+       reads as a filter sweep rather than a voice. */
+    o.frequency.setValueAtTime(base*0.94,t);
+    o.frequency.linearRampToValueAtTime(base*Math.pow(2,det/12),t+0.045);
+    const lfo=ctx.createOscillator(); lfo.type="sine"; lfo.frequency.value=5.4;
+    const lg=ctx.createGain(); lg.gain.value=base*0.012;
+    lfo.connect(lg); lg.connect(o.frequency); lfo.start(t+0.1); lfo.stop(t+dur+0.1);
+    o.connect(src); o.start(t); o.stop(t+dur+0.15);
+  });
+  const mix=ctx.createGain(); mix.gain.value=0.9;
+  vw.forEach((fr,i)=>{
+    const bp=ctx.createBiquadFilter(); bp.type="bandpass";
+    bp.frequency.value=fr; bp.Q.value=7+i*2;
+    const ag=ctx.createGain(); ag.gain.value=[1,0.6,0.3][i];
+    src.connect(bp); bp.connect(ag); ag.connect(mix);
+  });
+  const breath=noiseSrc(t,dur+0.1);
+  const bhp=ctx.createBiquadFilter(); bhp.type="bandpass"; bhp.frequency.value=3200; bhp.Q.value=1.6;
+  const bg=ctx.createGain(); bg.gain.value=0.035;
+  breath.connect(bhp); bhp.connect(bg); bg.connect(mix);
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(0.16,t+0.03);
+  g.gain.setValueAtTime(0.16,t+Math.max(0.05,dur-0.08));
+  expTo(g.gain,0.0001,t+dur+0.06);
+  mix.connect(g); g.connect(out);
+}
+
+/* ---- house bass engines ---- */
+function vPluck(t,out,f,dur,acc){            // short filtered pluck, garage/soulful
+  const ctx=AU.ctx;
+  const o=ctx.createOscillator(); o.type="sawtooth"; o.frequency.setValueAtTime(num(f,55),t);
+  const sub=ctx.createOscillator(); sub.type="sine"; sub.frequency.setValueAtTime(num(f,55),t);
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=7;
+  lp.frequency.setValueAtTime(acc?2000:1300,t);
+  expTo(lp.frequency,180,t+Math.min(0.3,dur));
+  const g=ctx.createGain();
+  const pk=acc?0.4:0.33;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(pk,t+0.006);
+  expTo(g.gain,0.0001,t+Math.max(0.1,dur*0.9));
+  const sg=ctx.createGain(); sg.gain.value=0.55;
+  o.connect(lp); sub.connect(sg); sg.connect(lp); lp.connect(g); g.connect(out);
+  o.start(t); o.stop(t+dur+0.1); sub.start(t); sub.stop(t+dur+0.1);
+}
+function vOrganBass(t,out,f,dur,acc){        // round, slightly woody — Chicago
+  const ctx=AU.ctx, base=num(f,55);
+  const g=ctx.createGain();
+  const pk=acc?0.5:0.42;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(pk,t+0.009);
+  g.gain.setValueAtTime(pk,t+Math.max(0.03,dur-0.05));
+  expTo(g.gain,0.0001,t+dur+0.04);
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=520; lp.Q.value=2;
+  [[1,1],[2,0.35],[3,0.12]].forEach(([h,a])=>{
+    const o=ctx.createOscillator(); o.type= h===1?"sine":"triangle";
+    o.frequency.setValueAtTime(base*h,t);
+    const hg=ctx.createGain(); hg.gain.value=a;
+    o.connect(hg); hg.connect(lp);
+    o.start(t); o.stop(t+dur+0.1);
+  });
+  lp.connect(g); g.connect(out);
+}
+
+
+const KITS = [
+{
+  name:"DEEP HOUSE", keyName:"F MIN", bpm:122, swing:0.58, human:0.0020,
+  root:43.65,
+  useSamples:true, smpRate:1.0,
+  labels:{CHORD:"KEYS", LEAD:"VOX"},
+  /* The m9 is the sound. Movement is small and stepwise — that is the whole
+     deep house trick: the chord barely changes but it never sits still. */
+  prog:[chord(0,"m9"), chord(-4,"maj9"), chord(-2,"m11"), chord(3,"maj7"),
+        chord(5,"m7"), chord(-5,"sus9")],
+  voices:{kick:"house", snare:"clap808", hat:"warm", bass:"sub", chord:"epiano", lead:"vox", perc:"machine"},
+  sends:{delay:[0,.08,.14,.16,0,.22,.30], verb:[.04,.26,.16,.28,0,.40,.46]},
+  drive:1.12, filt:0.80,
+  pat:{
+    KICK: ["X...x...X...x...","X...x...X...x..x","X...x...X...x.o.","X..ox...X...x..x"],
+    SNARE:["....C.......C...","....C.......C..o","....C...x...C...","....C..o....C.o."],
+    HATS: ["..O...O...O...O.","x.Ox..Ox..Ox..O.","xxOxxxOxxxOxxxOx","x.O.s.O.x.O.s.O."],
+    PERC: ["................","..s...s...s...s.","..c.....c.c.....","c..c..s.c..c..s."],
+    BASS: ["0.......0.......","0...0...0...0...","0.....0.4.....0.","0-..0...4-..2..."],
+    CHORD:["..0.......0.....","..0.......1.....","..0...1.......2.","..0.1...2.....1."],
+    LEAD: ["................","......0.........","......0.......2.","....0.....2...1."]
+  },
+  prob:{ HATS:["","","","......6.......8."], PERC:["","","","...4......6....."] }
+},
+{
+  name:"CHICAGO JACK", keyName:"A MIN", bpm:126, swing:0.54, human:0.0016,
+  root:55.00,
+  useSamples:true, smpRate:1.03,
+  labels:{CHORD:"ORGAN"},
+  /* Raw and repetitive on purpose. Sus and plain triads, no lush extensions. */
+  prog:[chord(0,"tri"), chord(0,"sus9"), chord(5,"tri"), chord(-2,"sus9"),
+        chord(3,"tri"), chord(7,"m7")],
+  voices:{kick:"house", snare:"clap909", hat:"tight", bass:"organbass", chord:"organ", lead:"blip", perc:"machine"},
+  sends:{delay:[0,.06,.10,.14,0,.18,.34], verb:[0,.18,.10,.18,0,.22,.28]},
+  drive:1.5, filt:0.82,
+  pat:{
+    KICK: ["X...x...X...x...","X...x...X...x..x","X...x...X..xx...","X..xx...X...x.x."],
+    SNARE:["....C.......C...","....C.......C..o","..o.C.......C...","..o.C.....o.C.o."],
+    HATS: ["..O...O...O...O.","x.O.x.O.x.O.x.O.","xxOxxxOxxxOxxxOx","x.Oxx.Oxx.Oxx.Ox"],
+    PERC: ["................","......r.......r.","..r.....r...r...","r..r..r...r..r.r"],
+    BASS: ["0...0...0...0...","0.0.0...0.0.0...","0...3...0...5...","0.0.3.0.0.0.5.3."],
+    CHORD:["..0.......0.....","..0...0...1...1.","..0.1.....2.3...","0.1...2.1...3.0."],
+    LEAD: ["................","..........4.....","....4.......2...","..4...5...4...7."]
+  },
+  prob:{ PERC:["","","","...6..8...4...6."] }
+},
+{
+  name:"FRENCH FILTER", keyName:"G MIN", bpm:124, swing:0.52, human:0.0014,
+  root:49.00,
+  useSamples:true, smpRate:0.98,
+  labels:{PERC:"LOOP", CHORD:"DISCO"},
+  /* Big dumb seventh-chord loops, filtered. Octave bass under everything. */
+  prog:[chord(0,"m7"), chord(5,"dom9"), chord(-2,"maj7"), chord(3,"maj9"),
+        chord(0,"m9"), chord(7,"m7")],
+  voices:{kick:"house", snare:"clap909", hat:"tight", bass:"pluck", chord:"disco", lead:"saw", perc:"loop"},
+  sends:{delay:[0,.06,.10,.10,0,.16,.30], verb:[.02,.20,.12,.16,0,.24,.30]},
+  drive:1.7, filt:0.86,
+  pat:{
+    KICK: ["X...x...X...x...","X...x...X...x..x","X...x...X...x.x.","X..xx...X...x..x"],
+    SNARE:["....C.......C...","....C.......C..o","....C...o...C...","....C.o.....C.o."],
+    HATS: ["..O...O...O...O.","x.O.x.O.x.O.x.O.","xxOxxxOxxxOxxxOx","x.Oxx.Oxx.Oxx.Ox"],
+    PERC: ["................","xxxxxxxxxxxxxxxx","xxxxxxdxxxxxxcxx","xxdxxcxxxxdxxxbx"],
+    BASS: ["0...0...0...0...","0.0...0.0.0...0.","0...4...0...2...","0.0.4.0.2.0.4.2."],
+    CHORD:["0---------------","0-------1-------","0---1---2---3---","0-1-2-1-3-1-0-1-"],
+    LEAD: ["................","..........2.....","....4.......2...","..4...5...4...2."]
+  },
+  prob:{ PERC:["","","","......4.....6..."] }
+},
+{
+  name:"SOULFUL", keyName:"E MIN", bpm:123, swing:0.61, human:0.0024,
+  root:41.20,
+  useSamples:true, smpRate:1.0,
+  labels:{CHORD:"PIANO", LEAD:"VOX"},
+  /* Piano and a real progression. The swing is doing as much work as the keys. */
+  prog:[chord(0,"m9"), chord(5,"m7"), chord(-2,"maj9"), chord(3,"maj7"),
+        chord(7,"m11"), chord(-4,"dom9")],
+  voices:{kick:"house", snare:"clap808", hat:"warm", bass:"pluck", chord:"piano", lead:"vox", perc:"latin"},
+  sends:{delay:[0,.08,.14,.16,0,.20,.34], verb:[.04,.28,.18,.26,0,.34,.48]},
+  drive:1.1, filt:0.80,
+  pat:{
+    KICK: ["X...x...X...x...","X...x...X...x..x","X...x...X...x.o.","X..ox...X...x..o"],
+    SNARE:["....C.......C...","....C.......C..o","....C...o...C...","..o.C.o...o.C.o."],
+    HATS: ["..O...O...O...O.","x.Ox..Ox..Ox..O.","xxOxxxOxxxOxxxOx","x.O.s.Oxx.O.s.Ox"],
+    PERC: ["..s...s...s...s.","..c.....c.c.....","..s.c.s...s.c.s.","c..c..s.c..c..s."],
+    BASS: ["0.......0.......","0...0...4...0...","0.0...4.2.....0.","0-..4...2-..5..."],
+    CHORD:["..0.......1.....","..0...1...2...3.","..0.1...2.....3.","0.1.2.1.3.4.2.1."],
+    LEAD: ["................","......0.........","......0.......2.","..0.....2...3..."]
+  },
+  prob:{ HATS:["","","","....6.......4..8"], LEAD:["","","","...6......8....."] }
+},
+{
+  name:"AFRO LATIN", keyName:"D MIN", bpm:124, swing:0.56, human:0.0030,
+  root:36.71,
+  useSamples:true, smpRate:1.0,
+  labels:{PERC:"CONGAS", CHORD:"KEYS"},
+  /* The percussion row is the lead instrument here, so it is busy on every pad. */
+  prog:[chord(0,"m9"), chord(-2,"m7"), chord(5,"m11"), chord(3,"maj9"),
+        chord(7,"sus9"), chord(0,"m6")],
+  voices:{kick:"house", snare:"clap808", hat:"warm", bass:"sub", chord:"epiano", lead:"blip", perc:"latin"},
+  sends:{delay:[0,.06,.12,.18,0,.22,.30], verb:[.04,.24,.18,.26,0,.36,.40]},
+  drive:1.15, filt:0.80,
+  pat:{
+    KICK: ["X...x...X...x...","X...x...X...x..x","X...x...X..xx...","X..ox...X...x.o."],
+    SNARE:["....o.......o...","....C.......C...","..o.C.....o.C...","..o.C.o...o.C.o."],
+    HATS: ["..O...O...O...O.","x.Ox..Ox..Ox..O.","xxOxxxOxxxOxxxOx","x.O.s.O.x.O.s.O."],
+    PERC: ["..c...c...c...c.","c.c.t.c...c.t.c.","c.ct.cc.c.ct.cc.","ccct.cc.cct.ccb."],
+    BASS: ["0.......0.......","0...0...0...4...","0.0...4.0.....2.","0.0.4.0.2.0.4.-."],
+    CHORD:["................","..0.......1.....","..0...1...2...1.","..0.1...2.....3."],
+    LEAD: ["................","..........2.....","....4.......2...","..2...4...2...5."]
+  },
+  prob:{ PERC:["","...8......6.....","....6.......8...","..8.6...8.6...8."] }
+},
+{
+  name:"DUB TECH HOUSE", keyName:"D MIN", bpm:126, swing:0.52, human:0.0016,
+  root:36.71,
+  useSamples:true, smpRate:1.0,
+  labels:{CHORD:"DUB"},
+  /* Sparse, long, wet. One chord held and echoed is the whole arrangement. */
+  prog:[chord(0,"m9"), chord(0,"m7"), chord(-2,"m11"), chord(5,"m7"),
+        chord(3,"maj7"), chord(0,"tri")],
+  voices:{kick:"house", snare:"rimshot", hat:"warm", bass:"sub", chord:"dub", lead:"noise", perc:"machine"},
+  sends:{delay:[0,.18,.22,.30,0,.58,.48], verb:[.06,.30,.20,.30,.04,.50,.52]},
+  drive:1.08, filt:0.72,
+  pat:{
+    KICK: ["X...x...X...x...","X...x...X...x..o","X...x...X...x.o.","X...x..oX...x..."],
+    SNARE:["................","............o...","....o.......o...","....C.......C..."],
+    HATS: ["..O...O...O...O.","..o...O...o...O.","x.O.x.O.x.O.x.O.","xxOxx.Oxxx.xx.O."],
+    PERC: ["................","..........r.....","......s.......s.","..r...s...r...s."],
+    BASS: ["0---------------","0-------0-------","0-----4-0-------","0---2---0---4---"],
+    CHORD:["..0.............","..0.......0.....","..0...1.......0.","..0...1...2...0."],
+    LEAD: ["................","........0.......","....0.......0...","..0...0...0...0."]
+  },
+  prob:{ HATS:["","","","......6.......4."] }
+}
+];
+
+/* ================================================================= audio */
+const AU = {ctx:null, ready:false, noise:null, ir:null};
+let master, drive, crushDry, crushWet, crushNode, mainFilter, comp, recDest;
+let delayNode, delayFb, delayFilt, delayIn, revIn, revNode;
+let limiter, safety, djHP, dryGain, echoSend, echoDly, echoFb, throwSend, throwVerb,
+    freezeSend, freezeDly, freezeFb, freezeOut, riserGain;
+const trackKill = {};
+const trackBus = {}, trackGate = {}, trackDelay = {}, trackVerb = {};
+
+function makeNoise(ctx){
+  const b = ctx.createBuffer(1, ctx.sampleRate*2, ctx.sampleRate);
+  const d = b.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i] = Math.random()*2-1;
+  return b;
+}
+/* Mono impulse responses: a stereo convolver does twice the work for a tail
+   nobody can localise, and convolution runs continuously whether or not
+   anything is being sent to it. */
+function makeIR(ctx, dur, decay){
+  const n = Math.floor(ctx.sampleRate*dur);
+  const b = ctx.createBuffer(1,n,ctx.sampleRate);
+  for(let ch=0;ch<1;ch++){
+    const d = b.getChannelData(ch);
+    for(let i=0;i<n;i++){
+      const t = i/n;
+      d[i] = (Math.random()*2-1) * Math.pow(1-t, decay) * (0.85 + 0.15*Math.sin(t*90+ch*1.7));
+    }
+  }
+  return b;
+}
+/* Curves are rebuilt constantly — once per kit load, and once per pointer move
+   while dragging DRIVE or CRUSH. Each rebuild allocates a new array and swaps
+   it onto a live audio node, which is both wasteful and a source of glitching.
+   Quantise the amount and cache, so a drag reuses curves instead of making
+   hundreds of them. */
+const _satCache = new Map();
+function satCurve(amt){
+  const k = Math.max(0.001, Math.round(Math.max(0.001,amt)*20)/20);
+  let c = _satCache.get(k);
+  if(c) return c;
+  const n=2048; c=new Float32Array(n);
+  for(let i=0;i<n;i++){ const x=i/(n-1)*2-1; c[i]=Math.tanh(x*k)/Math.tanh(k); }
+  _satCache.set(k, c);
+  return c;
+}
+/* The output ceiling. Dead linear below 0.72 so normal playing is untouched,
+   then bends to a 0.93 asymptote. The ceiling sits below full scale on purpose:
+   the oversampling filters in a WaveShaper ring slightly past whatever the
+   curve says, so a curve that stops exactly at 1.0 still measures over. */
+let _ceilCurve = null;
+function ceilCurve(){
+  if(_ceilCurve) return _ceilCurve;
+  const n=4096, c=new Float32Array(n), t=0.72, top=0.93, span=top-t;
+  for(let i=0;i<n;i++){
+    const x=i/(n-1)*2-1, a=Math.abs(x);
+    const y = a<=t ? a : t + span*Math.tanh((a-t)/span);
+    c[i] = x<0 ? -y : y;
+  }
+  _ceilCurve = c;
+  return c;
+}
+const _crushCache = new Map();
+function crushCurve(bits){
+  const b = Math.round(Math.max(2,bits)*4)/4;
+  let c = _crushCache.get(b);
+  if(c) return c;
+  const n=2048; c=new Float32Array(n); const lv=Math.pow(2,b);
+  for(let i=0;i<n;i++){ const x=i/(n-1)*2-1; c[i]=Math.round(x*lv)/lv; }
+  _crushCache.set(b, c);
+  return c;
+}
+
+/* ==================================================== rendered sample bank
+   The honest answer to "make the drums sound sampled" inside one HTML file.
+   Real breaks are somebody's copyright, and a base64 WAV of audio we generated
+   ourselves would add megabytes for no gain. So every one-shot is rendered once
+   through an OfflineAudioContext instead. That buys three things realtime nodes
+   cannot: six or seven layers per hit, a convolved room that glues them, and
+   saturation applied to the summed result rather than per-voice. The rendered
+   buffer is then decimated and bit-reduced the way an Akai would have done it.
+   After that, a hit costs one buffer node instead of ten oscillators.        */
+
+const LATENCY_KEY = "gs90.latency";
+const SMP = {};
+const BREAK_BPM = 124;   // the rendered loop is a disco break at house tempo
+
+function envC(ctx,t,a,d,peak,hold){
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(Math.max(0.0002,peak),t+a);
+  if(hold) g.gain.setValueAtTime(Math.max(0.0002,peak),t+a+hold);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+a+(hold||0)+d);
+  return g;
+}
+function offlineCtx(dur){
+  const OC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  const sr = (AU.ctx && AU.ctx.sampleRate) || 44100;
+  return new OC(1, Math.max(256, Math.ceil(sr*dur)), sr);
+}
+function oNoise(oc,dur){
+  const n=Math.max(2,Math.floor(oc.sampleRate*dur));
+  const b=oc.createBuffer(1,n,oc.sampleRate), d=b.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+  const s=oc.createBufferSource(); s.buffer=b; return s;
+}
+function oRoom(oc,dur,decay,pre){
+  const n=Math.max(2,Math.floor(oc.sampleRate*dur));
+  const b=oc.createBuffer(1,n,oc.sampleRate), d=b.getChannelData(0);
+  const p=Math.floor(oc.sampleRate*(pre||0.005));
+  for(let i=0;i<n;i++) d[i]= i<p ? 0 : (Math.random()*2-1)*Math.pow(1-i/n,decay);
+  return b;
+}
+/* Sample-and-hold decimation plus bit reduction — the grit of a 12-bit sampler
+   playing a break that has already been resampled twice. Done on the rendered
+   floats because there is no realtime node that does it honestly.            */
+function crushBuffer(buf,decim,bits){
+  const d=buf.getChannelData(0), lv=Math.pow(2,Math.max(2,bits)-1);
+  let hold=0, acc=decim;
+  for(let i=0;i<d.length;i++){
+    acc+=1;
+    if(acc>=decim){ acc-=decim; hold=d[i]; }
+    d[i]=Math.max(-1,Math.min(1,Math.round(hold*lv)/lv));
+  }
+}
+function reverseBuffer(buf){
+  const n=buf.length;
+  const nb=AU.ctx.createBuffer(1,n,AU.ctx.sampleRate);
+  const s=buf.getChannelData(0), d=nb.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=s[n-1-i];
+  return nb;
+}
+/* Belt and braces: whatever the renders do, scale any buffer under a ceiling
+   before it is ever played. Scaling cannot undo a flat top, which is why the
+   pre-gains matter — this only catches what they missed. */
+function normalizeBuffer(buf, ceiling){
+  const d=buf.getChannelData(0);
+  let peak=0;
+  for(let i=0;i<d.length;i++){ const a=Math.abs(d[i]); if(a>peak) peak=a; }
+  if(peak<=ceiling || peak<=0) return peak;
+  const g=ceiling/peak;
+  for(let i=0;i<d.length;i++) d[i]*=g;
+  return ceiling;
+}
+function trimTail(buf){ // fade the last 4ms so slices never click
+  const d=buf.getChannelData(0), n=Math.min(d.length, Math.floor(buf.sampleRate*0.004));
+  for(let i=0;i<n;i++) d[d.length-1-i] *= i/n;
+}
+
+/* ---- offline primitives: the same hit, reusable one-shot or inside a break -- */
+function oKick(oc,bus,t,vel){
+  const o=oc.createOscillator(); o.type="sine";
+  o.frequency.setValueAtTime(215,t); o.frequency.exponentialRampToValueAtTime(46,t+0.034);
+  o.connect(envC(oc,t,0.001,0.28,1.0*vel)).connect(bus);
+  o.start(t); o.stop(t+0.4);
+  const o2=oc.createOscillator(); o2.type="triangle";
+  o2.frequency.setValueAtTime(92,t); o2.frequency.exponentialRampToValueAtTime(43,t+0.09);
+  o2.connect(envC(oc,t,0.002,0.20,0.42*vel)).connect(bus);
+  o2.start(t); o2.stop(t+0.35);
+  const o3=oc.createOscillator(); o3.type="square"; o3.frequency.setValueAtTime(168,t);
+  const bp=oc.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=430; bp.Q.value=1.1;
+  o3.connect(bp); bp.connect(envC(oc,t,0.001,0.05,0.30*vel)).connect(bus);
+  o3.start(t); o3.stop(t+0.1);
+  const n=oNoise(oc,0.03);
+  const hp=oc.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=2600;
+  n.connect(hp); hp.connect(envC(oc,t,0.0004,0.013,0.55*vel)).connect(bus);
+  n.start(t); n.stop(t+0.05);
+}
+function oSnare(oc,bus,t,vel,ghost){
+  const dec = ghost ? 0.045 : 0.115;
+  const n=oNoise(oc,dec+0.1);
+  const bp=oc.createBiquadFilter(); bp.type="bandpass";
+  bp.frequency.value= ghost?1500:1850; bp.Q.value=0.62;
+  const hp=oc.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=380;
+  n.connect(bp); bp.connect(hp);
+  hp.connect(envC(oc,t,0.0008,dec,0.62*vel)).connect(bus);
+  n.start(t); n.stop(t+dec+0.12);
+  if(!ghost){ // the crack that sits on top — this is what makes it cut on a system
+    const c=oNoise(oc,0.05);
+    const chp=oc.createBiquadFilter(); chp.type="highpass"; chp.frequency.value=5400;
+    c.connect(chp); chp.connect(envC(oc,t,0.0003,0.028,0.40*vel)).connect(bus);
+    c.start(t); c.stop(t+0.07);
+  }
+  [(ghost?205:186),(ghost?362:338)].forEach((f,i)=>{
+    const o=oc.createOscillator(); o.type="triangle"; o.frequency.setValueAtTime(f,t);
+    o.frequency.exponentialRampToValueAtTime(f*0.86,t+0.05);
+    o.connect(envC(oc,t,0.0008,ghost?0.03:0.062,(i?0.13:0.26)*vel)).connect(bus);
+    o.start(t); o.stop(t+0.12);
+  });
+}
+function oHat(oc,bus,t,vel,open){
+  const dec = open?0.30:0.036;
+  const n=oNoise(oc,dec+0.06);
+  const hp=oc.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=7400;
+  const bp=oc.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=10400; bp.Q.value=1.5;
+  n.connect(hp); hp.connect(bp);
+  bp.connect(envC(oc,t,0.0006,dec,(open?0.20:0.17)*vel)).connect(bus);
+  n.start(t); n.stop(t+dec+0.08);
+}
+function oRideHit(oc,bus,t,vel){
+  const n=oNoise(oc,0.8);
+  const bp=oc.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=5600; bp.Q.value=0.45;
+  const hp=oc.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=3400;
+  n.connect(bp); bp.connect(hp);
+  hp.connect(envC(oc,t,0.002,0.55,0.11*vel)).connect(bus);
+  n.start(t); n.stop(t+0.9);
+}
+/* `pre` is the level going INTO the saturator, and it matters more than it
+   looks. tanh asymptotes at 1.0, so feeding it a signal peaking at 2 or 3 maps
+   a long stretch of samples to ~1.0 — a flat top, which is clipping written
+   permanently into the rendered sample. The kick was doing exactly that: 28
+   samples pinned at full scale, baked in, where no master limiter could ever
+   reach them. Drive the shaper at about unity instead. */
+function satBus(oc,amount,lpHz,pre){
+  const preGain=oc.createGain(); preGain.gain.value = (pre===undefined?1:pre);
+  const sh=oc.createWaveShaper(); sh.curve=satCurve(amount); sh.oversample="4x";
+  const lp=oc.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=lpHz||15000;
+  preGain.connect(sh); sh.connect(lp);
+  return {in:preGain, out:lp};
+}
+
+/* ---- the renders ---- */
+function rKick(oc,out){ const s=satBus(oc,2.6,11000,0.40); oKick(oc,s.in,0.004,1); s.out.connect(out); }
+function rSnare(oc,out){
+  const s=satBus(oc,2.2,14000,0.72);
+  const dry=oc.createGain(); dry.gain.value=1;
+  const wet=oc.createGain(); wet.gain.value=0.30;
+  const cv=oc.createConvolver(); cv.buffer=oRoom(oc,0.16,7,0.004);
+  oSnare(oc,dry,0.004,1,false);
+  dry.connect(s.in); dry.connect(cv); cv.connect(wet); wet.connect(s.in);
+  s.out.connect(out);
+}
+function rGhost(oc,out){ const s=satBus(oc,1.6,12000); oSnare(oc,s.in,0.004,0.85,true); s.out.connect(out); }
+function rHat(oc,out){ const s=satBus(oc,1.4,17000); oHat(oc,s.in,0.003,1,false); s.out.connect(out); }
+function rHatO(oc,out){ const s=satBus(oc,1.4,17000); oHat(oc,s.in,0.003,1,true); s.out.connect(out); }
+function rRide(oc,out){ const s=satBus(oc,1.2,16000); oRideHit(oc,s.in,0.003,1); s.out.connect(out); }
+function rCrash(oc,out){
+  const s=satBus(oc,1.3,16000);
+  const n=oNoise(oc,1.5);
+  const hp=oc.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=2600;
+  const bp=oc.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=7200; bp.Q.value=0.4;
+  n.connect(hp); hp.connect(bp);
+  bp.connect(envC(oc,0.003,0.004,1.25,0.5)).connect(s.in);
+  n.start(0.003); n.stop(1.5);
+  s.out.connect(out);
+}
+function rImpact(oc,out){        // the sub drop / downshifter under a switch-up
+  const s=satBus(oc,1.8,9000,0.52);
+  const o=oc.createOscillator(); o.type="sine";
+  o.frequency.setValueAtTime(120,0.004); o.frequency.exponentialRampToValueAtTime(28,0.004+0.7);
+  o.connect(envC(oc,0.004,0.004,0.85,0.9)).connect(s.in);
+  o.start(0.004); o.stop(1.1);
+  const n=oNoise(oc,0.4);
+  const lp=oc.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=900;
+  n.connect(lp); lp.connect(envC(oc,0.004,0.002,0.34,0.5)).connect(s.in);
+  n.start(0.004); n.stop(0.45);
+  s.out.connect(out);
+}
+function rSweep(oc,out){         // filtered noise riser
+  const s=satBus(oc,1.2,16000);
+  const n=oNoise(oc,1.3);
+  const bp=oc.createBiquadFilter(); bp.type="bandpass"; bp.Q.value=4.5;
+  bp.frequency.setValueAtTime(320,0.004);
+  bp.frequency.exponentialRampToValueAtTime(9000,0.004+1.2);
+  n.connect(bp); bp.connect(envC(oc,0.004,0.6,0.72,0.42,0.55)).connect(s.in);
+  n.start(0.004); n.stop(1.35);
+  s.out.connect(out);
+}
+/* One bar of break at 174, built the way a break actually sits: main hits loud,
+   a shuffle of ghost snares between them, hats riding underneath, and the whole
+   thing summed into a room before it hits the saturator. Sliced at playback. */
+function rBreak(oc,out,barSec){
+  const st=barSec/16, t0=0.002;
+  const dry=oc.createGain(); dry.gain.value=1;
+  const cv=oc.createConvolver(); cv.buffer=oRoom(oc,0.22,6,0.006);
+  const wet=oc.createGain(); wet.gain.value=0.26;
+  const s=satBus(oc,2.4,13500,0.46);
+  dry.connect(s.in); dry.connect(cv); cv.connect(wet); wet.connect(s.in);
+  s.out.connect(out);
+
+  const at=i=>t0+i*st;
+  [0,10].forEach(i=>oKick(oc,dry,at(i),1));
+  oKick(oc,dry,at(3),0.5);
+  [4,12].forEach(i=>oSnare(oc,dry,at(i),1,false));
+  [2,7,11,14,15].forEach(i=>oSnare(oc,dry,at(i),0.45+Math.random()*0.2,true));
+  for(let i=0;i<16;i++){
+    if(i%2===0) oHat(oc,dry,at(i)+(Math.random()-0.5)*0.004,0.55+Math.random()*0.3,false);
+    if(i===6||i===14) oHat(oc,dry,at(i),0.7,true);
+  }
+  [0,8].forEach(i=>oRideHit(oc,dry,at(i),0.5));
+  // room bleed: a quiet filtered noise bed so slices are never digitally silent
+  const bed=oNoise(oc,barSec+0.1);
+  const bhp=oc.createBiquadFilter(); bhp.type="highpass"; bhp.frequency.value=700;
+  const blp=oc.createBiquadFilter(); blp.type="lowpass"; blp.frequency.value=6000;
+  const bg=oc.createGain(); bg.gain.value=0.012;
+  bed.connect(bhp); bhp.connect(blp); blp.connect(bg); bg.connect(dry);
+  bed.start(0); bed.stop(barSec+0.1);
+}
+
+async function renderBank(onProgress){
+  const jobs=[
+    ["bkick",0.45,rKick],["bsnare",0.55,rSnare],["bghost",0.22,rGhost],
+    ["bhat",0.13,rHat],["bhatO",0.42,rHatO],["bride",0.95,rRide],
+    ["bcrash",1.6,rCrash],["bimpact",1.2,rImpact],["bsweep",1.4,rSweep]
+  ];
+  for(const [key,dur,fn] of jobs){
+    const oc=offlineCtx(dur); fn(oc,oc.destination);
+    SMP[key]=await oc.startRendering();
+    normalizeBuffer(SMP[key], 0.88);
+    trimTail(SMP[key]);
+    if(onProgress) onProgress(key);
+  }
+  crushBuffer(SMP.bkick,1.0,15);
+  crushBuffer(SMP.bsnare,1.35,12);
+  crushBuffer(SMP.bghost,1.5,11);
+  crushBuffer(SMP.bhat,1.2,12);
+
+  const barSec=4*60/BREAK_BPM;
+  const oc=offlineCtx(barSec);
+  rBreak(oc,oc.destination,barSec);
+  SMP.break1=await oc.startRendering();
+  normalizeBuffer(SMP.break1, 0.86);
+  crushBuffer(SMP.break1,1.75,12);
+  SMP.barSec=barSec;
+  SMP.break1R=reverseBuffer(SMP.break1);
+  SMP.crashR=reverseBuffer(SMP.bcrash);
+  SMP.ready=true;
+  if(onProgress) onProgress("break");
+}
+
+/* ---- buffer playback ---- */
+function playSmp(t,out,buf,gain,rate,offset,bufDur){
+  if(!buf) return;
+  const ctx=AU.ctx;
+  const s=ctx.createBufferSource(); s.buffer=buf;
+  const r=Math.max(0.06,num(rate,1));
+  s.playbackRate.value=r;
+  const g=ctx.createGain();
+  const pk=Math.max(0.0002,num(gain,1));
+  g.gain.setValueAtTime(pk,t);
+  s.connect(g); g.connect(out);
+  if(bufDur){
+    const real=bufDur/r;
+    g.gain.setValueAtTime(pk,t+Math.max(0.004,real-0.006));
+    g.gain.linearRampToValueAtTime(0.0001,t+real);
+    s.start(t,Math.max(0,num(offset,0)),bufDur+0.02);
+    s.stop(t+real+0.03);
+  } else {
+    s.start(t,Math.max(0,num(offset,0)));
+  }
+}
+/* Break chopping. A row of x plays the break straight through; every other
+   character is an edit applied to that step's sixteenth.                     */
+function vBreak(t,out,ch,step,rate){
+  if(!SMP.ready) return;
+  const sl=SMP.barSec/16;
+  let buf=SMP.break1, idx=step, g=0.72, r=rate;
+  if(ch==="o") g=0.34;
+  else if(ch==="X") g=0.95;
+  else if(ch==="r"){ buf=SMP.break1R; idx=15-step; }
+  else if(ch==="d") idx=(step+9)%16;            // stutter — pull a slice from elsewhere
+  else if(ch==="c"){ idx=(step+4)%16; g=0.7; }
+  else if(ch==="s"){ r=rate*2; idx=(step+2)%16; } // pitched-up flam
+  else if(ch==="t") r=rate*0.5;                  // half speed drag
+  else if(ch==="b"){                             // double-time roll
+    playSmp(t, out, buf, g, rate, idx*sl, sl/2);
+    playSmp(t+(sl/2)/rate, out, buf, g*0.9, rate, idx*sl, sl/2);
+    return;
+  }
+  playSmp(t,out,buf,g,r,idx*sl,sl);
+}
+function vFx(t,out,deg){
+  if(!SMP.ready) return;
+  if(deg===0) playSmp(t,out,SMP.crashR,0.42,1);
+  else if(deg===1) playSmp(t,out,SMP.bimpact,0.7,1);
+  else if(deg===2) playSmp(t,out,SMP.bsweep,0.45,1);
+  else playSmp(t,out,SMP.bcrash,0.34,1);
+}
+
+/* ============================================ A.M.C-school bass sound design
+   Three separate engines, one per pad, so the row spans an intro to a drop.
+   All of them keep a clean sine sub outside the distortion — putting the sub
+   through the saturator is what turns a heavy bass into a muddy one.         */
+function subLayer(ctx,t,f,dur,out,amt){
+  const o=ctx.createOscillator(); o.type="sine"; o.frequency.setValueAtTime(num(f,41),t);
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(amt,t+0.01);
+  g.gain.setValueAtTime(amt,t+Math.max(0.03,dur-0.05));
+  expTo(g.gain,0.0001,t+dur+0.04);
+  o.connect(g); g.connect(out); o.start(t); o.stop(t+dur+0.1);
+}
+function vReese(t,out,f,dur,acc){
+  const ctx=AU.ctx, base=num(f,41);
+  /* Detuned saws beating against each other, then swept notches to carve the
+     comb movement, then drive. That order is the whole Reese.               */
+  const sum=ctx.createGain(); sum.gain.value=0.34;
+  [-14,-7,0,7,14].forEach(cents=>{
+    const o=ctx.createOscillator(); o.type="sawtooth";
+    o.frequency.setValueAtTime(base*2*Math.pow(2,cents/1200),t);
+    o.connect(sum); o.start(t); o.stop(t+dur+0.12);
+  });
+  const n1=ctx.createBiquadFilter(); n1.type="notch"; n1.Q.value=2.4; n1.frequency.value=420;
+  const n2=ctx.createBiquadFilter(); n2.type="notch"; n2.Q.value=2.0; n2.frequency.value=980;
+  [[n1,0.28,220],[n2,0.41,430]].forEach(([nd,rate,depth])=>{
+    const l=ctx.createOscillator(); l.type="sine"; l.frequency.value=rate;
+    const lg=ctx.createGain(); lg.gain.value=depth;
+    l.connect(lg); lg.connect(nd.frequency); l.start(t); l.stop(t+dur+0.2);
+  });
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=5;
+  lp.frequency.setValueAtTime(acc?2100:1500,t);
+  lp.frequency.linearRampToValueAtTime(700,t+Math.min(1.2,dur*0.85));
+  const sh=ctx.createWaveShaper(); sh.curve=satCurve(3.2); sh.oversample="2x";
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=110;
+  const g=ctx.createGain();
+  const pk=acc?0.34:0.28;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(pk,t+0.014);
+  g.gain.setValueAtTime(pk,t+Math.max(0.04,dur-0.06));
+  expTo(g.gain,0.0001,t+dur+0.05);
+  sum.connect(n1); n1.connect(n2); n2.connect(lp); lp.connect(sh); sh.connect(hp); hp.connect(g); g.connect(out);
+  subLayer(ctx,t,base,dur,out,acc?0.52:0.44);
+}
+function vGrowl(t,out,f,dur,acc,bpm){
+  const ctx=AU.ctx, base=num(f,41);
+  /* FM'd saw through a resonant filter shaken at an eighth-note rate, then two
+     formant bands and three gain stages of drive. The tempo-locked wobble is
+     what stops it sounding like a generic distorted synth.                   */
+  const car=ctx.createOscillator(); car.type="sawtooth"; car.frequency.setValueAtTime(base*2,t);
+  const mod=ctx.createOscillator(); mod.type="sine"; mod.frequency.setValueAtTime(base*3.01,t);
+  const mg=ctx.createGain();
+  mg.gain.setValueAtTime(base*4.5,t); expTo(mg.gain,base*0.6,t+Math.min(0.5,dur));
+  mod.connect(mg); mg.connect(car.frequency);
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=13;
+  lp.frequency.setValueAtTime(acc?1800:1200,t);
+  const wob=ctx.createOscillator(); wob.type="triangle";
+  wob.frequency.value=Math.max(0.5,(num(bpm,174)/60)*2);   // eighth notes
+  const wg=ctx.createGain(); wg.gain.value=700;
+  wob.connect(wg); wg.connect(lp.frequency); wob.start(t); wob.stop(t+dur+0.2);
+  const sh1=ctx.createWaveShaper(); sh1.curve=satCurve(5.5); sh1.oversample="4x";
+  const fmix=ctx.createGain(); fmix.gain.value=0.9;
+  [[520,3.5,1],[1450,4.5,0.65],[2900,5,0.35]].forEach(([fr,q,amt])=>{
+    const bp=ctx.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=fr; bp.Q.value=q;
+    const ag=ctx.createGain(); ag.gain.value=amt;
+    sh1.connect(bp); bp.connect(ag); ag.connect(fmix);
+  });
+  const sh2=ctx.createWaveShaper(); sh2.curve=satCurve(2.4);
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=120;
+  const g=ctx.createGain();
+  const pk=acc?0.3:0.25;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(pk,t+0.008);
+  g.gain.setValueAtTime(pk,t+Math.max(0.03,dur-0.05));
+  expTo(g.gain,0.0001,t+dur+0.04);
+  car.connect(lp); lp.connect(sh1); fmix.connect(sh2); sh2.connect(hp); hp.connect(g); g.connect(out);
+  car.start(t); car.stop(t+dur+0.1); mod.start(t); mod.stop(t+dur+0.1);
+  subLayer(ctx,t,base,dur,out,acc?0.5:0.42);
+}
+function vJumpup(t,out,f,dur,acc){
+  const ctx=AU.ctx, base=num(f,41);
+  /* The talking bass: a square through a very resonant filter whose envelope
+     opens and shuts inside a single note, plus a vowel pair. Short and rude.  */
+  const o=ctx.createOscillator(); o.type="square"; o.frequency.setValueAtTime(base*2,t);
+  const o2=ctx.createOscillator(); o2.type="sawtooth"; o2.frequency.setValueAtTime(base*2*1.005,t);
+  const mix=ctx.createGain(); mix.gain.value=0.5;
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=16;
+  const top=acc?3400:2200;
+  lp.frequency.setValueAtTime(280,t);
+  lp.frequency.linearRampToValueAtTime(top,t+Math.min(0.07,dur*0.3));
+  expTo(lp.frequency,340,t+Math.min(0.55,dur*0.95));
+  const sh=ctx.createWaveShaper(); sh.curve=satCurve(7); sh.oversample="4x";
+  const vmix=ctx.createGain(); vmix.gain.value=0.85;
+  [[700,6,1],[1900,7,0.55]].forEach(([fr,q,amt])=>{
+    const bp=ctx.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=fr; bp.Q.value=q;
+    const ag=ctx.createGain(); ag.gain.value=amt;
+    sh.connect(bp); bp.connect(ag); ag.connect(vmix);
+  });
+  const dir=ctx.createGain(); dir.gain.value=0.4; sh.connect(dir); dir.connect(vmix);
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=130;
+  const g=ctx.createGain();
+  const pk=acc?0.3:0.24;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(pk,t+0.006);
+  g.gain.setValueAtTime(pk,t+Math.max(0.02,dur-0.04));
+  expTo(g.gain,0.0001,t+dur+0.03);
+  o.connect(mix); o2.connect(mix); mix.connect(lp); lp.connect(sh);
+  vmix.connect(hp); hp.connect(g); g.connect(out);
+  o.start(t); o.stop(t+dur+0.08); o2.start(t); o2.stop(t+dur+0.08);
+  subLayer(ctx,t,base,dur,out,acc?0.55:0.46);
+}
+/* Dark chord voice. No sevenths, no ninths — those extensions are exactly what
+   was making the drum & bass kit sound like a house record.                   */
+function vDarkPad(t,out,freqs,dur){
+  const ctx=AU.ctx;
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=2.2;
+  lp.frequency.setValueAtTime(340,t);
+  lp.frequency.linearRampToValueAtTime(1500,t+Math.min(1.4,dur*0.7));
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(0.10,t+Math.min(0.5,dur*0.4));
+  g.gain.setValueAtTime(0.10,t+Math.max(0.12,dur*0.75));
+  expTo(g.gain,0.0001,t+dur+0.35);
+  freqs.forEach((f,i)=>{
+    [-0.16,0.16].forEach(det=>{
+      const o=ctx.createOscillator(); o.type= i===0?"sawtooth":"triangle";
+      o.frequency.value=num(f,110)*Math.pow(2,det/12)*0.5;
+      o.connect(lp); o.start(t); o.stop(t+dur+0.5);
+    });
+  });
+  const n=noiseSrc(t,dur+0.3);
+  const bp=ctx.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=900; bp.Q.value=1.2;
+  const ng=ctx.createGain(); ng.gain.value=0.09;
+  n.connect(bp); bp.connect(ng); ng.connect(lp);
+  lp.connect(g); g.connect(out);
+}
+
+/* Guard rails: a non-finite value or an exponential ramp to zero throws. */
+function num(v,f){ return Number.isFinite(v) ? v : f; }
+function expTo(p,v,t){ p.exponentialRampToValueAtTime(Math.max(1e-4,num(v,1e-4)), t); }
+
+function initAudio(){
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  /* Browsers default an AudioContext to the smallest possible output buffer
+     ("interactive"). That is right for a game that must react in 5ms, and wrong
+     for a synth: a small buffer means the audio thread must refill every ~3ms,
+     and if it is ever late the device plays whatever was left in the buffer —
+     which is heard as crackling. It is especially bad on Windows and on
+     Bluetooth earbuds, and it is why a page can crackle while every other app
+     sounds fine. A ~100ms buffer costs a little responsiveness and gives the
+     audio thread about thirty times the headroom. */
+  let hint = 0.1;
+  try{
+    const saved = localStorage.getItem(LATENCY_KEY);
+    if(saved === "tight") hint = "interactive";
+  }catch(err){}
+  let ctx;
+  try{ ctx = new Ctx({latencyHint: hint}); }
+  catch(err){ ctx = new Ctx(); }      // older browsers reject the option
+  AU.ctx = ctx;
+  AU.noise = makeNoise(ctx);
+
+  master = ctx.createGain();          master.gain.value = 0.72;
+  drive  = ctx.createWaveShaper();    drive.curve = satCurve(1.4); drive.oversample="2x";
+  crushNode = ctx.createWaveShaper(); crushNode.curve = crushCurve(6);
+  crushDry = ctx.createGain();        crushDry.gain.value = 1;
+  crushWet = ctx.createGain();        crushWet.gain.value = 0;
+  mainFilter = ctx.createBiquadFilter(); mainFilter.type="lowpass";
+  mainFilter.frequency.value = 18000; mainFilter.Q.value = 0.8;
+  comp = ctx.createDynamicsCompressor();
+  comp.threshold.value=-10; comp.knee.value=8; comp.ratio.value=5;
+  comp.attack.value=0.004; comp.release.value=0.14;
+
+  /* The DJ filter is two filters in series: the low-pass we already had, plus
+     a high-pass. Centre leaves both wide open, so neither colours the sound. */
+  djHP = ctx.createBiquadFilter(); djHP.type="highpass";
+  djHP.frequency.value = 25; djHP.Q.value = 0.7;
+
+  /* master chain: bus -> drive -> crush -> LP -> HP -> comp -> FX -> out.
+     The performance FX sit after the compressor, where a mixer's master
+     section would be, so a roll or an echo does not get squashed back. */
+  drive.connect(crushDry); drive.connect(crushNode); crushNode.connect(crushWet);
+  crushDry.connect(mainFilter); crushWet.connect(mainFilter);
+  mainFilter.connect(djHP); djHP.connect(comp);
+
+  dryGain = ctx.createGain(); dryGain.gain.value = 1;
+  comp.connect(dryGain); dryGain.connect(master);
+
+  /* echo out — tempo-synced, feeds itself, kills the dry on the bar */
+  echoSend = ctx.createGain(); echoSend.gain.value = 0;
+  echoDly  = ctx.createDelay(2.0); echoDly.delayTime.value = 0.2;
+  echoFb   = ctx.createGain(); echoFb.gain.value = 0;
+  const echoTone = ctx.createBiquadFilter(); echoTone.type="bandpass";
+  echoTone.frequency.value = 1300; echoTone.Q.value = 0.5;
+  comp.connect(echoSend); echoSend.connect(echoDly);
+  echoDly.connect(echoTone); echoTone.connect(echoFb); echoFb.connect(echoDly);
+  echoTone.connect(master);
+
+  /* reverb throw — its own long tail, separate from the per-track SPACE send */
+  throwSend = ctx.createGain(); throwSend.gain.value = 0;
+  throwVerb = ctx.createConvolver(); throwVerb.buffer = makeIR(ctx, 2.6, 2.2);
+  const throwTone = ctx.createBiquadFilter(); throwTone.type="highpass";
+  throwTone.frequency.value = 300;
+  comp.connect(throwSend); throwSend.connect(throwVerb);
+  throwVerb.connect(throwTone); throwTone.connect(master);
+
+  /* freeze line — beat rolls and loop hold both run through this */
+  freezeSend = ctx.createGain(); freezeSend.gain.value = 0;
+  freezeDly  = ctx.createDelay(2.0); freezeDly.delayTime.value = 0.25;
+  freezeFb   = ctx.createGain(); freezeFb.gain.value = 0;
+  freezeOut  = ctx.createGain(); freezeOut.gain.value = 0;
+  comp.connect(freezeSend); freezeSend.connect(freezeDly);
+  freezeDly.connect(freezeFb); freezeFb.connect(freezeDly);
+  freezeDly.connect(freezeOut); freezeOut.connect(master);
+
+  riserGain = ctx.createGain(); riserGain.gain.value = 1; riserGain.connect(master);
+
+  /* Seven instruments, parallel FX sends and a feedback delay all summing into
+     one bus will go past full scale on loud pads — measured at +2.3 dBFS, which
+     is what the crackling was: the output stage clipping, not the earbuds.
+     The glue compressor earlier in the chain is set for feel, not for safety,
+     so the master needs an actual limiter and then a soft ceiling behind it. */
+  limiter = ctx.createDynamicsCompressor();
+  limiter.threshold.value = -2.0; limiter.knee.value = 0; limiter.ratio.value = 20;
+  limiter.attack.value = 0.002; limiter.release.value = 0.09;
+  /* A compressor has a release and can still let a fast transient through, so a
+     gentle tanh behind it guarantees nothing ever reaches the converter over
+     full scale. It only ever touches peaks the limiter did not catch. */
+  safety = ctx.createWaveShaper(); safety.curve = ceilCurve(); safety.oversample = "2x";   // the limiter already caught the peaks
+
+  master.connect(limiter); limiter.connect(safety); safety.connect(ctx.destination);
+  recDest = ctx.createMediaStreamDestination(); safety.connect(recDest);
+
+  /* sends */
+  delayIn = ctx.createGain();
+  delayFilt = ctx.createBiquadFilter(); delayFilt.type="bandpass";
+  delayFilt.frequency.value=1400; delayFilt.Q.value=0.6;
+  delayNode = ctx.createDelay(2.0);
+  delayFb = ctx.createGain(); delayFb.gain.value=0.42;
+  delayIn.connect(delayNode); delayNode.connect(delayFilt);
+  delayFilt.connect(delayFb); delayFb.connect(delayNode);
+  delayFilt.connect(drive);
+
+  revIn = ctx.createGain();
+  revNode = ctx.createConvolver(); revNode.buffer = makeIR(ctx, 2.4, 2.6);
+  const revTone = ctx.createBiquadFilter(); revTone.type="highpass"; revTone.frequency.value=260;
+  revIn.connect(revNode); revNode.connect(revTone); revTone.connect(drive);
+
+  TRACKS.forEach(t=>{
+    /* bus -> gate -> drive. Voices attach to the bus; the gate is a hard mute
+       we can slam shut to kill notes the scheduler already committed to the
+       audio clock. Without it, "instant" would still ring for a sixteenth. */
+    const g = ctx.createGain(); g.gain.value = 0.78;
+    const gate = ctx.createGain(); gate.gain.value = 1;
+    const kill = ctx.createGain(); kill.gain.value = 1;   // bass kill duck
+    g.connect(gate); gate.connect(kill); kill.connect(drive);
+    trackKill[t.id]=kill;
+    const d = ctx.createGain(); d.gain.value = 0; kill.connect(d); d.connect(delayIn);
+    const r = ctx.createGain(); r.gain.value = 0; kill.connect(r); r.connect(revIn);
+    trackBus[t.id]=g; trackGate[t.id]=gate; trackDelay[t.id]=d; trackVerb[t.id]=r;
+  });
+
+  AU.ready = true;
+}
+
+function noiseSrc(t, dur){
+  const s = AU.ctx.createBufferSource();
+  s.buffer = AU.noise; s.loop = true;
+  s.playbackRate.value = 0.9 + Math.random()*0.2;
+  s.start(t, Math.random()*1.5); s.stop(t+dur+0.05);
+  return s;
+}
+function env(t, atk, dec, peak){
+  const g = AU.ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(Math.max(0.0002,peak), t+atk);
+  expTo(g.gain, 0.0001, t+atk+dec);
+  return g;
+}
+
+/* ------------------------------------------------------------- drum voices */
+const KICKS = {
+  tech:   {f0:165,f1:47,pd:0.045,d:0.30,click:0.55,gain:1.05,body:"sine"},
+  house:  {f0:140,f1:44,pd:0.075,d:0.52,click:0.22,gain:1.00,body:"sine"},
+  dnb:    {f0:190,f1:52,pd:0.030,d:0.22,click:0.75,gain:1.05,body:"triangle"},
+  break:  {f0:150,f1:50,pd:0.040,d:0.26,click:0.60,gain:0.98,body:"sine"},
+  garage: {f0:155,f1:46,pd:0.050,d:0.34,click:0.40,gain:1.02,body:"sine"}
+};
+function vKick(t, out, vel, kind){
+  const ctx=AU.ctx, p=KICKS[kind]||KICKS.tech;
+  const o = ctx.createOscillator(); o.type=p.body;
+  o.frequency.setValueAtTime(p.f0*(0.94+vel*0.1), t);
+  expTo(o.frequency, p.f1, t+p.pd);
+  const g = env(t, 0.002, p.d, p.gain*vel);
+  o.connect(g); g.connect(out); o.start(t); o.stop(t+p.d+0.08);
+  if(p.click>0.05){
+    const n = noiseSrc(t, 0.02);
+    const hp = ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=1600;
+    const ng = env(t, 0.001, 0.016, p.click*vel*0.5);
+    n.connect(hp); hp.connect(ng); ng.connect(out);
+  }
+}
+function vSnare(t, out, vel, kind){
+  const ctx=AU.ctx;
+  const bright = kind==="break" ? 2400 : 1900;
+  const dec = (kind==="break" ? 0.14 : 0.17) * (0.5+vel*0.6);
+  const n = noiseSrc(t, dec+0.05);
+  const bp = ctx.createBiquadFilter(); bp.type="bandpass";
+  bp.frequency.value = bright*(0.9+Math.random()*0.2); bp.Q.value=0.7;
+  const hp = ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=420;
+  const ng = env(t, 0.001, dec, 0.5*vel);
+  n.connect(bp); bp.connect(hp); hp.connect(ng); ng.connect(out);
+  [188, 331].forEach((f,i)=>{
+    const o=ctx.createOscillator(); o.type="triangle"; o.frequency.value=f;
+    const g=env(t,0.001,0.055,(i?0.14:0.24)*vel);
+    o.connect(g); g.connect(out); o.start(t); o.stop(t+0.1);
+  });
+}
+function vClap(t, out, vel, k808){
+  const ctx=AU.ctx;
+  const offs = k808 ? [0,0.013,0.026] : [0,0.009,0.018,0.027];
+  offs.forEach((o,i)=>{
+    const n = noiseSrc(t+o, 0.03);
+    const bp = ctx.createBiquadFilter(); bp.type="bandpass";
+    bp.frequency.value = k808?1050:1350; bp.Q.value=1.3;
+    const g = env(t+o, 0.0008, 0.022, 0.34*vel*(1-i*0.12));
+    n.connect(bp); bp.connect(g); g.connect(out);
+  });
+  const tail = noiseSrc(t+0.031, 0.2);
+  const bp2 = ctx.createBiquadFilter(); bp2.type="bandpass";
+  bp2.frequency.value = k808?1000:1250; bp2.Q.value=1.1;
+  const gt = env(t+0.031, 0.002, k808?0.17:0.11, 0.3*vel);
+  tail.connect(bp2); bp2.connect(gt); gt.connect(out);
+}
+function vHat(t, out, vel, open, kind){
+  const ctx=AU.ctx;
+  const dec = open ? (kind==="warm"?0.34:0.28) : (kind==="warm"?0.058:0.038);
+  const n = noiseSrc(t, dec+0.04);
+  const hp = ctx.createBiquadFilter(); hp.type="highpass";
+  hp.frequency.value = kind==="warm" ? 6200 : 7800;
+  const bp = ctx.createBiquadFilter(); bp.type="bandpass";
+  bp.frequency.value = 9500; bp.Q.value = 1.6;
+  const g = env(t, 0.0008, dec, (open?0.20:0.17)*vel);
+  n.connect(hp); hp.connect(bp); bp.connect(g); g.connect(out);
+}
+function vRim(t,out,vel){
+  const ctx=AU.ctx;
+  const o=ctx.createOscillator(); o.type="triangle"; o.frequency.value=1750;
+  const g=env(t,0.0005,0.026,0.30*vel);
+  const bp=ctx.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=2300; bp.Q.value=2.2;
+  o.connect(bp); bp.connect(g); g.connect(out); o.start(t); o.stop(t+0.06);
+  const n=noiseSrc(t,0.014);
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=2600;
+  const ng=env(t,0.0004,0.012,0.14*vel);
+  n.connect(hp); hp.connect(ng); ng.connect(out);
+}
+function vShaker(t,out,vel){
+  const ctx=AU.ctx;
+  const n=noiseSrc(t,0.1);
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=5200;
+  const g=env(t,0.006,0.062,0.14*vel);
+  n.connect(hp); hp.connect(g); g.connect(out);
+}
+function vRide(t,out,vel){
+  const ctx=AU.ctx;
+  const n=noiseSrc(t,0.7);
+  const bp=ctx.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=5400; bp.Q.value=0.5;
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=3200;
+  const g=env(t,0.002,0.5,0.10*vel);
+  n.connect(bp); bp.connect(hp); hp.connect(g); g.connect(out);
+}
+function vTom(t,out,vel,f){
+  const ctx=AU.ctx;
+  const o=ctx.createOscillator(); o.type="sine";
+  o.frequency.setValueAtTime(num(f,190), t); expTo(o.frequency, num(f,190)*0.55, t+0.22);
+  const g=env(t,0.002,0.26,0.42*vel);
+  o.connect(g); g.connect(out); o.start(t); o.stop(t+0.35);
+  const n=noiseSrc(t,0.06);
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=2200;
+  const ng=env(t,0.001,0.05,0.09*vel);
+  n.connect(lp); lp.connect(ng); ng.connect(out);
+}
+function vConga(t,out,vel){ vTom(t,out,vel*0.85,330); }
+function vBell(t,out,vel){
+  const ctx=AU.ctx;
+  const bp=ctx.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=2600; bp.Q.value=1.4;
+  const g=env(t,0.001,0.18,0.16*vel);
+  [540,800].forEach(f=>{
+    const o=ctx.createOscillator(); o.type="square"; o.frequency.value=f;
+    o.connect(bp); o.start(t); o.stop(t+0.22);
+  });
+  bp.connect(g); g.connect(out);
+}
+
+/* ---------------------------------------------------------- pitched voices */
+function vSub(t,out,f,dur,acc){
+  const ctx=AU.ctx;
+  const o=ctx.createOscillator(); o.type="sine"; o.frequency.setValueAtTime(num(f,55),t);
+  const o2=ctx.createOscillator(); o2.type="triangle"; o2.frequency.setValueAtTime(num(f,55),t);
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=acc?340:220; lp.Q.value=1;
+  const g=ctx.createGain();
+  const peak = acc?0.85:0.62;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(peak,t+0.008);
+  g.gain.setValueAtTime(peak,t+Math.max(0.02,dur-0.05));
+  expTo(g.gain,0.0001,t+dur+0.04);
+  const g2=ctx.createGain(); g2.gain.value=0.3;
+  o.connect(lp); o2.connect(g2); g2.connect(lp); lp.connect(g); g.connect(out);
+  o.start(t); o.stop(t+dur+0.1); o2.start(t); o2.stop(t+dur+0.1);
+}
+function vAcid(t,out,f,dur,acc,glide,prevF){
+  const ctx=AU.ctx;
+  const o=ctx.createOscillator(); o.type="sawtooth";
+  if(glide && prevF){ o.frequency.setValueAtTime(prevF,t); o.frequency.setTargetAtTime(num(f,55),t,0.035); }
+  else o.frequency.setValueAtTime(num(f,55),t);
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=acc?17:11;
+  const base=180, top=base*(acc?11:5.5);
+  lp.frequency.setValueAtTime(top,t);
+  expTo(lp.frequency, base+90, t+Math.min(0.42,dur*0.9+0.1));
+  const sh=ctx.createWaveShaper(); sh.curve=satCurve(2.4);
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(acc?0.36:0.27,t+0.006);
+  g.gain.setValueAtTime(acc?0.36:0.27,t+Math.max(0.02,dur-0.04));
+  expTo(g.gain,0.0001,t+dur+0.03);
+  o.connect(lp); lp.connect(sh); sh.connect(g); g.connect(out);
+  o.start(t); o.stop(t+dur+0.08);
+}
+function vStab(t,out,freqs,dur){
+  const ctx=AU.ctx;
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=5;
+  lp.frequency.setValueAtTime(5200,t); expTo(lp.frequency,700,t+Math.min(0.3,dur));
+  const g=env(t,0.004,Math.max(0.09,dur*0.9),0.20);
+  freqs.forEach(f=>{
+    [-0.07,0.07].forEach(det=>{
+      const o=ctx.createOscillator(); o.type="sawtooth";
+      o.frequency.value=num(f,220)*Math.pow(2,det/12);
+      o.connect(lp); o.start(t); o.stop(t+dur+0.15);
+    });
+  });
+  lp.connect(g); g.connect(out);
+}
+function vRhodes(t,out,freqs,dur){
+  const ctx=AU.ctx;
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(0.16,t+0.012);
+  expTo(g.gain,0.0001,t+Math.max(0.25,dur));
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=2600;
+  freqs.forEach(f=>{
+    const c=ctx.createOscillator(); c.type="sine"; c.frequency.value=num(f,220);
+    const m=ctx.createOscillator(); m.type="sine"; m.frequency.value=num(f,220)*2;
+    const mg=ctx.createGain();
+    mg.gain.setValueAtTime(num(f,220)*1.6,t);
+    expTo(mg.gain,1,t+0.22);
+    m.connect(mg); mg.connect(c.frequency);
+    c.connect(lp);
+    c.start(t); c.stop(t+dur+0.3); m.start(t); m.stop(t+dur+0.3);
+  });
+  lp.connect(g); g.connect(out);
+}
+function vOrgan(t,out,freqs,dur){
+  const ctx=AU.ctx;
+  const g=env(t,0.006,Math.max(0.14,dur*0.85),0.13);
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=3400;
+  freqs.forEach(f=>{
+    [1,2,3].forEach((h,i)=>{
+      const o=ctx.createOscillator(); o.type= i===2?"triangle":"sine";
+      o.frequency.value=num(f,220)*h;
+      const hg=ctx.createGain(); hg.gain.value=1/(i+1.4);
+      o.connect(hg); hg.connect(lp); o.start(t); o.stop(t+dur+0.2);
+    });
+  });
+  lp.connect(g); g.connect(out);
+}
+function vDubChord(t,out,freqs,dur){
+  const ctx=AU.ctx;
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=3;
+  lp.frequency.setValueAtTime(2200,t); expTo(lp.frequency,520,t+0.5);
+  const g=env(t,0.008,Math.max(0.34,dur),0.17);
+  freqs.forEach(f=>{
+    [-0.12,0.12].forEach(det=>{
+      const o=ctx.createOscillator(); o.type="sawtooth";
+      o.frequency.value=num(f,220)*Math.pow(2,det/12);
+      o.connect(lp); o.start(t); o.stop(t+dur+0.6);
+    });
+  });
+  lp.connect(g); g.connect(out);
+}
+function vPad(t,out,freqs,dur){
+  const ctx=AU.ctx;
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=1.2;
+  lp.frequency.setValueAtTime(500,t);
+  lp.frequency.linearRampToValueAtTime(1900,t+Math.min(1.2,dur*0.6));
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(0.11,t+Math.min(0.35,dur*0.35));
+  g.gain.setValueAtTime(0.11,t+Math.max(0.1,dur*0.7));
+  expTo(g.gain,0.0001,t+dur+0.25);
+  freqs.forEach(f=>{
+    [-0.1,0.1,0].forEach(det=>{
+      const o=ctx.createOscillator(); o.type="sawtooth";
+      o.frequency.value=num(f,220)*Math.pow(2,det/12);
+      o.connect(lp); o.start(t); o.stop(t+dur+0.4);
+    });
+  });
+  lp.connect(g); g.connect(out);
+}
+function vBlip(t,out,f,dur){
+  const ctx=AU.ctx;
+  const o=ctx.createOscillator(); o.type="square"; o.frequency.value=num(f,440);
+  const bp=ctx.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=num(f,440)*1.6; bp.Q.value=3;
+  const g=env(t,0.002,Math.min(0.14,Math.max(0.05,dur)),0.13);
+  o.connect(bp); bp.connect(g); g.connect(out); o.start(t); o.stop(t+0.3);
+}
+function vSaw(t,out,f,dur){
+  const ctx=AU.ctx;
+  const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=6;
+  lp.frequency.setValueAtTime(3800,t); expTo(lp.frequency,900,t+Math.min(0.35,dur));
+  const g=env(t,0.004,Math.max(0.1,dur*0.9),0.12);
+  [-0.06,0.06].forEach(det=>{
+    const o=ctx.createOscillator(); o.type="sawtooth";
+    o.frequency.value=num(f,440)*Math.pow(2,det/12);
+    o.connect(lp); o.start(t); o.stop(t+dur+0.2);
+  });
+  lp.connect(g); g.connect(out);
+}
+function vNoiseFx(t,out,f,dur){
+  const ctx=AU.ctx;
+  const n=noiseSrc(t,dur+0.2);
+  const bp=ctx.createBiquadFilter(); bp.type="bandpass"; bp.Q.value=4;
+  bp.frequency.setValueAtTime(600,t);
+  bp.frequency.exponentialRampToValueAtTime(Math.max(200,num(f,900)*2.2),t+Math.max(0.1,dur));
+  const g=env(t,0.02,Math.max(0.2,dur),0.16);
+  n.connect(bp); bp.connect(g); g.connect(out);
+}
+
+/* ================================================================ sequencer */
+const PROB_CYCLE = [".","8","6","4","2"];
+const PROB_VAL = {".":1, "8":0.8, "6":0.6, "4":0.4, "2":0.2};
+const EMPTY = "................";
+
+const S = {
+  kitIndex:0,
+  kit:null,
+  pat:{},                 // pat[trackId][0..3] = mutable 16-char string
+  prob:{},                // prob[trackId][0..3] = 16 chars, "." = always fires
+  len:{},                 // steps per track — 16 by default, less for polymeter
+  absStep:0,              // never wraps; each track reads absStep % its own length
+  undo:[], redo:[],
+  edits:{},             // per-kit saved patterns, mirrored to localStorage
+  active:{},              // trackId -> variation index, or -1 for silent
+  queued:{},              // trackId -> variation index or -1 (applies next bar)
+  vol:{},
+  muted:{},
+  playing:false,
+  step:0, bar:0,
+  nextTime:0,
+  timer:null,
+  bpm:128, swing:0.5,
+  selTrack:"KICK",
+  instant:true,          // changes land on the keypress, not the barline
+  fillPending:false, fillActive:false,
+  lastBassF:{}, lastVoicing:null, lastLit:-1,
+  vis:[]                  // {step,time}
+};
+const LOOKAHEAD = 0.10, TICK = 20;
+
+/* ====================================================== saved work
+   Two separate problems, one mechanism. Edits were lost on restart, and they
+   were also lost when switching kits and back, because loadKit rebuilt every
+   pattern from the factory data. S.edits holds one entry per kit, written
+   whenever you leave that kit, and the whole thing is mirrored to
+   localStorage. Nothing here is required for the app to run: if storage is
+   unavailable (private windows, file:// on some browsers) it degrades to
+   in-session memory and says so once.                                     */
+const SAVE_KEY = "gs90.save.v1";
+let saveTimer = null, storageOk = true;
+
+function captureKit(){
+  const pat={}, prob={}, len={};
+  TRACKS.forEach(t=>{
+    pat[t.id]=S.pat[t.id].slice();
+    prob[t.id]=S.prob[t.id].slice();
+    len[t.id]=trackLen(t.id);
+  });
+  return {pat:pat, prob:prob, len:len, bpm:S.bpm, swing:S.swing,
+          voices:Object.assign({}, S.kit ? S.kit.voices : {}),
+          active:Object.assign({},S.active), vol:Object.assign({},S.vol),
+          muted:Object.assign({},S.muted)};
+}
+function applyKitEdits(e){
+  if(!e) return false;
+  TRACKS.forEach(t=>{
+    const p=e.pat && e.pat[t.id];
+    if(Array.isArray(p) && p.length===4 && p.every(x=>typeof x==="string" && x.length===STEPS))
+      S.pat[t.id]=p.slice();
+    const q=e.prob && e.prob[t.id];
+    if(Array.isArray(q) && q.length===4) S.prob[t.id]=q.map(padProb);
+    const L=e.len && e.len[t.id];
+    if(typeof L==="number" && L>=2 && L<=STEPS) S.len[t.id]=L;
+    if(e.vol && typeof e.vol[t.id]==="number") S.vol[t.id]=Math.max(0,Math.min(1,e.vol[t.id]));
+    if(e.muted) S.muted[t.id]=!!e.muted[t.id];
+  });
+  if(e.voices && typeof e.voices==="object" && S.kit){
+    if(!S.kit.origVoices) S.kit.origVoices = Object.assign({}, S.kit.voices);
+    Object.keys(ENGINES).forEach(id=>{
+      const def=ENGINES[id], v=e.voices[def.slot];
+      if(typeof v==="string" && def.opts.some(o=>o[0]===v)) S.kit.voices[def.slot]=v;
+    });
+  }
+  if(typeof e.bpm==="number" && e.bpm>=60 && e.bpm<=200) S.bpm=e.bpm;
+  if(typeof e.swing==="number" && e.swing>=0.5 && e.swing<=0.72) S.swing=e.swing;
+  return true;
+}
+function saveNow(){
+  try{
+    S.edits[S.kitIndex] = captureKit();
+    localStorage.setItem(SAVE_KEY, JSON.stringify({v:1, kit:S.kitIndex, edits:S.edits}));
+    storageOk = true;        // storage can come back — a quota clears, a permission changes
+    return true;
+  }catch(err){
+    /* Keep trying on later saves, but only say so the first time. */
+    if(storageOk) msg("CAN'T SAVE HERE — WORK KEPT FOR THIS SESSION ONLY");
+    storageOk = false;
+    return false;
+  }
+}
+/* Edits arrive in bursts while you click around the grid, so coalesce. */
+function scheduleSave(){
+  S.edits[S.kitIndex] = captureKit();      // keep the in-session copy current
+  if(saveTimer) clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{ saveTimer=null; saveNow(); }, 500);
+}
+function loadSaved(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(!raw) return null;
+    const d = JSON.parse(raw);
+    if(!d || d.v!==1 || !d.edits || typeof d.edits!=="object") return null;   // typeof null is "object"
+    return d;
+  }catch(err){ storageOk=false; return null; }
+}
+function wipeSaved(){
+  try{ localStorage.removeItem(SAVE_KEY); }catch(err){}
+  S.edits={};
+  if(saveTimer){ clearTimeout(saveTimer); saveTimer=null; }
+  loadKit(S.kitIndex, true);
+  msg("FACTORY PATTERNS RESTORED");
+}
+
+function loadKit(i, keepTransport){
+  /* Leaving a kit stashes its current state, so coming back finds your edits
+     rather than the factory patterns. */
+  if(S.kit && S.kitIndex!==i) S.edits[S.kitIndex] = captureKit();
+  const k = KITS[i];
+  S.kitIndex = i; S.kit = k;
+  S.pat = {}; S.prob = {}; S.len = {};
+  TRACKS.forEach(t=>{
+    S.pat[t.id] = k.pat[t.id].slice();
+    const kp = (k.prob && k.prob[t.id]) || [];
+    S.prob[t.id] = [0,1,2,3].map(i => padProb(kp[i]));
+    S.len[t.id] = STEPS;
+  });
+  S.undo.length=0; S.redo.length=0;
+  /* Switching kits mid-performance should morph the groove, not gut it: keep
+     whichever rows were live and on which pad. Cold start opens with kick+hats. */
+  const carry = keepTransport && S.active.KICK !== undefined;
+  TRACKS.forEach((t)=>{
+    if(!carry) S.active[t.id] = (t.id==="KICK"||t.id==="HATS") ? 0 : -1;
+    S.queued[t.id] = null;
+    if(S.vol[t.id]===undefined) S.vol[t.id]=0.78;
+    S.muted[t.id]=false;
+  });
+  S.lastBassF={}; S.lastVoicing=null;
+  S.bpm = k.bpm; S.swing = k.swing;
+  const saved = S.edits[i];
+  if(applyKitEdits(saved) && saved.active && keepTransport!=="fresh"){
+    TRACKS.forEach(t=>{
+      const a=saved.active[t.id];
+      if(typeof a==="number" && a>=-1 && a<4) S.active[t.id]=a;
+    });
+  }
+  if(AU.ready){
+    const dc = satCurve(k.drive);
+    if(drive.curve!==dc) drive.curve = dc;
+    TRACKS.forEach((t,ti)=>{
+      trackDelay[t.id].gain.setTargetAtTime(k.sends.delay[ti], AU.ctx.currentTime, 0.05);
+      trackVerb[t.id].gain.setTargetAtTime(k.sends.verb[ti], AU.ctx.currentTime, 0.05);
+      trackBus[t.id].gain.setTargetAtTime(S.vol[t.id], AU.ctx.currentTime, 0.05);
+    });
+    syncDelayTime();
+  }
+  if(!keepTransport){ S.step=0; S.bar=0; S.absStep=0; }
+  renderAll();
+  if(AU.ready) scheduleSave();
+  msg("KIT LOADED — " + stripAmp(k.name));
+}
+function stripAmp(s){ return s.replace(/&amp;/g,"&"); }
+function spb(){ return 60 / S.bpm / 4; }
+function syncDelayTime(){
+  if(!AU.ready) return;
+  delayNode.delayTime.setTargetAtTime(spb()*3, AU.ctx.currentTime, 0.08); // dotted eighth
+}
+
+function noteFreq(root, deg, oct, scale){
+  const sc = scale || SC_MIN;
+  const n = sc[Math.max(0,Math.min(sc.length-1,deg))];
+  return root * Math.pow(2, n/12) * Math.pow(2, oct);
+}
+function padProb(str){
+  let out = String(str==null ? "" : str).slice(0,STEPS);
+  while(out.length < STEPS) out += ".";
+  return out.replace(/[^.8642]/g, ".");
+}
+function probAt(id, v, step){
+  const row = S.prob[id] && S.prob[id][v];
+  if(!row) return 1;
+  const c = row[step];
+  return PROB_VAL[c] === undefined ? 1 : PROB_VAL[c];
+}
+function trackLen(id){
+  const n = S.len[id];
+  return (n && n>=2 && n<=STEPS) ? n : STEPS;
+}
+/* Length is per track, so a note tied at the end of a 15-step hat row wraps at
+   15, not at 16. Everything downstream reads this rather than assuming a bar. */
+function holdLen(str, i, len){
+  const L = len || STEPS;
+  let n = 1;
+  for(let k=1;k<L;k++){
+    if(str[(i+k)%L] === "-") n++; else break;
+  }
+  return n;
+}
+function melAt(str,i){
+  const c = str[i] || ".";
+  if(c===".") return null;
+  if(c==="-") return null;
+  if(c>="0"&&c<="9") return {deg:+c, acc:false};
+  if(c>="A"&&c<="J") return {deg:c.charCodeAt(0)-65, acc:true};
+  return null;
+}
+function isTied(str,i){ return (str[i]||".")==="-"; }
+
+/* abs is the absolute sixteenth since transport start. Each track folds it into
+   its own length, which is what lets a 15-step hat row phase against a 16-step
+   kick and still land together on the downbeat every 240 steps.              */
+function scheduleStep(abs, time){
+  const k = S.kit;
+  const j = ()=> (Math.random()*2-1) * k.human;
+
+  TRACKS.forEach((tr,ti)=>{
+    let v = S.active[tr.id];
+    if(v < 0 || S.muted[tr.id]) return;
+    const len = trackLen(tr.id);
+    const step = ((abs % len) + len) % len;
+    let p = S.pat[tr.id][v] || "";
+    const out = trackBus[tr.id];
+    const t = time + j();
+
+    if(tr.kind==="drum"){
+      const c = p[step] || ".";
+      if(c===".") return;
+      const pr = probAt(tr.id, v, step);
+      if(pr < 1 && Math.random() > pr) return;
+      const vel = c==="X" ? 1.0 : c==="o" ? 0.42 : 0.78;
+      /* Sampled kits play the rendered bank. The break rate follows the live
+         tempo, not the kit default, so slices stay locked if you push it.   */
+      const smp = !!(k.useSamples && SMP.ready);
+      const sr  = num(k.smpRate,1);
+      const brate = S.bpm / BREAK_BPM;
+      if(tr.id==="KICK"){
+        if(smp) playSmp(t,out,SMP.bkick,vel*0.95,sr);
+        else vKick(t,out,vel,k.voices.kick);
+      }
+      else if(tr.id==="SNARE"){
+        if(smp){
+          if(c==="o") playSmp(t,out,SMP.bghost,vel*1.25,sr*(1+(Math.random()-0.5)*0.07));
+          else playSmp(t,out,SMP.bsnare,vel*1.0,sr);
+        }
+        else if(c==="C") vClap(t,out,1.0,k.voices.snare==="clap808");
+        else if(k.voices.snare==="rimshot") vRim(t,out,vel);
+        else vSnare(t,out,vel,k.voices.snare==="break"?"break":"std");
+      }
+      else if(tr.id==="HATS"){
+        if(smp && c!=="s") playSmp(t,out, c==="O"?SMP.bhatO:SMP.bhat, vel*0.9, sr);
+        else if(c==="s") vShaker(t,out,vel);
+        else vHat(t,out,vel,c==="O",k.voices.hat);
+      }
+      /* The perc row gets its own engine. It used to key off useSamples, which
+         meant every sampled kit chopped the disco loop — so Afro Latin's conga
+         row was playing loop slices instead of congas. */
+      else if(k.voices.perc==="loop" && SMP.ready){ vBreak(t,out,c,step,brate); }
+      else {
+        const latin = k.voices.perc==="latin";
+        if(c==="r") vRim(t,out,vel);
+        else if(c==="s") vShaker(t,out,vel);
+        else if(c==="c") vConga(t,out,vel*(latin?1.15:1));
+        else if(c==="d") vRide(t,out,vel);
+        else if(c==="t") vTom(t,out,vel,175);
+        else if(c==="b") vBell(t,out,vel);
+        else vRim(t,out,vel);
+      }
+      return;
+    }
+
+    const n = melAt(p, step);
+    if(!n) return;
+    const pr = probAt(tr.id, v, step);
+    if(pr < 1 && Math.random() > pr) return;
+    const dur = holdLen(p, step, len) * spb() * 0.94;
+
+    if(tr.kind==="chord"){
+      /* Voice leading needs the chord before it, so the kit remembers where
+         its voices were last left. */
+      const vl = chordFreqs(k, n.deg, S.lastVoicing);
+      S.lastVoicing = vl.semis;
+      const freqs = vl.freqs;
+      const cv = k.voices.chord;
+      if(cv==="epiano") vEPiano(t,out,freqs,dur);
+      else if(cv==="piano") vHousePiano(t,out,freqs,dur);
+      else if(cv==="organ") vHouseOrgan(t,out,freqs,dur);
+      else if(cv==="disco") vDiscoChord(t,out,freqs,dur);
+      else if(cv==="dub") vDubChord(t,out,freqs,dur);
+      else if(cv==="pad") vPad(t,out,freqs,dur);
+      else vStab(t,out,freqs,dur);
+      return;
+    }
+
+    if(tr.id==="BASS"){
+      const f = noteFreq(k.root, n.deg, 0, (k.scale||SC_MIN));
+      const bv = (k.bassVoices && k.bassVoices[v]) || k.voices.bass;
+      if(bv==="pluck") vPluck(t,out,f,dur,n.acc);
+      else if(bv==="organbass") vOrganBass(t,out,f,dur,n.acc);
+      else if(bv==="reese") vReese(t,out,f,dur,n.acc);
+      else if(bv==="growl") vGrowl(t,out,f,dur,n.acc,S.bpm);
+      else if(bv==="jumpup") vJumpup(t,out,f,dur,n.acc);
+      else if(bv==="acid") vAcid(t,out,f,dur,n.acc, isTied(p,(step+len-1)%len), S.lastBassF[tr.id]);
+      else vSub(t,out,f,dur,n.acc);
+      S.lastBassF[tr.id]=f;
+      return;
+    }
+
+    // LEAD
+    const f = noteFreq(k.root, n.deg, 3, (k.scale||SC_MIN));
+    const lv = k.voices.lead;
+    if(lv==="fx"){ vFx(t,out,n.deg); return; }
+    if(lv==="vox"){ vVox(t,out,noteFreq(k.root,n.deg,2,k.scale||SC_MIN),dur,n.deg); return; }
+    if(lv==="pad"){
+      vPad(t,out,chordFreqs(k, n.deg, null).freqs, dur);
+    }
+    else if(lv==="noise") vNoiseFx(t,out,f,dur);
+    else if(lv==="saw") vSaw(t,out,f,dur);
+    else vBlip(t,out,f,dur);
+  });
+
+  if(S.fillActive) scheduleFill(((abs % STEPS)+STEPS)%STEPS, time);
+}
+function scheduleFill(step, time){
+  const out = trackBus.SNARE, k=S.kit;
+  const dense = step >= 8;
+  if(!dense && step%4!==0) return;
+  const vel = 0.4 + (step/STEPS)*0.6;
+  if(step%2===0 || dense) vSnare(time, out, vel, "break");
+  if(step===14||step===15) vTom(time, trackBus.PERC, vel, 220 - step*4);
+}
+
+function tick(){
+  const ctx = AU.ctx;
+  /* If the page froze longer than the lookahead — garbage collection, a big
+     re-render, the tab being backgrounded — nextTime is now in the past. The
+     loop below would then schedule every missed step at a time already gone,
+     and the browser fires those instantly as one burst. Skip the missed steps
+     and rejoin the grid instead. */
+  if(S.nextTime < ctx.currentTime){
+    const st = spb();
+    const skip = Math.ceil((ctx.currentTime - S.nextTime) / st);
+    S.nextTime += skip * st;
+    S.absStep  += skip;
+    S.bar      += Math.floor((S.step + skip) / STEPS);
+    S.step      = (S.step + skip) % STEPS;
+    S.vis.length = 0;
+  }
+  while(S.nextTime < ctx.currentTime + LOOKAHEAD){
+    const sw = (S.step % 2 === 1) ? (S.swing-0.5)*2*spb()*0.62 : 0;
+    scheduleStep(S.absStep, S.nextTime + sw);
+    S.vis.push({step:S.step, time:S.nextTime + sw});
+    S.nextTime += spb();
+    S.absStep++;
+    S.step++;
+    if(S.step >= STEPS){
+      S.step = 0; S.bar++;
+      applyQueued();
+      if(S.fillPending){ S.fillActive=true; S.fillPending=false; }
+      else if(S.fillActive){ S.fillActive=false; }
+    }
+  }
+}
+/* Slam the gate shut for the length of the scheduler's lookahead, then reopen,
+   and rewind nextTime so the loop immediately refills from the new pattern.
+   Costs about 30ms of silence on that one track — the price of truly instant. */
+/* Mute a track from now until the first step the scheduler has NOT yet
+   committed. Everything already handed to the audio clock plays into a closed
+   gate and is simply not heard; the new pattern is audible from the next
+   uncommitted step. The old version muted a fixed 30ms and then rewound the
+   step counter so those same notes were scheduled a second time — every
+   instrument fired twice at the same instant, which is +6dB and a flam on
+   every single pad press. */
+function cutTrack(id){
+  if(!AU.ready) return;
+  const g = trackGate[id]; if(!g) return;
+  const now = AU.ctx.currentTime;
+  const resume = S.playing ? Math.max(now + 0.012, S.nextTime) : now + 0.034;
+  g.gain.cancelScheduledValues(now);
+  g.gain.setValueAtTime(g.gain.value, now);
+  g.gain.linearRampToValueAtTime(0.0001, now + 0.004);
+  g.gain.setValueAtTime(0.0001, Math.max(now + 0.006, resume - 0.004));
+  g.gain.linearRampToValueAtTime(1, resume);
+}
+/* Kept as the single place that guards the transport clock. It must never
+   rewind: steps already scheduled cannot be unscheduled, and re-sending them
+   double-triggers every voice. Silencing them is cutTrack's job. */
+function reflow(){
+  if(!S.playing || !AU.ready) return;
+  const now = AU.ctx.currentTime;
+  if(S.nextTime < now) S.nextTime = now + 0.004;
+}
+function applyQueued(){
+  let changed=false;
+  TRACKS.forEach(t=>{
+    if(S.queued[t.id]!==null && S.queued[t.id]!==undefined){
+      S.active[t.id]=S.queued[t.id]; S.queued[t.id]=null; changed=true;
+    }
+  });
+  if(changed) needRender=true;
+}
+
+function play(){
+  if(!AU.ready) return;
+  if(AU.ctx.state==="suspended") AU.ctx.resume();
+  if(S.playing) return;
+  S.playing = true;
+  S.step = 0; S.absStep = 0;
+  S.nextTime = AU.ctx.currentTime + 0.06;
+  S.timer = setInterval(tick, TICK);
+  el("btnPlay").classList.add("on");
+  el("statTag").textContent="RUNNING";
+  msg("RUNNING");
+}
+function stop(){
+  if(AU.ready){ fxPanic(); TRACKS.forEach(t=>cutTrack(t.id)); }  // nothing rings on
+  S.playing=false;
+  if(S.timer) clearInterval(S.timer);
+  S.timer=null; S.vis.length=0; S.bar=0; S.step=0; S.absStep=0;
+  el("btnPlay").classList.remove("on");
+  el("statTag").textContent="STOPPED";
+  S.lastLit=-1;
+  document.querySelectorAll(".led.lit").forEach(e=>e.classList.remove("lit"));
+  document.querySelectorAll(".play").forEach(e=>e.classList.remove("play"));
+  msg("STOPPED");
+}
+
+/* ============================================================ generators
+   Random variations are constrained per genre so the dice never produces
+   something that would not belong on the record.                          */
+function rnd(a){ return a[Math.floor(Math.random()*a.length)]; }
+function chance(p){ return Math.random()<p; }
+
+function genDrum(trackId){
+  const k=S.kit, fam=k.voices.kick;
+  const a=new Array(STEPS).fill(".");
+  const fourFloor = ["tech","house","garage"].indexOf(fam)>=0 && fam!=="garage";
+  if(trackId==="KICK"){
+    if(fam==="dnb"){
+      a[0]="X"; a[10]="x";
+      if(chance(.4)) a[chance(.5)?15:5]="x";
+      if(chance(.3)) a[3]="o";
+    } else if(fam==="break"){
+      a[0]="X"; a[6]="x"; a[10]="x";
+      if(chance(.5)) a[14]="x";
+      if(chance(.4)) a[3]="o";
+    } else if(fam==="garage"){
+      a[0]="X"; a[6]="x";
+      if(chance(.5)) a[10]="X";
+      if(chance(.4)) a[13]="x";
+    } else {
+      for(let i=0;i<STEPS;i+=4) a[i]= i===0?"X":"x";
+      if(chance(.35)) a[15]="o";
+      if(chance(.25)) a[11]="x";
+    }
+  }
+  if(trackId==="SNARE"){
+    const hit = k.voices.snare==="clap808"||k.voices.snare==="clap909" ? "C" : "X";
+    a[4]=hit; a[12]=hit;
+    if(fam==="dnb"||fam==="break"){
+      [2,7,11,14,15].forEach(i=>{ if(chance(.35)) a[i]="o"; });
+      if(chance(.3)) a[14]="X";
+    } else if(chance(.4)) a[15]="o";
+    if(k.voices.snare==="rimshot"){ a[4]="."; a[12]=chance(.5)?"o":"."; }
+  }
+  if(trackId==="HATS"){
+    const style=Math.random();
+    if(style<0.33){ for(let i=2;i<STEPS;i+=4) a[i]="O"; }
+    else if(style<0.66){
+      for(let i=0;i<STEPS;i+=2) a[i]="x";
+      for(let i=2;i<STEPS;i+=4) a[i]="O";
+    } else {
+      for(let i=0;i<STEPS;i++) a[i]= chance(.82) ? (i%4===2?"O":(i%2?"x":"x")) : ".";
+      for(let i=0;i<STEPS;i+=8) if(a[i]!==".") a[i]="X";
+    }
+    if(chance(.3)) a[rnd([1,5,9,13])]="s";
+  }
+  if(trackId==="PERC"){
+    if(k.voices.perc==="loop"){
+      /* A break row is the break playing, edited — not a scattering of hits. */
+      for(let i=0;i<STEPS;i++) a[i]= chance(.9) ? "x" : ".";
+      const edits=1+Math.floor(Math.random()*4);
+      for(let i=0;i<edits;i++) a[rnd([3,5,6,7,9,11,13,14,15])]=rnd(["d","d","r","c","s","t","b"]);
+      if(chance(.4)) a[15]="b";
+      a[0]="x";
+    } else {
+      const v = fam==="house" ? ["c","s"] : ["r","s","t","b"];
+      const n = 1+Math.floor(Math.random()*4);
+      for(let i=0;i<n;i++) a[rnd([2,3,6,7,10,11,13,14,15])]=rnd(v);
+    }
+  }
+  return a.join("");
+}
+function genMel(trackId){
+  const k=S.kit;
+  const a=new Array(STEPS).fill(".");
+  const maxDeg = Math.min(7, k.scale.length-1);
+  if(trackId==="BASS"){
+    if(k.voices.bass==="reese"){
+      a[0]="0";
+      for(let i=1;i<STEPS;i++) a[i]="-";
+      if(chance(.6)){ const p=rnd([8,10,12]); a[p]=String(rnd([0,2,3,4])); }
+    } else if(k.voices.bass==="acid"){
+      for(let i=0;i<STEPS;i++){
+        const r=Math.random();
+        if(r<0.42) a[i]= (i%4===0&&chance(.5)) ? String.fromCharCode(65+rnd([0,2,3])) : String(rnd([0,0,0,1,2,3,4]));
+        else if(r<0.72) a[i]="-";
+        else a[i]=".";
+      }
+      a[0]="A";
+    } else {
+      const style=Math.random();
+      if(style<0.4){ for(let i=2;i<STEPS;i+=4) a[i]="0"; }
+      else if(style<0.75){ a[0]="0"; a[6]="0"; if(chance(.6)) a[10]=String(rnd([2,3,4])); if(chance(.5)) a[13]="0"; }
+      else { for(let i=0;i<STEPS;i+=2) if(chance(.7)) a[i]= chance(.75)?"0":String(rnd([2,3,4])); }
+    }
+  }
+  if(trackId==="LEAD"){
+    const density = k.voices.lead==="pad" ? 0.12 : 0.3;
+    if(k.voices.lead==="pad"){
+      a[0]="0"; for(let i=1;i<8;i++) a[i]="-";
+      a[8]=String(rnd([1,2,3])); for(let i=9;i<STEPS;i++) a[i]="-";
+    } else {
+      for(let i=0;i<STEPS;i++) if(chance(density)) a[i]=String(rnd([0,2,3,4,5,6,7]).toString().slice(0,1));
+      if(a.every(c=>c===".")) a[rnd([4,8,10])]=String(rnd([4,5,7]));
+    }
+  }
+  return a.join("");
+}
+function genChord(){
+  const a=new Array(STEPS).fill(".");
+  const nc=(S.kit.prog||[1]).length;
+  const style=Math.random();
+  if(style<0.4){ for(let i=2;i<STEPS;i+=4) a[i]=String(Math.floor(Math.random()*nc)); }
+  else if(style<0.7){ a[2]="0"; a[10]=String(Math.floor(Math.random()*nc)); }
+  else { a[0]="0"; for(let i=1;i<8;i++) a[i]="-"; a[8]=String(Math.floor(Math.random()*nc)); for(let i=9;i<STEPS;i++) a[i]="-"; }
+  return a;
+}
+/* The dice rolls chance as well as notes. A pattern where two ghost snares and
+   a hat only fire most of the time is the difference between a loop you notice
+   repeating and one you don't.                                              */
+function genProb(trackId, pattern){
+  const a = new Array(STEPS).fill(".");
+  const weight = trackId==="KICK" ? 0.06
+               : (trackId==="SNARE"||trackId==="HATS"||trackId==="PERC") ? 0.22
+               : 0.12;
+  for(let i=0;i<STEPS;i++){
+    const c = pattern[i] || ".";
+    if(c==="." || c==="-") continue;
+    if(i%4===0 && trackId==="KICK") continue;          // never gamble the downbeat
+    const soft = (c==="o");
+    if(chance(soft ? weight*2.2 : weight)) a[i]=rnd(soft?["6","4","2"]:["8","6","4"]);
+  }
+  return a.join("");
+}
+function randomise(trackId, varIdx){
+  const tr = TRACKS.find(t=>t.id===trackId);
+  snapshot(trackId, varIdx);
+  let s;
+  if(tr.kind==="drum") s=genDrum(trackId);
+  else if(tr.kind==="chord") s=genChord().join("");
+  else s=genMel(trackId);
+  S.pat[trackId][varIdx]=s;
+  S.prob[trackId][varIdx]=genProb(trackId, s);
+  needRender=true;
+  msg("GENERATED — " + trLabel(trackId) + " " + VARS[varIdx]);
+}
+
+/* ------------------------------------------------- undo / redo / keep
+   Rolling the dice is only useful if it costs nothing. Every mutation
+   snapshots the one pattern it is about to touch, so you can roll ten times
+   and walk back to the third.                                              */
+function snapshot(id, v){
+  S.undo.push({id:id, v:v, pat:S.pat[id][v], prob:S.prob[id][v], len:S.len[id]});
+  if(S.undo.length > 80) S.undo.shift();
+  S.redo.length = 0;
+  updateHistoryUi();
+  scheduleSave();
+}
+function applyState(e){
+  S.pat[e.id][e.v]=e.pat; S.prob[e.id][e.v]=e.prob; S.len[e.id]=e.len;
+  scheduleSave();
+}
+function grabState(id,v){
+  return {id:id, v:v, pat:S.pat[id][v], prob:S.prob[id][v], len:S.len[id]};
+}
+function undoStep(){
+  if(!S.undo.length){ msg("NOTHING TO UNDO"); return; }
+  const e = S.undo.pop();
+  S.redo.push(grabState(e.id, e.v));
+  applyState(e);
+  S.selTrack = e.id;
+  renderLabels(); renderPads(); renderEditor(); updateHistoryUi();
+  msg("UNDO — " + trLabel(e.id) + " " + VARS[e.v]);
+}
+function redoStep(){
+  if(!S.redo.length){ msg("NOTHING TO REDO"); return; }
+  const e = S.redo.pop();
+  S.undo.push(grabState(e.id, e.v));
+  applyState(e);
+  S.selTrack = e.id;
+  renderLabels(); renderPads(); renderEditor(); updateHistoryUi();
+  msg("REDO — " + trLabel(e.id) + " " + VARS[e.v]);
+}
+function keepPattern(){
+  const id = S.selTrack, v = curVar(id);
+  const free = S.pat[id].findIndex((str,i)=> i!==v && str===EMPTY);
+  if(free < 0){ msg("NO EMPTY PAD IN THIS ROW — CLEAR ONE FIRST"); return; }
+  snapshot(id, free);
+  S.pat[id][free] = S.pat[id][v];
+  S.prob[id][free] = S.prob[id][v];
+  launchPad(id, free);
+  renderEditor();
+  msg("KEPT AS " + trLabel(id) + " " + VARS[free]);
+}
+function setLen(id, n){
+  n = Math.max(2, Math.min(STEPS, n));
+  if(n === trackLen(id)) return;
+  snapshot(id, curVar(id));
+  S.len[id] = n;
+  renderLabels(); renderEditor();
+  msg(trLabel(id) + " — " + n + (n===STEPS ? " STEPS" : " STEPS (POLYMETRIC)"));
+}
+function updateHistoryUi(){
+  const u=el("edUndo"), r=el("edRedo");
+  if(u) u.textContent = "↶ UNDO" + (S.undo.length ? " "+S.undo.length : "");
+  if(r) r.textContent = "↷ REDO" + (S.redo.length ? " "+S.redo.length : "");
+}
+
+/* ================================================================== render */
+function el(id){ return document.getElementById(id); }
+let needRender=false;
+let msgTimer=null;
+function msg(s){
+  el("lcdMsg").textContent=s;
+  if(msgTimer) clearTimeout(msgTimer);
+  msgTimer=setTimeout(()=>{ el("lcdMsg").textContent = S.playing?"RUNNING":"READY"; }, 2600);
+}
+
+function buildKits(){
+  const c=el("kits"); c.innerHTML="";
+  KITS.forEach((k,i)=>{
+    const b=document.createElement("button");
+    b.className="btn"+(i===S.kitIndex?" on":"");
+    b.innerHTML=k.name;
+    b.onclick=()=>{ loadKit(i, true); };
+    c.appendChild(b);
+  });
+}
+function buildLeds(){
+  const c=el("ledbar"); c.innerHTML="";
+  for(let i=0;i<STEPS;i++){
+    const d=document.createElement("div");
+    d.className="led"+(i%4===0?" beat":"");
+    c.appendChild(d);
+  }
+}
+function buildGrid(){
+  const g=el("grid"); g.innerHTML="";
+  const thead=document.createElement("thead");
+  const hr=document.createElement("tr");
+  hr.innerHTML='<th class="lbl">INSTRUMENT</th>';
+  VARS.forEach((v,i)=>{
+    const th=document.createElement("th");
+    const b=document.createElement("button");
+    b.className="mini"; b.style.width="100%"; b.textContent="SCENE "+v;
+    b.onclick=()=>launchScene(i);
+    th.appendChild(b);
+    hr.appendChild(th);
+  });
+  /* These last two headers must be built as nodes, not appended with
+     innerHTML +=. That re-parses the whole row and replaces every child with
+     a fresh element, which silently throws away the scene buttons' click
+     handlers — they render fine and do nothing. */
+  ["MIX",""].forEach(txt=>{
+    const th=document.createElement("th");
+    th.textContent=txt;
+    hr.appendChild(th);
+  });
+  g.appendChild(thead); thead.appendChild(hr);
+
+  const tb=document.createElement("tbody");
+  TRACKS.forEach((tr,ti)=>{
+    const row=document.createElement("tr");
+    const td0=document.createElement("td");
+    const nm=document.createElement("div");
+    nm.className="tname"; nm.dataset.tr=tr.id; nm.tabIndex=0;
+    nm.innerHTML='<span class="dot"></span>'+tr.label+' <span style="color:#6f736c;font-size:9px">'+(ti+1)+'</span>';
+    nm.onclick=()=>{ if(!nm.dataset.longPressed) selectTrack(tr.id); delete nm.dataset.longPressed; };
+    nm.onkeydown=e=>{
+      if(e.key==="Enter"||e.key===" "){e.preventDefault();selectTrack(tr.id);}
+      if(e.key==="ArrowRight"){e.preventDefault();openPicker(tr.id);}   // keyboard route in
+    };
+    /* Hold to change the sound. The flag stops the release from also firing
+       the plain click that selects the row. */
+    let lpTimer=null;
+    const startLp=()=>{
+      clearTimeout(lpTimer);
+      lpTimer=setTimeout(()=>{ nm.dataset.longPressed="1"; openPicker(tr.id); }, 450);
+    };
+    const cancelLp=()=>{ clearTimeout(lpTimer); };
+    nm.addEventListener("pointerdown",startLp);
+    nm.addEventListener("pointerup",cancelLp);
+    nm.addEventListener("pointerleave",cancelLp);
+    nm.addEventListener("pointercancel",cancelLp);
+    nm.addEventListener("pointermove",cancelLp);
+    nm.addEventListener("contextmenu",e=>{ e.preventDefault(); openPicker(tr.id); });
+    td0.appendChild(nm); row.appendChild(td0);
+
+    VARS.forEach((v,vi)=>{
+      const td=document.createElement("td");
+      const p=document.createElement("button");
+      p.className="pad"; p.textContent=v; p.dataset.tr=tr.id; p.dataset.v=vi;
+      p.onclick=()=>launchPad(tr.id, vi);
+      td.appendChild(p); row.appendChild(td);
+    });
+
+    const tdm=document.createElement("td");
+    const wrap=document.createElement("div");
+    wrap.style.cssText="display:flex;align-items:center;gap:6px";
+    const sl=document.createElement("input");
+    sl.type="range"; sl.min="0"; sl.max="1"; sl.step="0.01"; sl.className="vol";
+    sl.value=String(S.vol[tr.id]); sl.setAttribute("aria-label",tr.label+" level");
+    sl.oninput=()=>{
+      S.vol[tr.id]=+sl.value;
+      if(AU.ready) trackBus[tr.id].gain.setTargetAtTime(S.muted[tr.id]?0:+sl.value, AU.ctx.currentTime, 0.03);
+      scheduleSave();
+    };
+    const mu=document.createElement("button");
+    mu.className="mini"; mu.textContent="M"; mu.title="Mute";
+    mu.onclick=()=>{
+      S.muted[tr.id]=!S.muted[tr.id];
+      mu.classList.toggle("mute",S.muted[tr.id]);
+      if(AU.ready) trackBus[tr.id].gain.setTargetAtTime(S.muted[tr.id]?0:S.vol[tr.id], AU.ctx.currentTime, 0.03);
+      scheduleSave();
+    };
+    wrap.appendChild(sl); wrap.appendChild(mu);
+    tdm.appendChild(wrap); row.appendChild(tdm);
+
+    const tdd=document.createElement("td");
+    const dice=document.createElement("button");
+    dice.className="mini"; dice.textContent="⚄"; dice.title="Random variation";
+    dice.onclick=()=>{
+      const v = S.active[tr.id]>=0 ? S.active[tr.id] : 0;
+      randomise(tr.id, v);
+      if(S.active[tr.id]<0) launchPad(tr.id, v);
+      renderAll();
+    };
+    tdd.appendChild(dice); row.appendChild(tdd);
+    tb.appendChild(row);
+  });
+  g.appendChild(tb);
+}
+
+function renderPads(){
+  document.querySelectorAll(".pad").forEach(p=>{
+    const id=p.dataset.tr, v=+p.dataset.v;
+    const q=S.queued[id];
+    p.classList.toggle("on", S.active[id]===v && (q===null||q===undefined));
+    p.classList.toggle("queued", q===v);
+  });
+  document.querySelectorAll(".tname").forEach(n=>{
+    n.classList.toggle("live", S.active[n.dataset.tr]>=0 && !S.muted[n.dataset.tr]);
+    n.classList.toggle("sel", n.dataset.tr===S.selTrack);
+  });
+}
+function renderLcd(){
+  const k=S.kit;
+  el("lcdKit").innerHTML=k.name;
+  el("lcdSlot").textContent="KIT "+(S.kitIndex+1)+"/"+KITS.length;
+  el("lcdTempo").textContent=S.bpm.toFixed(1)+" BPM";
+  el("lcdKey").textContent=k.keyName;
+  el("lcdSwing").textContent="SWING "+Math.round(S.swing*100)+"%";
+  el("roTempo").innerHTML=Math.round(S.bpm)+"<small>TEMPO</small>";
+  el("roSwing").innerHTML=Math.round(S.swing*100)+"<small>SWING</small>";
+  document.querySelectorAll("#kits .btn").forEach((b,i)=>b.classList.toggle("on",i===S.kitIndex));
+}
+
+/* ------------------------------------------------------------ step editor */
+function selectTrack(id){ S.selTrack=id; renderEditor(); renderPads(); }
+function curVar(id){ return S.active[id]>=0 ? S.active[id] : 0; }
+
+function chanceRow(id, v, len, inGrid){
+  const row = document.createElement("div");
+  if(!inGrid) row.className="chrow";
+  const str = S.prob[id][v];
+  for(let i=0;i<STEPS;i++){
+    const b=document.createElement("button");
+    b.className="ch"+(i>=len?" off":"")+(str[i]!=="."?" set":"");
+    b.dataset.chance=i;
+    b.textContent = str[i]==="." ? "" : str[i]+"0";
+    b.title = str[i]==="." ? "Always fires" : str[i]+"0% chance";
+    b.onclick=()=>{
+      snapshot(id,v);
+      const cur=S.prob[id][v][i];
+      const nxt=PROB_CYCLE[(PROB_CYCLE.indexOf(cur)+1+PROB_CYCLE.length)%PROB_CYCLE.length];
+      S.prob[id][v]=S.prob[id][v].substring(0,i)+nxt+S.prob[id][v].substring(i+1);
+      renderEditor();
+    };
+    if(inGrid) inGrid.appendChild(b); else row.appendChild(b);
+  }
+  return row;
+}
+function renderEditor(){
+  const tr=TRACKS.find(t=>t.id===S.selTrack);
+  const v=curVar(tr.id);
+  const len=trackLen(tr.id);
+  const pstr=S.prob[tr.id][v];
+  el("edTitle").textContent="EDIT — "+trLabel(tr.id)+" · PATTERN "+VARS[v];
+  el("lenVal").textContent=String(len);
+  updateHistoryUi();
+  const isBreak = tr.id==="PERC" && S.kit.voices.perc==="loop";
+  const body=el("edBody");
+  body.innerHTML="";
+  if(tr.kind==="drum"){
+    el("edHint").textContent = isBreak
+      ? "x plays the break in time · o quiet · X loud · r reverse · d stutter · c chop · s flam · t half · b roll"
+      : "Click a step: off → soft → hit → accent"+(tr.id==="HATS"?" → open":"");
+    const wrap=document.createElement("div"); wrap.className="steps";
+    const str=S.pat[tr.id][v];
+    for(let i=0;i<STEPS;i++){
+      const c=document.createElement("button");
+      c.className="cell"+(Math.floor(i/4)%2?" q":"");
+      c.dataset.step=i;
+      const ch=str[i]||".";
+      if(ch==="o") c.classList.add("v1");
+      else if(ch==="x") c.classList.add("v1");
+      else if(ch==="X") c.classList.add("v2");
+      else if(ch==="O"||ch==="s") c.classList.add("v3");
+      if(i>=len) c.classList.add("off");
+      if(pstr[i]!==".") c.classList.add("maybe");
+      c.textContent = ch==="." ? "" : ch;
+      c.onclick=()=>{ cycleDrum(tr.id,v,i); };
+      wrap.appendChild(c);
+    }
+    body.appendChild(wrap);
+    const lab=document.createElement("div"); lab.className="chlab"; lab.textContent="CHANCE";
+    body.appendChild(lab);
+    body.appendChild(chanceRow(tr.id,v,len,null));
+  } else {
+    el("edHint").textContent = tr.kind==="chord"
+      ? "Rows are chords. Click to place, click again to clear. TIE holds it."
+      : "Rows are scale degrees. Click to place, again for accent, again to clear.";
+    const rows = tr.kind==="chord" ? (S.kit.prog||[]).length : 8;
+    const pw=document.createElement("div"); pw.className="pianoWrap";
+    const grid=document.createElement("div"); grid.className="piano";
+    grid.style.gridTemplateColumns="26px repeat(16,minmax(20px,1fr))";
+    const str=S.pat[tr.id][v];
+    for(let r=rows-1;r>=0;r--){
+      const lab=document.createElement("div"); lab.className="prow";
+      lab.textContent = tr.kind==="chord" ? ("CH"+(r+1)) : String(r);
+      grid.appendChild(lab);
+      for(let i=0;i<STEPS;i++){
+        const n=melAt(str,i);
+        const b=document.createElement("button");
+        b.className="pk"+(Math.floor(i/4)%2?" q":"");
+        b.dataset.step=i;
+        if(n && n.deg===r) b.classList.add(n.acc?"acc":"on");
+        if(i>=len) b.classList.add("off");
+        if(n && n.deg===r && pstr[i]!==".") b.classList.add("maybe");
+        b.onclick=()=>{ setMel(tr.id,v,i,r,tr.kind); };
+        grid.appendChild(b);
+      }
+    }
+    const tl=document.createElement("div"); tl.className="prow"; tl.textContent="TIE";
+    grid.appendChild(tl);
+    for(let i=0;i<STEPS;i++){
+      const b=document.createElement("button");
+      b.className="pk"+(Math.floor(i/4)%2?" q":"")+(isTied(str,i)?" tie":"")+(i>=len?" off":"");
+      b.dataset.step=i;
+      b.onclick=()=>{ toggleTie(tr.id,v,i); };
+      grid.appendChild(b);
+    }
+    const cl=document.createElement("div"); cl.className="prow"; cl.textContent="CHANCE";
+    grid.appendChild(cl);
+    chanceRow(tr.id,v,len,grid);
+    pw.appendChild(grid); body.appendChild(pw);
+  }
+}
+function setChar(id,v,i,ch){
+  const s=S.pat[id][v];
+  S.pat[id][v]=s.substring(0,i)+ch+s.substring(i+1);
+}
+function cycleDrum(id,v,i){
+  snapshot(id,v);
+  const order = id==="HATS" ? [".","o","x","X","O","s"]
+              : id==="PERC" ? [".","r","s","c","d","t","b"]
+              : id==="SNARE" ? [".","o","x","X","C"]
+              : [".","o","x","X"];
+  const cur=S.pat[id][v][i]||".";
+  const idx=order.indexOf(cur);
+  setChar(id,v,i, order[(idx+1)%order.length]);
+  renderEditor();
+}
+function setMel(id,v,i,deg,kind){
+  snapshot(id,v);
+  const cur=melAt(S.pat[id][v],i);
+  if(cur && cur.deg===deg){
+    if(!cur.acc && kind!=="chord") setChar(id,v,i,String.fromCharCode(65+deg));
+    else setChar(id,v,i,".");
+  } else {
+    setChar(id,v,i,String(deg));
+  }
+  renderEditor();
+}
+function toggleTie(id,v,i){
+  snapshot(id,v);
+  const cur=S.pat[id][v][i]||".";
+  setChar(id,v,i, cur==="-" ? "." : "-");
+  renderEditor();
+}
+
+/* ------------------------------------------------------------- launch logic */
+function launchPad(id, v){
+  const off = S.active[id]===v && (S.queued[id]===null||S.queued[id]===undefined);
+  const target = off ? -1 : v;
+  if(!S.playing || S.instant){
+    S.active[id]=target; S.queued[id]=null;
+    if(S.playing){ cutTrack(id); reflow(); }
+    msg(trLabel(id)+(target<0 ? " OUT" : " → "+VARS[v]));
+  } else {
+    S.queued[id]=target;
+    msg(trLabel(id)+(target<0 ? " OUT NEXT BAR" : " → "+VARS[v]+" NEXT BAR"));
+  }
+  if(S.selTrack===id) renderEditor();
+  renderPads(); scheduleSave();
+}
+function launchScene(v){
+  if(!S.playing || S.instant){
+    TRACKS.forEach(t=>{ S.active[t.id]=v; S.queued[t.id]=null; if(S.playing) cutTrack(t.id); });
+    reflow();
+    msg("SCENE "+VARS[v]);
+  } else {
+    TRACKS.forEach(t=>{ S.queued[t.id]=v; });
+    msg("SCENE "+VARS[v]+" NEXT BAR");
+  }
+  renderPads(); renderEditor(); scheduleSave();
+}
+function setInstant(on){
+  S.instant = !!on;
+  const b = el("btnQuant");
+  if(b){
+    b.textContent = S.instant ? "INSTANT" : "BAR SYNC";
+    b.classList.toggle("on", S.instant);
+  }
+  if(S.instant){
+    /* Anything waiting on a barline should land now, or the toggle appears
+       to have done nothing until the next bar. */
+    let any=false;
+    TRACKS.forEach(t=>{
+      if(S.queued[t.id]!==null && S.queued[t.id]!==undefined){
+        S.active[t.id]=S.queued[t.id]; S.queued[t.id]=null; cutTrack(t.id); any=true;
+      }
+    });
+    if(any) reflow();
+    renderPads();
+  }
+  msg(S.instant ? "INSTANT SWITCHING" : "CHANGES LAND ON THE BAR");
+}
+
+/* ------------------------------------------------------------------- knobs */
+function makeKnob(parent, {label, min, max, val, fmt, onChange}){
+  const w=document.createElement("div"); w.className="knobwrap";
+  const k=document.createElement("div"); k.className="knob"; k.tabIndex=0;
+  k.setAttribute("role","slider"); k.setAttribute("aria-label",label);
+  const ind=document.createElement("i"); k.appendChild(ind);
+  const lab=document.createElement("label"); lab.textContent=label;
+  const vv=document.createElement("div"); vv.className="val";
+  w.appendChild(k); w.appendChild(lab); w.appendChild(vv); parent.appendChild(w);
+  let value=val;
+  function draw(){
+    const p=(value-min)/(max-min);
+    ind.style.transform="rotate("+(-135+p*270)+"deg)";
+    vv.textContent=fmt(value);
+    k.setAttribute("aria-valuenow",String(Math.round(value*100)/100));
+  }
+  function set(nv){ value=Math.max(min,Math.min(max,nv)); draw(); onChange(value); }
+  let dragging=false, y0=0, v0=0;
+  k.addEventListener("pointerdown",e=>{ dragging=true; y0=e.clientY; v0=value; k.setPointerCapture(e.pointerId); e.preventDefault(); });
+  k.addEventListener("pointermove",e=>{ if(!dragging) return; set(v0 + (y0-e.clientY)/160*(max-min)); });
+  k.addEventListener("pointerup",e=>{ dragging=false; try{k.releasePointerCapture(e.pointerId);}catch(_){} });
+  k.addEventListener("pointercancel",()=>{ dragging=false; });
+  k.addEventListener("keydown",e=>{
+    const st=(max-min)/40;
+    if(e.key==="ArrowUp"||e.key==="ArrowRight"){ set(value+st); e.preventDefault(); }
+    if(e.key==="ArrowDown"||e.key==="ArrowLeft"){ set(value-st); e.preventDefault(); }
+  });
+  draw(); onChange(value);
+  return {set, get:()=>value};
+}
+/* ======================================================= DJ PERFORMANCE FX
+   Hands-on mixer moves, not a studio rack: everything here is a hold or a
+   one-shot, and nothing has a settings page. The chain sits after the
+   compressor so these behave like a mixer's master section rather than
+   another layer of instrument processing.
+
+   Quantize is the thing that makes them feel played rather than clicked.
+   Rolls land on the next beat; throws, echo kills and loops land on the next
+   bar; the riser lands on the next 8-bar phrase. That is a separate control
+   from the pad INSTANT/BAR SYNC toggle, which still defaults to instant.   */
+
+const FX = {
+  quant:true,            // snap triggers to the grid
+  echo:null,             // "4" or "8" (1/4 or 3/8) while held
+  freeze:null,           // beats held by a roll or loop
+  bassKill:false,
+  riserUntil:0,
+  pend:{}                // live timeouts, keyed, so a re-trigger cancels the old one
+};
+const DIV_BEAT = 4, DIV_BAR = 16, DIV_PHRASE = 128;
+
+/* Audio time of absolute step n. S.nextTime is the clock time of the next step
+   the scheduler will hand out, so this reads straight off the transport.    */
+function stepTimeAt(n){ return S.nextTime + (n - S.absStep) * spb(); }
+function quantTime(divSteps){
+  const now = AU.ctx.currentTime;
+  if(!S.playing || !FX.quant) return now + 0.004;
+  let n = Math.ceil(S.absStep / divSteps) * divSteps;
+  let t = stepTimeAt(n);
+  let guard = 0;
+  while(t < now + 0.012 && guard++ < 512){ n += divSteps; t = stepTimeAt(n); }
+  return t;
+}
+const nextBeat   = ()=>quantTime(DIV_BEAT);
+const nextBar    = ()=>quantTime(DIV_BAR);
+const nextPhrase = ()=>quantTime(DIV_PHRASE);
+function beatSec(){ return 60 / S.bpm; }
+
+/* A gain move that cannot be fought by whatever was scheduled before it. */
+function ramp(param, to, at, time){
+  const t = Math.max(AU.ctx.currentTime, at);
+  param.cancelScheduledValues(t);
+  param.setValueAtTime(param.value, t);
+  param.linearRampToValueAtTime(Math.max(0.0001, to), t + (time||0.006));
+}
+function later(key, at, fn){
+  if(FX.pend[key]) clearTimeout(FX.pend[key]);
+  const ms = Math.max(0, (at - AU.ctx.currentTime) * 1000);
+  FX.pend[key] = setTimeout(()=>{ delete FX.pend[key]; fn(); }, ms);
+}
+function fxBtn(id, on){
+  const b = el(id); if(b) b.classList.toggle("on", !!on);
+}
+
+/* ---- bipolar DJ filter: centre off, left low-pass, right high-pass ---- */
+function setDjFilter(v){
+  if(!AU.ready) return;
+  const now = AU.ctx.currentTime, a = Math.abs(v);
+  const lp = v < 0 ? 18000 * Math.pow(120/18000, a) : 18000;
+  const hp = v > 0 ? 25 * Math.pow(7000/25, a) : 25;
+  mainFilter.frequency.setTargetAtTime(lp, now, 0.015);
+  djHP.frequency.setTargetAtTime(hp, now, 0.015);
+  /* A touch of resonance as you leave centre — that lip on the sweep is most
+     of what makes a DJ filter sound like one. Kept low so it never screams. */
+  const q = 0.7 + a * 3.2;
+  mainFilter.Q.setTargetAtTime(v < 0 ? q : 0.7, now, 0.03);
+  djHP.Q.setTargetAtTime(v > 0 ? q : 0.7, now, 0.03);
+}
+function djFilterLabel(v){
+  if(Math.abs(v) < 0.04) return "OFF";
+  return (v < 0 ? "LP " : "HP ") + Math.round(Math.abs(v) * 100) + "%";
+}
+
+/* ---- echo out: dry dies on the bar, the delay rings on ---- */
+function echoOn(div){
+  if(!AU.ready) return;
+  FX.echo = div;
+  const at = nextBar();
+  /* A quarter note is one beat and a 3/8 note is a beat and a half — these
+     are note values, not fractions of a beat. 3/8 is the dub one: it lands
+     off the grid and pulls against the kick. */
+  const t = beatSec() * (div === "8" ? 1.5 : 1);
+  echoDly.delayTime.setValueAtTime(Math.min(1.9, t), Math.max(AU.ctx.currentTime, at - 0.02));
+  ramp(echoFb.gain, 0.72, at, 0.01);
+  ramp(echoSend.gain, 1, at, 0.01);
+  ramp(dryGain.gain, 0.0001, at, 0.02);
+  fxBtn("fxEcho"+div, true);
+  later("echo", at, ()=>msg("ECHO OUT " + (div==="8" ? "3/8" : "1/4")));
+  msg("ECHO ARMED");
+}
+function echoOff(){
+  if(!AU.ready || !FX.echo) return;
+  const div = FX.echo;
+  FX.echo = null;
+  const at = nextBar();                       // dry returns on the downbeat
+  ramp(dryGain.gain, 1, at, 0.02);
+  ramp(echoSend.gain, 0.0001, at, 0.02);
+  ramp(echoFb.gain, 0.0001, at + 0.9, 0.5);   // let the tail die under the dry
+  fxBtn("fxEcho"+div, false);
+  later("echoOff", at, ()=>msg("DRY BACK"));
+}
+
+/* ---- reverb throw: one beat into a long tail, then shut ---- */
+function reverbThrow(){
+  if(!AU.ready) return;
+  const at = nextBar();
+  ramp(throwSend.gain, 1, at, 0.008);
+  ramp(throwSend.gain, 0.0001, at + beatSec(), 0.03);
+  fxBtn("fxThrow", true);
+  later("throw", at, ()=>{ msg("REVERB THROW"); });
+  later("throwOff", at + beatSec(), ()=>fxBtn("fxThrow", false));
+}
+
+/* ---- freeze: beat rolls and loop hold are the same machine ----
+   A delay line whose feedback is held at unity captures one pass of the
+   programme and repeats it. Opening the send for exactly one loop length is
+   what records the slice; closing it is what stops new audio contaminating
+   the repeat. Dry is cut for the duration. Release restores dry at once,
+   which is why a roll can be dropped anywhere without losing the groove.  */
+function freezeStart(beats, label){
+  if(!AU.ready) return;
+  if(FX.freeze) freezeEnd(true);
+  FX.freeze = {beats:beats, label:label};
+  const len = Math.min(1.9, beatSec() * beats);
+  const at  = beats < 1 ? nextBeat() : nextBar();
+  const set = Math.max(AU.ctx.currentTime, at - 0.02);
+  freezeDly.delayTime.cancelScheduledValues(set);
+  freezeDly.delayTime.setValueAtTime(len, set);
+  ramp(freezeFb.gain, 0.995, at, 0.004);
+  ramp(freezeSend.gain, 1, at, 0.004);
+  ramp(freezeSend.gain, 0.0001, at + len, 0.004);   // one pass only
+  ramp(freezeOut.gain, 1, at, 0.004);
+  ramp(dryGain.gain, 0.0001, at, 0.008);
+  fxBtn(label, true);
+  later("freeze", at, ()=>msg(beats < 1 ? "ROLL 1/"+Math.round(1/beats) : "LOOP "+beats));
+}
+function freezeEnd(silent){
+  if(!AU.ready || !FX.freeze) return;
+  const lbl = FX.freeze.label;
+  FX.freeze = null;
+  const now = AU.ctx.currentTime;             // release is always instant
+  if(FX.pend.freeze){ clearTimeout(FX.pend.freeze); delete FX.pend.freeze; }
+  ramp(freezeSend.gain, 0.0001, now, 0.004);
+  ramp(freezeFb.gain, 0.0001, now, 0.004);
+  ramp(freezeOut.gain, 0.0001, now, 0.008);
+  if(!FX.echo) ramp(dryGain.gain, 1, now, 0.008);
+  fxBtn(lbl, false);
+  if(!silent) msg("BACK IN");
+}
+
+/* ---- bass kill: ducked, not muted, so the groove still breathes ---- */
+function setBassKill(on){
+  if(!AU.ready) return;
+  FX.bassKill = !!on;
+  const now = AU.ctx.currentTime;
+  const g = FX.bassKill ? 0.063 : 1;          // about -24 dB
+  ["KICK","BASS"].forEach(id=>{
+    const node = trackKill[id];
+    if(node) ramp(node.gain, g, now, 0.012);
+  });
+  fxBtn("fxBass", FX.bassKill);
+  msg(FX.bassKill ? "BASS KILL" : "BASS BACK");
+}
+
+/* ---- riser: noise sweep that lands exactly on the next phrase ---- */
+function riser(){
+  if(!AU.ready) return;
+  const ctx = AU.ctx, now = ctx.currentTime;
+  let end = nextPhrase();
+  const minLen = beatSec() * 2;
+  while(end - now < minLen) end += beatSec() * 4 * 8;
+  const dur = Math.min(16, end - now);
+  const t = now + 0.005;
+
+  const n = noiseSrc(t, dur + 0.1);
+  const bp = ctx.createBiquadFilter(); bp.type="bandpass"; bp.Q.value=5.5;
+  bp.frequency.setValueAtTime(300, t);
+  bp.frequency.exponentialRampToValueAtTime(9500, t + dur);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(0.30, t + dur * 0.92);
+  g.gain.linearRampToValueAtTime(0.0001, t + dur);     // silent on the downbeat
+  n.connect(bp); bp.connect(g); g.connect(riserGain);
+
+  FX.riserUntil = end;
+  fxBtn("fxRiser", true);
+  later("riser", end, ()=>fxBtn("fxRiser", false));
+  msg("RISER — " + (dur).toFixed(1) + "s TO THE DROP");
+}
+
+/* REMIX — the cheap version of mix-and-match. One button, no menus: it pulls
+   a chord or bass engine from a different style into the kit you are on, so
+   soulful piano can land on a dub tech groove without a patch bay.        */
+/* What each row can be swapped to. The melodic rows get the most choices,
+   because that is where a house track's identity actually lives.          */
+const ENGINES = {
+  KICK:  {slot:"kick",  opts:[["house","CLASSIC 909"],["tech","TIGHT"],["garage","PUNCHY"],
+                              ["break","LOOSE"],["dnb","HARD"]]},
+  SNARE: {slot:"snare", opts:[["clap909","CLAP 909"],["clap808","CLAP 808"],
+                              ["rimshot","RIMSHOT"],["break","SNARE"]]},
+  HATS:  {slot:"hat",   opts:[["tight","TIGHT"],["warm","WARM"]]},
+  PERC:  {slot:"perc",  opts:[["machine","MACHINE"],["latin","CONGAS"],["loop","DISCO LOOP"]]},
+  BASS:  {slot:"bass",  opts:[["sub","DEEP SUB"],["pluck","PLUCK"],["organbass","ORGAN BASS"],
+                              ["acid","ACID 303"],["reese","REESE"]]},
+  CHORD: {slot:"chord", opts:[["epiano","RHODES"],["piano","PIANO"],["organ","ORGAN"],
+                              ["disco","FILTERED DISCO"],["dub","DUB CHORD"],["pad","PAD"],
+                              ["stab","STAB"]]},
+  LEAD:  {slot:"lead",  opts:[["vox","VOCAL CHOPS"],["blip","BLIP"],["saw","SAW LEAD"],
+                              ["pad","PAD"],["noise","NOISE FX"],["fx","ONE SHOTS"]]}
+};
+const CHORD_ENGINES = ENGINES.CHORD.opts.map(o=>o[0]);
+const BASS_ENGINES  = ENGINES.BASS.opts.map(o=>o[0]);
+
+function setEngine(trackId, value){
+  const e = ENGINES[trackId]; if(!e) return;
+  const k = S.kit;
+  if(!k.origVoices) k.origVoices = Object.assign({}, k.voices);
+  k.voices[e.slot] = value;
+  S.lastVoicing = null;
+  const label = (e.opts.find(o=>o[0]===value) || [value,value])[1];
+  msg(trLabel(trackId) + " — " + label);
+  renderLabels(); renderEditor(); scheduleSave();
+}
+/* Press and hold an instrument name (or right-click) to change its sound. */
+function openPicker(trackId){
+  const e = ENGINES[trackId]; if(!e) return;
+  const cur = S.kit.voices[e.slot];
+  const wrap = el("picker");
+  el("pickTitle").textContent = trLabel(trackId) + " SOUND";
+  const body = el("pickBody");
+  body.innerHTML = "";
+  e.opts.forEach(([val,label])=>{
+    const b = document.createElement("button");
+    b.className = "pickopt" + (val===cur ? " on" : "");
+    b.textContent = label;
+    b.onclick = ()=>{ setEngine(trackId, val); closePicker(); };
+    body.appendChild(b);
+  });
+  wrap.classList.add("open");
+  S.pickerFor = trackId;
+}
+function closePicker(){ el("picker").classList.remove("open"); S.pickerFor=null; }
+function remix(){
+  const k = S.kit;
+  if(!k.origVoices) k.origVoices = Object.assign({}, k.voices);
+  const row = ["CHORD","CHORD","BASS","BASS","LEAD","PERC"][Math.floor(Math.random()*6)];
+  const e = ENGINES[row];
+  const opts = e.opts.filter(o=>o[0]!==k.voices[e.slot]);
+  const pick = opts[Math.floor(Math.random()*opts.length)];
+  k.voices[e.slot] = pick[0];
+  S.lastVoicing = null;
+  msg("REMIX — " + trLabel(row) + " NOW " + pick[1]);
+  renderLabels(); scheduleSave();
+}
+function unremix(){
+  const k = S.kit;
+  if(!k.origVoices){ msg("ALREADY STOCK"); return; }
+  k.voices = Object.assign({}, k.origVoices);
+  S.lastVoicing = null;
+  msg("STOCK SOUNDS RESTORED");
+  scheduleSave();
+}
+function setFxQuant(on){
+  FX.quant = !!on;
+  const b = el("fxQuant");
+  if(b){ b.textContent = FX.quant ? "FX QUANT" : "FX FREE"; b.classList.toggle("on", FX.quant); }
+  msg(FX.quant ? "FX SNAP TO GRID" : "FX FIRE IMMEDIATELY");
+}
+/* Stopping the transport must not leave the master muted by a held effect. */
+function fxPanic(){
+  if(!AU.ready) return;
+  Object.keys(FX.pend).forEach(k=>clearTimeout(FX.pend[k]));
+  FX.pend = {};
+  FX.echo = null; FX.freeze = null;
+  const now = AU.ctx.currentTime;
+  ramp(dryGain.gain, 1, now, 0.01);
+  [echoSend, echoFb, throwSend, freezeSend, freezeFb, freezeOut].forEach(n=>ramp(n.gain, 0.0001, now, 0.01));
+  ["fxEcho4","fxEcho8","fxThrow","fxRoll2","fxRoll4","fxRoll8","fxLoop1","fxLoop2","fxLoop4","fxRiser"]
+    .forEach(id=>fxBtn(id, false));
+}
+
+/* ---- wiring: every control is a hold except throw, riser and the toggles -- */
+function holdBtn(id, down, up){
+  const b = el(id); if(!b) return;
+  const end = ()=>{ if(b.dataset.held){ delete b.dataset.held; up(); } };
+  b.addEventListener("pointerdown", e=>{ e.preventDefault(); b.dataset.held="1"; down(); });
+  b.addEventListener("pointerup", end);
+  b.addEventListener("pointerleave", end);
+  b.addEventListener("pointercancel", end);
+}
+function buildFxDeck(){
+  holdBtn("fxEcho4", ()=>echoOn("4"), echoOff);
+  holdBtn("fxEcho8", ()=>echoOn("8"), echoOff);
+  holdBtn("fxRoll2", ()=>freezeStart(0.5,"fxRoll2"), ()=>freezeEnd());
+  holdBtn("fxRoll4", ()=>freezeStart(0.25,"fxRoll4"), ()=>freezeEnd());
+  holdBtn("fxRoll8", ()=>freezeStart(0.125,"fxRoll8"), ()=>freezeEnd());
+  holdBtn("fxLoop1", ()=>freezeStart(1,"fxLoop1"), ()=>freezeEnd());
+  holdBtn("fxLoop2", ()=>freezeStart(2,"fxLoop2"), ()=>freezeEnd());
+  holdBtn("fxLoop4", ()=>freezeStart(4,"fxLoop4"), ()=>freezeEnd());
+  holdBtn("fxBass", ()=>setBassKill(true), ()=>setBassKill(false));
+  el("fxThrow").onclick = reverbThrow;
+  el("fxRiser").onclick = riser;
+  el("fxQuant").onclick = ()=>setFxQuant(!FX.quant);
+}
+const FX_KEYS = {
+  "h":["fxEcho4", ()=>echoOn("4"), echoOff],
+  "j":["fxEcho8", ()=>echoOn("8"), echoOff],
+  "u":["fxRoll2", ()=>freezeStart(0.5,"fxRoll2"), ()=>freezeEnd()],
+  "i":["fxRoll4", ()=>freezeStart(0.25,"fxRoll4"), ()=>freezeEnd()],
+  "o":["fxRoll8", ()=>freezeStart(0.125,"fxRoll8"), ()=>freezeEnd()],
+  "b":["fxLoop1", ()=>freezeStart(1,"fxLoop1"), ()=>freezeEnd()],
+  "n":["fxLoop2", ()=>freezeStart(2,"fxLoop2"), ()=>freezeEnd()],
+  "m":["fxLoop4", ()=>freezeStart(4,"fxLoop4"), ()=>freezeEnd()],
+  "l":["fxBass", ()=>setBassKill(true), ()=>setBassKill(false)]
+};
+
+
+function buildFx(){
+  const c=el("fx"); c.innerHTML="";
+  /* One bipolar filter instead of a cutoff plus a resonance knob: centre is
+     off, left sweeps the low-pass down, right sweeps the high-pass up, and
+     resonance follows the distance from centre on its own. */
+  djKnob = makeKnob(c,{label:"DJ FILTER",min:-1,max:1,val:0,fmt:djFilterLabel,onChange:setDjFilter});
+  makeKnob(c,{label:"DELAY",min:0,max:0.82,val:0.42,fmt:v=>Math.round(v*100)+"%",onChange:v=>{
+    if(AU.ready) delayFb.gain.setTargetAtTime(v, AU.ctx.currentTime, 0.05);
+  }});
+  makeKnob(c,{label:"SPACE",min:0,max:1.6,val:0.7,fmt:v=>Math.round(v*62)+"%",onChange:v=>{
+    if(AU.ready) revIn.gain.setTargetAtTime(v, AU.ctx.currentTime, 0.05);
+  }});
+  makeKnob(c,{label:"CRUSH",min:0,max:1,val:0,fmt:v=>Math.round(v*100)+"%",onChange:v=>{
+    if(!AU.ready) return;
+    crushWet.gain.setTargetAtTime(v, AU.ctx.currentTime, 0.03);
+    crushDry.gain.setTargetAtTime(1-v*0.85, AU.ctx.currentTime, 0.03);
+    const cc = crushCurve(Math.max(2, 8 - v*6));
+    if(crushNode.curve!==cc) crushNode.curve = cc;
+  }});
+  makeKnob(c,{label:"DRIVE",min:0.5,max:5,val:1.4,fmt:v=>v.toFixed(1),onChange:v=>{
+    if(!AU.ready) return;
+    const c=satCurve(v);
+    if(drive.curve!==c) drive.curve=c;
+  }});
+  makeKnob(c,{label:"VOLUME",min:0,max:1.0,val:0.72,fmt:v=>Math.round(v*100)+"%",onChange:v=>{
+    if(AU.ready) master.gain.setTargetAtTime(v, AU.ctx.currentTime, 0.03);
+  }});
+}
+let djKnob = null;
+function filterHz(v){ return 120 * Math.pow(150, v); } // retained for the LP mapping
+
+function trLabel(id){
+  const lb=(S.kit && S.kit.labels)||{};
+  return lb[id] || (TRACKS.find(t=>t.id===id)||{}).label || id;
+}
+function renderLabels(){
+  document.querySelectorAll(".tname").forEach(n=>{
+    const id=n.dataset.tr, idx=TRACKS.findIndex(t=>t.id===id)+1;
+    const L=trackLen(id);
+    n.innerHTML='<span class="dot"></span>'+trLabel(id)+
+      ' <span style="color:#6f736c;font-size:9px">'+idx+'</span>'+
+      (L!==STEPS ? '<span class="polylen">'+L+'</span>' : '');
+  });
+}
+function renderAll(){ renderLcd(); buildKits(); renderLabels(); renderPads(); renderEditor(); }
+
+/* ------------------------------------------------------------------ visual */
+function frame(){
+  requestAnimationFrame(frame);
+  if(needRender){ needRender=false; renderPads(); renderEditor(); }
+  if(!AU.ready || !S.playing) return;
+  const now=AU.ctx.currentTime;
+  let cur=-1;
+  while(S.vis.length && S.vis[0].time <= now){ cur=S.vis.shift().step; }
+  if(cur>=0 && cur!==S.lastLit){
+    /* Only touch the DOM when the step actually changes, and only the two
+       elements involved. Sweeping the document every frame is main-thread work
+       that can stall the scheduler, and a stalled scheduler is audible. */
+    const leds=el("ledbar").children;
+    if(S.lastLit>=0 && leds[S.lastLit]) leds[S.lastLit].classList.remove("lit");
+    if(leds[cur]) leds[cur].classList.add("lit");
+    document.querySelectorAll("#edBody .play").forEach(e=>e.classList.remove("play"));
+    document.querySelectorAll('#edBody [data-step="'+cur+'"]').forEach(e=>e.classList.add("play"));
+    S.lastLit = cur;
+    const beat=Math.floor(cur/4)+1;
+    el("lcdPos").textContent="BAR "+((S.bar%8)+1)+" · "+beat;
+  }
+}
+
+/* -------------------------------------------------------------- recording */
+let mediaRec=null, recChunks=[];
+function toggleRec(){
+  if(!AU.ready) return;
+  const b=el("btnRec");
+  if(mediaRec && mediaRec.state==="recording"){
+    mediaRec.stop(); b.classList.remove("armed"); b.textContent="● REC";
+    return;
+  }
+  if(typeof MediaRecorder==="undefined"){ msg("RECORDING NOT SUPPORTED HERE"); return; }
+  try{
+    recChunks=[];
+    mediaRec=new MediaRecorder(recDest.stream);
+    mediaRec.ondataavailable=e=>{ if(e.data.size) recChunks.push(e.data); };
+    mediaRec.onstop=async ()=>{
+      const blob=new Blob(recChunks,{type:"audio/webm"});
+      const name="groove-station-"+stripAmp(S.kit.name).toLowerCase().replace(/\W+/g,"-")+"-"+Math.round(S.bpm)+"bpm.webm";
+      /* Two routes, because this page runs in two places. Opened as a local
+         file, an anchor download just works. Published as an artifact, the
+         viewer never grants a page download rights directly — the save has to
+         go through the downloads capability, which asks the viewer first. */
+      let dl=null;
+      try{ dl = window.claude && claude.use ? await claude.use("downloads") : null; }catch(err){ dl=null; }
+      if(dl){
+        try{
+          await dl.save({filename:name, data:blob});
+          msg("SAVED");
+        }catch(err){
+          msg(err && err.code==="declined" ? "SAVE CANCELLED" : "COULDN'T SAVE HERE");
+        }
+        return;
+      }
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement("a");
+      a.href=url; a.download=name;
+      a.click(); setTimeout(()=>URL.revokeObjectURL(url),4000);
+      msg("SAVED — CHECK DOWNLOADS");
+    };
+    mediaRec.start();
+    b.classList.add("armed"); b.textContent="● STOP REC";
+    if(!S.playing) play();
+    msg("RECORDING");
+  }catch(err){ msg("RECORDING UNAVAILABLE"); }
+}
+
+/* ------------------------------------------------------------------- wiring */
+function setBpm(v){
+  S.bpm=Math.max(60,Math.min(200,Math.round(v*10)/10));
+  syncDelayTime(); renderLcd(); scheduleSave();
+}
+function setSwing(v){ S.swing=Math.max(0.5,Math.min(0.72,v)); renderLcd(); scheduleSave(); }
+
+function boot(){
+  loadKit(0,false);
+  buildLeds(); buildGrid(); buildFx(); renderAll();
+
+  el("btnPlay").onclick=()=>{ S.playing?stop():play(); };
+  el("btnStop").onclick=stop;
+  el("bpmUp").onclick=()=>setBpm(S.bpm+1);
+  el("bpmDn").onclick=()=>setBpm(S.bpm-1);
+  el("swUp").onclick=()=>setSwing(S.swing+0.02);
+  el("swDn").onclick=()=>setSwing(S.swing-0.02);
+  el("btnFill").onclick=()=>{ S.fillPending=true; msg("FILL ARMED"); };
+  el("btnAll").onclick=()=>{
+    TRACKS.forEach(t=>{ if(S.active[t.id]<0){
+      if(S.playing && !S.instant) S.queued[t.id]=0; else { S.active[t.id]=0; S.queued[t.id]=null; }
+    }});
+    if(S.playing && S.instant) reflow();
+    renderPads(); msg("ALL IN");
+  };
+  el("btnNone").onclick=()=>{
+    TRACKS.forEach(t=>{
+      if(S.playing && !S.instant) S.queued[t.id]=-1;
+      else { S.active[t.id]=-1; S.queued[t.id]=null; if(S.playing) cutTrack(t.id); }
+    });
+    renderPads(); msg("ALL OUT");
+  };
+  el("btnQuant").onclick=()=>setInstant(!S.instant);
+  el("btnRemix").onclick=remix;
+  el("pickClose").onclick=closePicker;
+  el("picker").addEventListener("click",e=>{ if(e.target.id==="picker") closePicker(); });
+  const audioBtn=el("btnAudio");
+  function readLatency(){
+    try{ return localStorage.getItem(LATENCY_KEY)==="tight" ? "tight" : "smooth"; }
+    catch(err){ return "smooth"; }
+  }
+  function paintLatency(){
+    audioBtn.textContent = "AUDIO: " + (readLatency()==="tight" ? "TIGHT" : "SMOOTH");
+  }
+  paintLatency();
+  audioBtn.onclick=()=>{
+    const next = readLatency()==="tight" ? "smooth" : "tight";
+    try{ localStorage.setItem(LATENCY_KEY, next); }catch(err){}
+    paintLatency();
+    msg(next==="tight"
+      ? "TIGHT — LOWEST LATENCY, MAY CRACKLE. RELOAD TO APPLY"
+      : "SMOOTH — BIGGER AUDIO BUFFER, NO CRACKLE. RELOAD TO APPLY");
+  };
+  el("btnReset").onclick=()=>{
+    if(S.resetArm){
+      S.resetArm=false;
+      el("btnReset").textContent="RESET THIS KIT TO FACTORY";
+      el("btnReset").classList.remove("mute");
+      delete S.edits[S.kitIndex];
+      if(S.kit.origVoices) S.kit.voices = Object.assign({}, S.kit.origVoices);
+      saveNow();
+      loadKit(S.kitIndex,"fresh");
+      return;
+    }
+    /* Destroys work, so it asks once rather than popping a dialog. */
+    S.resetArm=true;
+    el("btnReset").textContent="PRESS AGAIN TO DISCARD YOUR EDITS";
+    el("btnReset").classList.add("mute");
+    setTimeout(()=>{
+      if(S.resetArm){
+        S.resetArm=false;
+        el("btnReset").textContent="RESET THIS KIT TO FACTORY";
+        el("btnReset").classList.remove("mute");
+      }
+    },4000);
+  };
+  el("btnRec").onclick=toggleRec;
+  el("btnHelp").onclick=()=>el("help").classList.add("open");
+  el("helpClose").onclick=()=>el("help").classList.remove("open");
+  el("help").addEventListener("click",e=>{ if(e.target.id==="help") el("help").classList.remove("open"); });
+  el("edDice").onclick=()=>{ randomise(S.selTrack, curVar(S.selTrack)); renderEditor(); };
+  el("edUndo").onclick=undoStep;
+  el("edRedo").onclick=redoStep;
+  el("edKeep").onclick=keepPattern;
+  el("lenUp").onclick=()=>setLen(S.selTrack, trackLen(S.selTrack)+1);
+  el("lenDn").onclick=()=>setLen(S.selTrack, trackLen(S.selTrack)-1);
+  el("edClear").onclick=()=>{
+    const id=S.selTrack, v=curVar(id);
+    snapshot(id,v);
+    S.pat[id][v]=EMPTY; S.prob[id][v]=EMPTY;
+    renderEditor(); msg("CLEARED");
+  };
+
+  document.addEventListener("keydown",e=>{
+    if(e.target.tagName==="INPUT") return;
+    const k=e.key.toLowerCase();
+    if(e.code==="Space"){ e.preventDefault(); S.playing?stop():play(); return; }
+    if(k>="1"&&k<="7"){ selectTrack(TRACKS[+k-1].id); return; }
+    const vi="qwer".indexOf(k);
+    if(vi>=0){ launchPad(S.selTrack, vi); return; }
+    const si="asdf".indexOf(k);
+    if(si>=0){ launchScene(si); return; }
+    if(k==="["){ setBpm(S.bpm-1); }
+    if(k==="]"){ setBpm(S.bpm+1); }
+    if(k==="g"){ randomise(S.selTrack,curVar(S.selTrack)); renderEditor(); }
+    if(k==="z"){ undoStep(); }
+    if(k==="y"){ redoStep(); }
+    if(k==="k"){ keepPattern(); }
+    if(k==="q"&&e.shiftKey){ setInstant(!S.instant); return; }
+    if(k==="f"&&e.shiftKey){ setFxQuant(!FX.quant); return; }
+    if(k==="p"){ riser(); return; }
+    if(k==="x"){ remix(); return; }
+    if(k==="c"){ unremix(); return; }
+    if(k===","){ setLen(S.selTrack, trackLen(S.selTrack)-1); }
+    if(k==="."){ setLen(S.selTrack, trackLen(S.selTrack)+1); }
+    if(k==="/"){ e.preventDefault(); reverbThrow(); return; }
+    if(k==="escape"){ el("help").classList.remove("open"); closePicker(); }
+  });
+
+  /* The hold effects need key-up as well as key-down, and the browser repeats
+     key-down while a key is held — which would re-trigger the roll forever. */
+  const fxHeld = {};
+  document.addEventListener("keydown",e=>{
+    if(e.target.tagName==="INPUT" || e.shiftKey) return;
+    const entry = FX_KEYS[e.key.toLowerCase()];
+    if(!entry) return;
+    e.preventDefault();
+    if(fxHeld[e.key.toLowerCase()]) return;
+    fxHeld[e.key.toLowerCase()] = true;
+    entry[1]();
+  });
+  document.addEventListener("keyup",e=>{
+    const kk = e.key.toLowerCase();
+    const entry = FX_KEYS[kk];
+    if(!entry || !fxHeld[kk]) return;
+    delete fxHeld[kk];
+    entry[2]();
+  });
+  window.addEventListener("blur",()=>{            // never leave an effect latched
+    Object.keys(fxHeld).forEach(kk=>{ delete fxHeld[kk]; (FX_KEYS[kk]||[])[2] && FX_KEYS[kk][2](); });
+  });
+
+  /* The debounce can still be pending when the tab closes, so flush on the way
+     out. visibilitychange is the one that fires reliably on mobile. */
+  document.addEventListener("visibilitychange",()=>{ if(document.hidden) saveNow(); });
+  window.addEventListener("pagehide", saveNow);
+  window.addEventListener("beforeunload", saveNow);
+
+  requestAnimationFrame(frame);
+}
+
+el("powerBtn").onclick=async ()=>{
+  const btn=el("powerBtn");
+  if(btn.disabled) return;
+  btn.disabled=true;
+  try{
+    initAudio();
+    btn.textContent="RENDERING DRUMS";
+    try{
+      await renderBank(k=>{ btn.textContent="RENDERING "+k.toUpperCase(); });
+    }catch(e){
+      SMP.ready=false;   // fall back to the realtime voices, still playable
+    }
+    const saved = loadSaved();
+    if(saved){ S.edits = saved.edits || {}; }
+    loadKit(saved ? (saved.kit|0) : 0, false);
+    buildFx();                 // re-run so every knob writes its value into the live graph
+    buildFxDeck();
+    if(saved) msg("YOUR SAVED PATTERNS LOADED");
+    else if(!storageOk) msg("THIS BROWSER WON'T SAVE — WORK LASTS THIS SESSION");
+    el("power").style.display="none";
+    play();
+  }catch(err){
+    btn.disabled=false; btn.textContent="POWER ON";
+    el("power").querySelector("p").textContent="Audio could not start in this browser: "+err.message;
+  }
+};
+
+boot();
+</script>
+</body>
+</html>
