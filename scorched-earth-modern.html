@@ -760,23 +760,23 @@ const THEATRES=[
   sky:['#8d9298','#b8b6ae','#d6cfc0'], gnd:['#9c968c','#7a756c','#43413c'], ridge:'rgba(104,106,104,',
   rock:'#b0aca4', amp:0.30, rough:0.7, cover:2.4, wind:0.7, shear:0.8},
  {id:'canyon',n:'CANYON',       sub:'vertical · narrow windows',
-  sky:['#9c7f6e','#d1a077','#eec89a'], gnd:['#c4794c','#9a5535','#4e2c1e'], ridge:'rgba(138,92,66,',
+  sky:['#9c7f6e','#d1a077','#eec89a'], gnd:['#d08a5d','#aa6542','#5e3827'], ridge:'rgba(152,104,76,',
   rock:'#b9744a', amp:1.15, rough:1.25, cover:0.7, wind:0.9, shear:1.5},
  {id:'moon', n:'LUNAR MARE',    sub:'low gravity · no air',
-  sky:['#05070d','#0b1018','#1c2230'], gnd:['#8f8f96','#63636c','#2e2e35'], ridge:'rgba(70,72,84,',
+  sky:['#05070d','#0b1018','#1c2230'], gnd:['#a3a3ab','#757581','#3a3a44'], ridge:'rgba(84,86,100,',
   rock:'#9a9aa2', amp:0.9, rough:1.1, cover:0.8, wind:0.0, shear:0.0, grav:0.42, vac:true, stars:true},
  {id:'glacier',n:'GLACIER',     sub:'steep ice · shells skate',
   sky:['#8fb6cc','#c6dbe6','#eaf2f5'], gnd:['#dcecf2','#a8c6d6','#5d7f92'], ridge:'rgba(150,180,196,',
   rock:'#cfe2ec', amp:1.05, rough:1.15, cover:0.5, wind:1.2, shear:1.7, slick:true},
  {id:'volc', n:'VOLCANIC RIFT', sub:'ash sky · brittle ground',
-  sky:['#2a1a18','#5c3026','#9c5230'], gnd:['#6b4335','#472c24','#1e1512'], ridge:'rgba(78,48,40,',
-  rock:'#7a4c3c', amp:1.1, rough:1.3, cover:0.9, wind:1.1, shear:1.2, ember:true, brittle:true},
+  sky:['#2a1a18','#5c3026','#9c5230'], gnd:['#8a5a46','#5d3a2e','#2a1d18'], ridge:'rgba(96,60,50,',
+  rock:'#8f5b47', amp:1.1, rough:1.3, cover:0.9, wind:1.1, shear:1.2, ember:true, brittle:true},
 ];
 const WEATHER=[
  {id:'clear',n:'CLEAR',      sub:'',                       w:1},
- {id:'storm',n:'SANDSTORM',  sub:'sight degraded',          w:1, haze:0.42, gust:true, only:['dune','canyon','volc']},
+ {id:'storm',n:'SANDSTORM',  sub:'sight degraded',          w:1, haze:0.34, gust:true, only:['dune','canyon','volc']},
  {id:'rain', n:'RAIN',       sub:'fires die fast',          w:1, rain:1, wet:true, only:['urban','glacier','canyon']},
- {id:'night',n:'NIGHT',      sub:'muzzle flash lighting',   w:1, dark:0.62, only:['urban','dune','glacier','volc']},
+ {id:'night',n:'NIGHT',      sub:'muzzle flash lighting',   w:1, dark:0.44, only:['urban','dune','glacier','volc']},
  {id:'fog',  n:'LOW CLOUD',  sub:'high arcs vanish',        w:1, fog:true, only:['glacier','urban','canyon']},
 ];
 const MODS=[
@@ -2070,28 +2070,71 @@ function drawTerrain(){
   for(let x=0;x<t.length;x+=2)ctx.lineTo(x,t[x]);
   ctx.strokeStyle=TH.id==='moon'?'rgba(230,232,240,.95)':'rgba(252,244,214,.95)'; ctx.lineWidth=2; ctx.stroke();
 }
+// Relative luminance of a #rrggbb, 0..1 — decides which way a rim has to contrast.
+function lumOf(hex){
+  const n=parseInt(hex.slice(1),16);
+  const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);};
+  return 0.2126*f((n>>16)&255)+0.7152*f((n>>8)&255)+0.0722*f(n&255);
+}
+// How bright the ground under the tanks really is, counting the weather dimming.
+function sceneLum(){
+  let L=lumOf(TH.gnd[1]);
+  if(WX.dark)L=L*(1-WX.dark);                    // night pulls it toward black
+  if(WX.haze)L=L*(1-WX.haze)+0.5*WX.haze;        // haze washes it pale
+  if(WX.fog)L=L*0.85+0.15;
+  return L;
+}
 function drawTank(t){
   if(t.dead){ctx.save();ctx.globalAlpha=.5;}
   const sl=Math.atan(slope(t.x));
+  // Dual rim — dark outer, light inner. On bright ground the dark edge separates the hull;
+  // on dark ground the light edge does; on mid-tone ground both are visible. No map can hide a tank.
+  const L=sceneLum();
+  const rimA=L<0.22?'rgba(14,20,22,.95)':'rgba(255,253,244,.95)';   // outer
+  const rimB=L<0.22?'rgba(255,253,244,.95)':'rgba(14,20,22,.95)';   // inner
+  const rim=rimB;
   ctx.save(); ctx.translate(t.x,t.y); ctx.rotate(sl);
-  ctx.fillStyle=t.ai?'#7a3b2c':'#2f4a55';
+
+  ctx.fillStyle='rgba(0,0,0,.28)';                       // contact shadow: sits on the ground
+  ctx.beginPath(); ctx.ellipse(0,1,18,4,0,0,7); ctx.fill();
+
+  ctx.fillStyle=rimA;                                    // outer silhouette
+  ctx.fillRect(-18.6,-12.6,37.2,13.8);
+  ctx.fillRect(-11.6,-18.6,23.2,10.4);
+  ctx.fillStyle=rimB;                                    // inner silhouette
+  ctx.fillRect(-17.4,-11.4,34.8,12.6);
+  ctx.fillRect(-10.4,-17.4,20.8,9.2);
+
+  ctx.fillStyle=t.ai?'#ff5c7a':'#4ad2f0';                // cyan vs crimson: hues no terrain uses
   ctx.fillRect(-15,-9,30,9);
-  ctx.fillStyle='rgba(0,0,0,.45)'; ctx.fillRect(-16,-2,32,5);
-  for(let i=-13;i<=13;i+=5.2){ctx.fillStyle='rgba(200,200,190,.18)';ctx.fillRect(i-1,-1.4,2,3.6);}
-  ctx.fillStyle=t.ai?'#96513c':'#3b5c68'; ctx.fillRect(-8,-15,16,7);
+  ctx.fillStyle='rgba(0,0,0,.32)'; ctx.fillRect(-16,-2,32,5);
+  for(let i=-13;i<=13;i+=5.2){ctx.fillStyle='rgba(255,255,250,.32)';ctx.fillRect(i-1,-1.4,2,3.6);}
+  ctx.fillStyle=t.ai?'#ff8fa4':'#8ae6ff'; ctx.fillRect(-8,-15,16,7);
   const a=t.ang*Math.PI/180 - sl;
   ctx.save(); ctx.translate(0,-13); ctx.rotate(a);
-  ctx.fillStyle='#1c2429'; ctx.fillRect(0,-2,22,4);
+  ctx.fillStyle=rim; ctx.fillRect(-1.2,-3.4,24.6,6.8);   // rimmed barrel
+  ctx.fillStyle=t.ai?'#a62240':'#176b86'; ctx.fillRect(0,-2,22,4);
   ctx.restore();
-  ctx.strokeStyle='rgba(0,0,0,.5)';ctx.lineWidth=1;ctx.strokeRect(-15,-9,30,9);
-  if(t.shield){                                        // reactive plates, visibly bolted on
-    ctx.strokeStyle='rgba(209,82,10,.9)';ctx.lineWidth=2;
+  if(t.shield){                                          // reactive plates, visibly bolted on
+    ctx.strokeStyle='rgba(255,150,40,.95)';ctx.lineWidth=2;
     ctx.strokeRect(-18,-18,36,19);
-    ctx.fillStyle='rgba(209,82,10,.16)';ctx.fillRect(-18,-18,36,19);
+    ctx.fillStyle='rgba(255,150,40,.18)';ctx.fillRect(-18,-18,36,19);
   }
   ctx.restore();
+  if(!t.dead){                                           // identity marker: a graphic, not a label
+    ctx.fillStyle=rimA;
+    ctx.beginPath();ctx.moveTo(t.x,t.y-23);ctx.lineTo(t.x-7.5,t.y-34);ctx.lineTo(t.x+7.5,t.y-34);
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle=rimB;
+    ctx.beginPath();ctx.moveTo(t.x,t.y-25);ctx.lineTo(t.x-6,t.y-33);ctx.lineTo(t.x+6,t.y-33);
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle=t.ai?'#ff5c7a':'#4ad2f0';
+    ctx.beginPath();ctx.moveTo(t.x,t.y-26);ctx.lineTo(t.x-4,t.y-31.5);ctx.lineTo(t.x+4,t.y-31.5);
+    ctx.closePath();ctx.fill();
+  }
   if(t.dead)ctx.restore();
 }
+
 function drawAimWorld(){
   if(!drag||(G.phase!=='aim'&&G.phase!=='plan')||G.tanks[0].emp)return;
   const s=solutionFrom(drag), me=G.tanks[0], w=wpn(G.hand[G.sel]);
@@ -2286,10 +2329,12 @@ function render(){
   let sx=0,sy=0;
   if(G.shake>0.2){sx=(Math.random()-.5)*G.shake;sy=(Math.random()-.5)*G.shake;ctx.translate(sx,sy);}
   camApply();
-  drawSky(); drawTerrain(); drawBlocks(); drawMines(); drawPredict(); drawPods(); drawDecoy();
-  G.tanks.forEach(drawTank);
+  drawSky(); drawTerrain(); drawBlocks();
   drawEmbers();
-  drawShots(); drawVortex(); drawBeams(); drawFX(); drawAtmos(); drawPrecip(); drawAimWorld();
+  drawAtmos();                                     // night / haze / cloud dim the WORLD...
+  drawMines(); drawPredict(); drawPods(); drawDecoy();
+  G.tanks.forEach(drawTank);                       // ...never the tanks, drawn on top of the dimming
+  drawShots(); drawVortex(); drawBeams(); drawFX(); drawPrecip(); drawAimWorld();
   ctx.restore();
   drawAimHUD();
   speedLines(CAM.lines*(G.slow>0?1:0.55));

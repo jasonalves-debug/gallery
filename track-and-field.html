@@ -655,12 +655,21 @@ function onUp(e){
     // find where the outward motion actually began — everything before that is
     // still spin, and measuring the angle from it would poison the launch angle
     const b=h[h.length-1];
-    let i0=h.length-1;
-    while(i0>0&&h[i0].r>h[i0-1].r+0.8) i0--;   // needs a real outward step, not spin jitter
+    // Origin = the tightest point the thumb reached. Walking back step by step
+    // stalled whenever a flick began tangentially, reading dr as 7-15 instead
+    // of 40+, so the gesture silently failed over a third of the dial.
+    let i0=0,minR=1e9;
+    for(let i=0;i<h.length;i++) if(h[i].r<minR){minR=h[i].r;i0=i;}
     const a=h[i0];
     const dx=b.x-a.x,dy=b.y-a.y,dist=Math.hypot(dx,dy),dr=b.r-a.r,dt=Math.max(1,b.t-a.t);
-    if(dr>20&&dist>26&&dy<-8&&dist/dt>0.18){
-      const ang=Math.atan2(-dy,Math.max(2,Math.abs(dx)))*180/Math.PI;
+    // A flick is OUTWARD motion; it does not have to be upward as well.
+    if(dr>20&&dist>24&&dist/dt>0.14){
+      // Take the DIRECTION from the tail of the gesture only, so the circular
+      // spin that preceded it cannot skew the launch angle.
+      let aa=a;
+      for(let i=h.length-1;i>=0;i--){ if(b.t-h[i].t>=60){ aa=h[i]; break; } }
+      const ddx=b.x-aa.x, ddy=b.y-aa.y;
+      const ang=Math.atan2(-ddy,Math.max(2,Math.abs(ddx)))*180/Math.PI;
       const lag=Math.min(0.24,Math.max(0,dt/1000));   // gesture duration = input lag
       input.flick={angle:Math.max(15,Math.min(78,ang)),lag:lag};
     }
@@ -706,7 +715,7 @@ const EVENTS=[
  {id:'hammer',name:'HAMMER THROW',  short:'HAMMER', scene:'hammer',vox:'hammer',unit:'M',
   rec:86.74, qual:55.00, tries:3, start:'none', cpu:[58.2,0,63.9]},
  {id:'dive',  name:'HIGH DIVE',     short:'DIVE',   scene:'dive', vox:'dive',   unit:'PT',
-  rec:99.00, qual:58.00, tries:2, start:'none', cpu:[64,71]},
+  rec:92.00, qual:55.00, tries:3, start:'none', cpu:[62,68,0]},
  {id:'lift',  name:'CLEAN AND JERK',short:'LIFT',   scene:'lift', vox:'lift',   unit:'KG',
   rec:225,   qual:120,   tries:3, start:'none', cpu:[135,0,152]},
  {id:'arch',  name:'ARCHERY',       short:'ARCHERY',scene:'arch', vox:'archery',unit:'PT',
@@ -816,7 +825,7 @@ function startAttempt(){
   S.drawAmt=0; S.hold=0; S.arrow=null; S.ring=0; S.crossHist=[];
   S.peakH=0; S.peakSeen=0; S.clearedBar=false; S.barCheck=false; S.turned=false; S.flightT=0;
   S.pushed=false; S.pushBonus=0; S.pushRamp=0; S.visLift=0; S.barSlow=false;
-  S.orbit=0; S.hspd=0; S.turns=0;
+  S.orbit=0; S.hspd=0; S.turns=0; S.orbHist=[]; S.relOff=0; S.orbRate=0; S.orbHist=[]; S.relOff=0;
   S.phase='build'; S.power=0; S.weight=0; S.tilt=0; S.tiltV=0; S.holdT=0; S.barWob=0;
   S.wind=(Math.random()*2-1);
   S.crossX=172; S.crossY=240;
@@ -1242,17 +1251,37 @@ function updHammer(dt,e){
   S.x=CIRC_M;
   const target=input.spinRate*8.6;                       // rev/s -> m/s at the head
   S.hspd = Math.min(30.0, S.hspd+(target-S.hspd)*Math.min(1,dt*5.0)); // human ceiling
-  S.orbit += input.spinRate*2*Math.PI*dt;
-  S.turns = S.orbit/(2*Math.PI);
+  // The orbit is what you AIM with, so it has to be trackable. Cap it at a
+  // readable rate; spin rate still sets release speed, it just no longer
+  // whips the ball round faster than anyone can time.
+  S.orbRate=Math.min(1.9,input.spinRate);
+  S.orbit += S.orbRate*2*Math.PI*dt;
+  // Count the turns the THUMB made, not the capped ball orbit. Deriving them
+  // from the capped orbit meant spinning hard fouled you for not enough turns
+  // — the opposite of what the gesture was telling the game.
+  S.turns += input.spinRate*dt;
+  // Record where the ball actually was, frame by frame. spinRate collapses the
+  // moment the thumb stops circling, so estimating the rewind from it
+  // under-corrects badly.
+  if(!S.orbHist) S.orbHist=[];
+  S.orbHist.push({t:S.timer,o:S.orbit,v:S.hspd});
+  while(S.orbHist.length&&S.timer-S.orbHist[0].t>0.5) S.orbHist.shift();
   const f=takeFlick();
   if(f){
-    let a=S.orbit%(2*Math.PI); if(a<0) a+=2*Math.PI;
-    const off=Math.abs(a-1.5*Math.PI);
-    if(S.turns<1.5){ finishAttempt(0,true,'NOT ENOUGH TURNS'); return; }
-    if(off>0.95){ finishAttempt(0,true,'OUT OF SECTOR'); return; }
+    const want=S.timer-(f.lag||0);
+    let snap=S.orbHist.length?S.orbHist[0]:{o:S.orbit,v:S.hspd};
+    for(let i=S.orbHist.length-1;i>=0;i--) if(S.orbHist[i].t<=want){ snap=S.orbHist[i]; break; }
+    let a=snap.o%(2*Math.PI); if(a<0) a+=2*Math.PI;
+    let off=Math.abs(a-1.5*Math.PI);
+    if(off>Math.PI) off=2*Math.PI-off;
+    if(S.turns<1.0){ finishAttempt(0,true,'NOT ENOUGH TURNS'); return; }
+    // Only a genuinely backwards release fouls. Inside the sector, accuracy
+    // scales the throw — distance goes as v squared, so the penalty is gentle.
+    if(off>2.5){ finishAttempt(0,true,'OUT OF SECTOR'); return; }
+    S.relOff=off;
     const th=f.angle*Math.PI/180;
-    const acc=1-(off/0.95)*0.12;                          // clean release pays
-    const v=S.hspd*acc;
+    const acc=1-Math.pow(off/2.5,2)*0.28;
+    const v=snap.v*acc;
     S.takeoffX=CIRC_M; S.fx=CIRC_M; S.fy=1.7;
     S.fvx=v*Math.cos(th); S.fvy=v*Math.sin(th);
     S.mode='flight'; S.t=0; S.landed=false; S.trail.length=0; S.slow=0.40;
@@ -1326,32 +1355,45 @@ function updDiveBoard(dt,e){
   S.timer+=dt;
   const f=takeFlick();
   if(f){
-    S.dvVy=-(110+(f.angle/78)*175);
+    S.dvVy=-(150+(f.angle/78)*215);
     S.mode='flight'; S.t=0; S.straight=false;
     SFX.whoosh(); vib(25); S.shake=3;
   }
   if(S.timer>20) finishAttempt(0,true,'NO DIVE');
 }
 function updDiveFlight(dt,e){
-  S.dvVy+=700*dt;
+  S.dvVy+=615*dt;
   S.dvY+=S.dvVy*dt;
   S.dvX+=26*dt;
   const rate=input.spinRate*Math.PI;          // dial rev/s -> body rad/s
-  S.body+=rate*dt; S.rotTot+=rate*dt;
   S.straight=input.spinRate<0.45;
+  if(S.straight){
+    // Stop spinning and the diver KICKS OUT, easing on to the nearest
+    // head-down line — the way a real diver comes out of a tuck. Stopping
+    // early enough to finish the kick-out is the skill, not hitting an
+    // exact angle at the instant of entry.
+    const k=Math.round((S.body-Math.PI)/(2*Math.PI))*(2*Math.PI)+Math.PI;
+    const d=k-S.body;
+    const stepMax=5.2*dt;
+    const mv=Math.abs(d)<stepMax?d:Math.sign(d)*stepMax;
+    S.body+=mv; S.rotTot+=Math.abs(mv)*0.35;
+  } else {
+    S.body+=rate*dt; S.rotTot+=rate*dt;
+  }
   if(S.dvY>=WATER_Y-6){
     // entry
     let a=S.body%(2*Math.PI); if(a<0) a+=2*Math.PI;
     const err=Math.abs(a-Math.PI);            // 0 = perfectly head-down
-    const halves=Math.floor((S.rotTot/(2*Math.PI))*2)/2;
-    let bonus=30*Math.max(0,1-err/(Math.PI/3));
-    if(input.spinRate>0.7) bonus*=0.35;
-    const score=Math.min(100,25+Math.min(45,halves*10)+bonus);
+    const revs=Math.floor((S.rotTot/(2*Math.PI))*2)/2;
+    let bonus=40*Math.max(0,1-err/(Math.PI/2));
+    if(input.spinRate>0.9) bonus*=0.55;         // still tumbling at entry
+    const score=Math.round(Math.min(100,20+Math.min(40,revs*13)+bonus));
     S.splash=0.9; SFX.splash(); S.shake=6; vib(70);
     for(let i=0;i<26;i++)
       puff(S.dvX+(Math.random()-0.5)*24,WATER_Y,(Math.random()-0.5)*160,
            -60-Math.random()*140,0.7,i%2?C.foam:C.white,2+Math.random()*3);
     const msg = err<0.35 ? 'CLEAN ENTRY' : (err<0.9 ? 'GOOD DIVE' : 'BELLY FLOP');
+    S.lastRevs=revs; S.lastErr=err;
     finishAttempt(score,false,msg);
   }
 }
@@ -1887,10 +1929,11 @@ function sceneHammer(e){
     const behind=(a>Math.PI*0.5&&a<Math.PI*1.5);
     const flip=behind;
     // release arc guide
-    for(let g=1.5*Math.PI-0.95;g<=1.5*Math.PI+0.95;g+=0.09){
+    for(let g=1.5*Math.PI-2.5;g<=1.5*Math.PI+2.5;g+=0.07){
       const gx2=cx+Math.cos(g)*40, gy2=PL_BASE-30+Math.sin(g)*13;
-      ctx.fillStyle=S.turns>=1.5?C.yellow:C.grey;
-      ctx.fillRect(Math.round(gx2/2)*2,Math.round(gy2/2)*2,2,2);
+      const core=Math.abs(g-1.5*Math.PI)<0.7;
+      ctx.fillStyle=S.turns>=1.0?(core?'#40E060':C.yellow):C.grey;
+      ctx.fillRect(Math.round(gx2/2)*2,Math.round(gy2/2)*2,core?3:2,core?3:2);
     }
     function ball(){
       ctx.fillStyle=C.steel;
@@ -1907,9 +1950,9 @@ function sceneHammer(e){
       t:S.resultT,flip:flip},'p');
     if(!behind) ball();
     if(S.mode==='run'){
-      textS(S.turns.toFixed(1)+' TURNS',128,178,S.turns>=1.5?C.yellow:C.white,2,'c');
+      textS(S.turns.toFixed(1)+' TURNS',128,178,S.turns>=1.0?C.yellow:C.white,2,'c');
       textS(Math.round(S.hspd*100)+' CM/SEC',128,200,C.cyan,1,'c');
-      if(S.turns>=1.5) textS('FLICK ON THE YELLOW ARC',128,212,C.salmon,1,'c');
+      if(S.turns>=1.0) textS('FLICK ON THE YELLOW ARC',128,212,C.salmon,1,'c');
     }
   } else if(S.mode==='flight'){
     drawAthlete(cx,PL_BASE,{mode:'release'},'p');
@@ -2025,8 +2068,14 @@ function sceneDive(e){
   if(S.mode==='run') textS('FLICK TO DIVE',128,210,C.yellow,2,'c');
   if(S.mode==='flight'){
     const rots=Math.abs(S.rotTot)/(2*Math.PI);
-    textS(rots.toFixed(2)+' ROTS',128,190,C.yellow,2,'c');
-    textS(S.straight?'STRAIGHT':'SPINNING',128,212,S.straight?C.cyan:C.salmon,1,'c');
+    textS(rots.toFixed(2)+' ROTS',128,182,C.yellow,2,'c');
+    // how close the body is to head-down right now — the thing you must land on
+    let ca=S.body%(2*Math.PI); if(ca<0) ca+=2*Math.PI;
+    const cerr=Math.abs(ca-Math.PI);
+    textS(cerr<0.35?'HEAD DOWN':(cerr<0.9?'CLOSE':'TUMBLING'),128,202,
+          cerr<0.35?'#40E060':(cerr<0.9?C.yellow:C.salmon),2,'c');
+    text(S.straight?'STOPPED - HOLD IT':'SPIN TO ROTATE',128,222,
+         S.straight?C.cyan:C.white,1,'c');
   }
 }
 
@@ -2152,7 +2201,7 @@ function drawDial(){
     else if(e.id==='hurdle'){ l1='FLICK'; l2='TO HOP'; }
     else if(e.scene==='lift'){ l1='SPIN'; l2=S.phase==='hold'?'TO STEADY':'TO BUILD'; }
     else if(e.scene==='bar'){ l1='FLICK'; l2=e.id==='vault'?'TO PLANT':'TO JUMP'; }
-    else if(e.scene==='hammer'){ l1='SPIN'; l2=S.turns>=1.5?'FLICK NOW':'TO TURN'; }
+    else if(e.scene==='hammer'){ l1='SPIN'; l2=S.turns>=1.0?'FLICK NOW':'TO TURN'; }
     else if(e.scene==='field'){ l1='FLICK'; l2=e.id==='jav'?'TO THROW':'TO JUMP'; }
   }
   else if(S.mode==='flight'){
