@@ -153,7 +153,7 @@ const popAlive=n=>n.cities.reduce((s,c)=>s+c.pop*c.alive,0);
 const siloMis=n=>n.silos.reduce((s,x)=>s+(x.alive?x.n:0),0);
 const subMis=n=>n.subs.reduce((s,x)=>s+x.n,0);
 
-function newGame(pi,eis){
+function newGame(pi,eis){eis=eis.slice(0,1);
   const P=mkNation(WORLD[pi],'player');
   const E=eis.map(i=>{const n=mkNation(WORLD[i],'enemy');const a=0.45+rnd()*0.55;n.ai={aggr:a,state:'idle',tFirst:12+(1-a)*36+rnd()*10,tNext:0,warned:false,stand:false};return n;});
   WORLD.forEach(c=>c.role=0);WORLD[pi].role=1;eis.forEach(i=>WORLD[i].role=2);
@@ -1200,18 +1200,18 @@ function choosePlayer(i,quiet){
   if(!quiet){sndUI(660);focusV(c.cv);}
 }
 function renderPickE(){
-  dom.sheet.innerHTML=`<div class="row"><div class="ttl">CHOOSE ADVERSARIES</div><button class="x" id="eb" aria-label="Back">←</button></div><div class="tags" id="et"></div><input class="q" id="q" placeholder="Search countries" autocomplete="off"><div class="list" id="lst"></div><div class="btns"><button class="btn" id="er">RANDOM</button><button class="btn red" id="eg" disabled>START WAR</button></div>`;
+  dom.sheet.innerHTML=`<div class="row"><div class="ttl">CHOOSE ADVERSARY</div><button class="x" id="eb" aria-label="Back">←</button></div><div class="tags" id="et"></div><input class="q" id="q" placeholder="Search countries" autocomplete="off"><div class="list" id="lst"></div><div class="btns"><button class="btn" id="er">RANDOM</button><button class="btn red" id="eg" disabled>START WAR</button></div>`;
   const lst=$('lst'),q=$('q');
-  UI.pickE=UI.pickE.filter(i=>i!==UI.pickP);
-  const paint=()=>{lst.innerHTML=listHTML(q.value,c=>UI.pickE.indexOf(c.i)>=0,'e');const t=$('et');t.innerHTML=UI.pickE.length?UI.pickE.map(i=>`<span class="tag">${WORLD[i].name}</span>`).join(''):'<span class="sub">Tap up to 4 countries. They will all target you.</span>';$('eg').disabled=!UI.pickE.length;
+  UI.pickE=UI.pickE.filter(i=>i!==UI.pickP).slice(0,1);
+  const paint=()=>{lst.innerHTML=listHTML(q.value,c=>UI.pickE.indexOf(c.i)>=0,'e');const t=$('et');t.innerHTML=UI.pickE.length?UI.pickE.map(i=>`<span class="tag">${WORLD[i].name}</span>`).join(''):'<span class="sub">Tap one country. It will target you.</span>';$('eg').disabled=!UI.pickE.length;
     WORLD.forEach(x=>x.role=0);WORLD[UI.pickP].role=1;UI.pickE.forEach(i=>WORLD[i].role=2);layoutSoon();};
   paint();q.addEventListener('input',paint);
-  const tog=i=>{const k=UI.pickE.indexOf(i);if(k>=0)UI.pickE.splice(k,1);else{if(UI.pickE.length>=4)UI.pickE.shift();UI.pickE.push(i);focusV(WORLD[i].cv);}sndUI(560);paint();};
+  const tog=i=>{const k=UI.pickE.indexOf(i);if(k>=0)UI.pickE=[];else{UI.pickE=[i];focusV(WORLD[i].cv);}sndUI(560);paint();};
   UI.togE=tog;bindList(lst,tog);
   $('eb').addEventListener('click',()=>{sndUI(500);setMode('pickP');});
   $('er').addEventListener('click',()=>{
     const me=WORLD[UI.pickP];const pool=PLAYABLE.filter(c=>c.i!==me.i&&c.a>=12).sort((a,b)=>ang(a.cv,me.cv)-ang(b.cv,me.cv)).slice(0,12);
-    UI.pickE=[];const n=2+Math.floor(rnd()*2);while(UI.pickE.length<n&&pool.length){UI.pickE.push(pool.splice(Math.floor(rnd()*pool.length),1)[0].i);}sndUI(700);paint();});
+    UI.pickE=pool.length?[pool[Math.floor(rnd()*pool.length)].i]:[];sndUI(700);paint();});
   $('eg').addEventListener('click',()=>{if(UI.pickE.length)startWar();});
 }
 function startWar(){
