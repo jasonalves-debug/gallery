@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Big Board</title>
+<title>PRESS YOUR LUCK — Big Board</title>
 <style>
 /* ============================================================
    TOKENS
@@ -701,6 +701,181 @@ button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
   .controls .buzzer{padding:7px 6px;font-size:clamp(14px,4.6vh,18px)}
   .controls .reflip,.controls .pass{padding:6px 4px}
 }
+
+/* ============================================================
+   CENTRE SCREEN — magnifier, reveals, idle info
+   ============================================================ */
+.monitor{container-type:size}
+.monitor::after{z-index:6}
+.mon-eyebrow,.mon-main,.mon-sub,.mon-streak,.pips{position:relative;z-index:3}
+.mon-rays{position:absolute;left:50%;top:50%;width:170cqmax;height:170cqmax;margin:-85cqmax 0 0 -85cqmax;
+  background:repeating-conic-gradient(rgba(255,194,51,.34) 0 6deg,transparent 6deg 15deg);
+  -webkit-mask:radial-gradient(circle,#000 0 10%,transparent 48%);mask:radial-gradient(circle,#000 0 10%,transparent 48%);
+  opacity:0;z-index:0;pointer-events:none}
+.mon-rays.on{animation:raysIn 2s ease-out forwards,raysSpin 7s linear infinite}
+.mon-rays.cyan{background:repeating-conic-gradient(rgba(38,232,255,.3) 0 6deg,transparent 6deg 15deg)}
+@keyframes raysIn{0%{opacity:0}12%{opacity:1}65%{opacity:.75}100%{opacity:0}}
+@keyframes raysSpin{to{transform:rotate(360deg)}}
+.mon-cv{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.mon-fx{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.mon-fx.back{z-index:1}
+.mon-fx.front{z-index:4}
+
+/* magnifier: the square under the light, big */
+.mon-mag{--mw:min(70cqw,78cqh);position:absolute;z-index:2;display:none;
+  width:var(--mw);height:calc(var(--mw)/1.35);left:calc(50% - var(--mw)/2);top:calc(50% - var(--mw)/2.7);
+  border-radius:clamp(8px,4cqw,16px);overflow:hidden;
+  background:linear-gradient(180deg,#1a2247,#0a0d20 55%,#070a18);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.85),0 0 0 3px rgba(38,232,255,.9),0 0 40px 8px rgba(38,232,255,.45)}
+.mon-mag::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(158deg,rgba(255,255,255,.18),rgba(255,255,255,.03) 28%,transparent 48%)}
+.monitor.magging{justify-content:flex-start}
+.monitor.magging .mon-sub{margin-top:auto}
+.monitor.magging .mon-mag{display:block}
+.monitor.magging .mon-main,.monitor.magging .mon-streak{display:none}
+.mon-mag .face{position:absolute;inset:0}
+.mon-mag .face .f-amt{font-size:calc(var(--mw)*.19)}
+.mon-mag .face.prize .f-amt,.mon-mag .face.special .f-amt{font-size:calc(var(--mw)*.12)}
+.mon-mag .face .f-tag{font-size:calc(var(--mw)*.058);letter-spacing:.14em}
+.mon-mag .face.whammy .wsvg{width:78%;height:78%}
+.mon-mag.tick{animation:magTick .16s ease-out}
+@keyframes magTick{0%{transform:scale(1.06);filter:brightness(1.7)}100%{transform:none;filter:none}}
+.mon-mag.bad{box-shadow:inset 0 0 0 2px #fff,0 0 0 3px var(--whammy),0 0 46px 10px rgba(255,58,46,.6)}
+.mon-mag.good{box-shadow:inset 0 0 0 2px #fff,0 0 0 3px var(--gold),0 0 46px 10px rgba(255,194,51,.6)}
+.mon-mag.hot::before{content:'HOT ×3';position:absolute;top:0;left:0;right:0;z-index:3;text-align:center;
+  font:900 calc(var(--mw)*.055)/1.5 var(--body);letter-spacing:.16em;color:#2a1600;
+  background:linear-gradient(180deg,#fff2c0,var(--gold))}
+.mon-mag.lock{animation:magLock .5s ease-out}
+@keyframes magLock{0%{transform:scale(1.14);filter:brightness(3)}100%{transform:none;filter:none}}
+
+/* reel / split-flap characters */
+.rw{display:inline-block;white-space:nowrap}
+.rc{display:inline-block}
+.mon-main.win .rc:not(.flap){background:linear-gradient(180deg,#fff,var(--gold) 60%,#b96f04);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.rc.lock{animation:rcLock .24s cubic-bezier(.3,1.8,.5,1)}
+@keyframes rcLock{0%{transform:translateY(-28%) scale(1.25);filter:brightness(2.2)}100%{transform:none;filter:none}}
+.rc.flap{min-width:.64em;margin:0 .035em;padding:.06em .06em .02em;text-align:center;border-radius:.09em;
+  color:var(--gold);-webkit-text-fill-color:var(--gold);text-shadow:none;
+  background:linear-gradient(180deg,#22263a 0 48%,#05060c 48% 52%,#161a2c 52%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),0 2px 4px rgba(0,0,0,.6)}
+.rc.flap.lock{animation:flapLock .2s ease-out}
+@keyframes flapLock{0%{transform:rotateX(-90deg);filter:brightness(2)}100%{transform:none;filter:none}}
+.rc.one{animation:oneDrop .55s cubic-bezier(.3,1.6,.5,1) .12s both}
+@keyframes oneDrop{0%{transform:translateY(-160%) scale(1.4);opacity:0}60%{opacity:1}100%{transform:none}}
+.mon-main.wait{visibility:hidden}
+.mon-main.slideL{animation:slideL .5s cubic-bezier(.2,1.3,.4,1)}
+.mon-main.slideR{animation:slideR .5s cubic-bezier(.2,1.3,.4,1)}
+@keyframes slideL{0%{transform:translateX(60%);opacity:0;filter:blur(6px)}100%{transform:none}}
+@keyframes slideR{0%{transform:translateX(-60%);opacity:0;filter:blur(6px)}100%{transform:none}}
+
+/* double: two copies of the bank slam together */
+.mon-main.dbl{position:absolute;left:50%;top:50%;white-space:nowrap;font-size:clamp(14px,min(9cqw,15cqh),68px)}
+.dbl.l{animation:dblL .42s cubic-bezier(.6,0,.9,.5) forwards}
+.dbl.r{animation:dblR .42s cubic-bezier(.6,0,.9,.5) forwards}
+@keyframes dblL{0%{transform:translate(-50%,-50%) translateX(-28cqw);opacity:0}25%{opacity:1}100%{transform:translate(-50%,-50%) scale(.85);opacity:.3}}
+@keyframes dblR{0%{transform:translate(-50%,-50%) translateX(28cqw);opacity:0}25%{opacity:1}100%{transform:translate(-50%,-50%) scale(.85);opacity:.3}}
+.slam{position:absolute;left:50%;top:50%;width:30cqmin;height:30cqmin;margin:-15cqmin 0 0 -15cqmin;border-radius:50%;
+  border:3px solid #fff;animation:ring .6s ease-out forwards}
+.slam.gold{border-color:var(--gold)}
+.slam.cyan{border-color:var(--cyan)}
+@keyframes ring{0%{transform:scale(.2);opacity:1}100%{transform:scale(3.2);opacity:0}}
+
+/* shield stamp */
+.shield{position:absolute;left:50%;top:50%;width:min(46cqw,62cqh);height:min(46cqw,62cqh);
+  transform:translate(-50%,-50%);animation:shieldIn .5s cubic-bezier(.2,1.4,.4,1) forwards;
+  filter:drop-shadow(0 0 18px rgba(38,232,255,.7))}
+@keyframes shieldIn{0%{transform:translate(-50%,-50%) scale(2.6);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:.32}}
+.shield.broke{animation:shieldIn .5s cubic-bezier(.2,1.4,.4,1) forwards,shieldBreak .5s ease-in .55s forwards}
+@keyframes shieldBreak{0%{opacity:.32}30%{opacity:.9;filter:drop-shadow(0 0 22px #fff)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.25) rotate(-6deg)}}
+
+/* crack */
+.crack{position:absolute;inset:0;width:100%;height:100%}
+.crack path{fill:none;stroke:rgba(255,255,255,.9);stroke-width:2.2;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;
+  animation:crackDraw .28s ease-out forwards;filter:drop-shadow(0 0 3px rgba(255,80,60,.9))}
+@keyframes crackDraw{to{stroke-dashoffset:0}}
+
+/* streak stamp chip */
+.stampchip{position:absolute;top:8%;right:6%;font-family:var(--display);letter-spacing:.06em;
+  font-size:clamp(14px,min(10cqw,12cqh),38px);color:#2a1600;padding:.12em .4em;border-radius:.2em;
+  background:linear-gradient(180deg,#fff2c0,var(--gold));box-shadow:0 0 22px rgba(255,194,51,.7);
+  animation:chipIn .45s cubic-bezier(.2,1.7,.4,1) forwards}
+@keyframes chipIn{0%{transform:rotate(-14deg) scale(2.4);opacity:0}100%{transform:rotate(-8deg) scale(1);opacity:1}}
+
+/* idle info */
+.mon-streak{font-family:var(--display);letter-spacing:.06em;color:var(--gold);min-height:0;
+  font-size:clamp(13px,min(8cqw,9cqh),30px);text-shadow:0 0 16px rgba(255,194,51,.6);text-align:center}
+.mon-streak:empty{display:none}
+.mon-streak b{font-weight:400;color:#fff}
+.mon-hot{position:absolute;z-index:3;display:none;align-items:center;gap:.35em;white-space:nowrap;
+  font:900 clamp(9px,min(5cqw,6cqh),14px)/1 var(--body);letter-spacing:.14em;color:var(--gold);
+  padding:.35em .6em;border-radius:99px;background:rgba(20,12,0,.6);box-shadow:inset 0 0 0 1px rgba(255,194,51,.55),0 0 18px rgba(255,194,51,.25);
+  transform:translate(-50%,-50%)}
+.mon-hot .arr{display:inline-flex;width:1.4em;height:1.4em}
+.mon-hot svg{width:100%;height:100%;animation:nudge .8s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(22%)}}
+.monitor.idle:not(.magging) .mon-hot.placed{display:flex}
+.pips.bar{width:min(70%,240px);gap:4px}
+/* results read big on every screen: sized to the monitor, not the window */
+.mon-main{font-size:clamp(20px,min(16cqw,26cqh),120px)}
+.mon-eyebrow{font-size:clamp(8px,min(2.4cqw,5cqh),17px)}
+.mon-sub{font-size:clamp(8px,min(2.4cqw,5cqh),16px)}
+.pips.bar .pip{flex:1;aspect-ratio:auto;height:clamp(5px,1.6cqh,9px);width:auto;border-radius:3px}
+
+/* ============================================================
+   PERKS, OVERCLOCK, BOSS, MOOD LIGHTING, RGB SPLIT
+   ============================================================ */
+.mood{position:absolute;inset:0;opacity:0;transition:opacity 1s ease;pointer-events:none}
+.mood.r{background:radial-gradient(ellipse 75% 55% at 50% 0%,rgba(255,40,30,.34),transparent 70%),radial-gradient(ellipse 60% 40% at 50% 100%,rgba(255,40,30,.18),transparent 70%)}
+.mood.g{background:radial-gradient(ellipse 75% 55% at 50% 0%,rgba(255,190,50,.28),transparent 70%),radial-gradient(ellipse 60% 40% at 50% 100%,rgba(255,190,50,.14),transparent 70%)}
+.backdrop.danger .mood.r,.backdrop.hot .mood.g{opacity:1}
+.backdrop.danger .sweep{background:linear-gradient(180deg,rgba(255,50,40,.24),transparent 62%)}
+.backdrop.hot .sweep{background:linear-gradient(180deg,rgba(255,194,51,.2),transparent 62%)}
+
+.frame.boss{box-shadow:0 0 0 2px #000,0 0 0 4px #7a1810,0 30px 70px rgba(0,0,0,.8),0 0 90px rgba(255,58,46,.35)}
+.frame.revflash{animation:revFlash .4s ease-out}
+@keyframes revFlash{0%{filter:brightness(1.8) hue-rotate(-30deg)}100%{filter:none}}
+
+.tile.oc{box-shadow:inset 0 0 0 2px var(--whammy),0 0 0 2px rgba(255,58,46,.5),0 0 22px rgba(255,58,46,.6);animation:ocPulse 1s ease-in-out infinite}
+@keyframes ocPulse{50%{filter:brightness(1.35)}}
+
+body.magnet .tile.hot::before{content:'HOT ×5'}
+body.magnet .mon-mag.hot::before{content:'HOT ×5'}
+
+.shop-bank{font-family:var(--body);font-weight:800;letter-spacing:.2em;font-size:12px;color:var(--dim);margin:-.2em 0 .9em}
+.shop-bank b{font-family:var(--data);font-size:1.6em;letter-spacing:0;color:var(--gold);margin-left:.4em}
+.perks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 1.2em;text-align:left}
+.perk{border:0;cursor:pointer;display:grid;grid-template-columns:auto 1fr;gap:.2em .7em;align-items:start;
+  padding:.8em .9em;border-radius:12px;color:var(--bone);font-family:var(--body);
+  background:linear-gradient(180deg,rgba(40,30,90,.95),rgba(14,10,32,.95));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 0 1px rgba(38,232,255,.3);
+  transition:transform .12s,box-shadow .12s,filter .12s}
+.perk:hover:not(:disabled){transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 0 2px var(--cyan),0 0 24px rgba(38,232,255,.3)}
+.perk .pi{grid-row:1/4;font-size:26px;line-height:1}
+.perk .pn{font-family:var(--display);letter-spacing:.08em;font-size:clamp(15px,1.5vw,20px)}
+.perk .pd{font-size:12px;line-height:1.4;color:#c9bce8}
+.perk .pc{font-family:var(--data);font-weight:700;font-size:13px;color:var(--gold);margin-top:.25em}
+.perk .pc i{font-style:normal;color:var(--dim);font-weight:400}
+.perk.bought{box-shadow:inset 0 0 0 2px var(--gold),0 0 22px rgba(255,194,51,.35)}
+.perk.bought .pc{color:var(--cyan)}
+.perk.bought:disabled{opacity:1;filter:none;cursor:default}
+.perk.flash{animation:perkBuy .45s ease-out}
+@keyframes perkBuy{0%{filter:brightness(2.4)}100%{filter:none}}
+
+.card.offer{box-shadow:0 0 0 1px rgba(255,47,158,.5),0 0 80px rgba(255,47,158,.25),0 30px 70px rgba(0,0,0,.7)}
+.offer-btns{display:flex;gap:14px;justify-content:center;align-items:center;margin-top:1.2em}
+.offer-btns .pass{padding:.9em 1.4em}
+
+@media (orientation:landscape) and (max-height:560px){
+  .perks{grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:.7em}
+  .perk{grid-template-columns:1fr;padding:.5em .55em;gap:.1em}
+  .perk .pi{grid-row:auto;font-size:18px}
+  .perk .pd{font-size:10.5px}
+  .pod-top{flex-wrap:wrap;row-gap:0}
+  .pod-name{flex-shrink:0}
+}
+@media (max-width:420px){ .perks{gap:7px} .perk{padding:.6em .6em;gap:.1em .5em} .perk .pd{font-size:11px} }
 </style>
 </head>
 <body>
@@ -743,8 +918,20 @@ button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
   </symbol>
 </svg>
 
-<div class="backdrop">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rgbsplit" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+    <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="r"/>
+    <feOffset in="r" id="rgbR" dx="0" dy="0" result="r2"/>
+    <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="g"/>
+    <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="b"/>
+    <feOffset in="b" id="rgbB" dx="0" dy="0" result="b2"/>
+    <feBlend in="r2" in2="g" mode="screen" result="rg"/>
+    <feBlend in="rg" in2="b2" mode="screen"/>
+  </filter>
+</svg>
+<div class="backdrop" id="backdrop">
   <div class="sweep a"></div><div class="sweep b"></div><div class="sweep c"></div>
+  <div class="mood r"></div><div class="mood g"></div>
   <div class="floor"></div>
 </div>
 <canvas id="fx"></canvas>
@@ -768,10 +955,17 @@ button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
       <div class="bulbs" id="bulbs"></div>
       <div class="grid" id="grid">
         <div class="monitor" id="monitor">
+          <div class="mon-rays" id="monRays"></div>
+          <canvas class="mon-cv" id="monCv"></canvas>
+          <div class="mon-fx back" id="monBack"></div>
+          <div class="mon-mag" id="monMag"></div>
           <div class="mon-eyebrow" id="monEyebrow">ROUND 1</div>
           <div class="mon-main" id="monMain">READY</div>
           <div class="mon-sub" id="monSub">Hit the buzzer to start the board</div>
+          <div class="mon-streak" id="monStreak"></div>
           <div class="pips" id="pips"></div>
+          <div class="mon-hot" id="monHot"><span class="arr"><svg viewBox="0 0 24 24"><path d="M3 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="hx">HOT ×3</span></div>
+          <div class="mon-fx front" id="monFront"></div>
         </div>
       </div>
     </div>
@@ -864,6 +1058,29 @@ button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
   </div>
 </div>
 
+<div class="overlay" id="ovShop">
+  <div class="card">
+    <div class="eyebrow" id="shopEyebrow">LEVEL 2 · SHOP</div>
+    <h1>POWER-UPS</h1>
+    <p>Your bank is your score. Every power-up spends part of it.</p>
+    <div class="shop-bank">BANK <b id="shopBank">$0</b></div>
+    <div class="perks" id="perkGrid"></div>
+    <button class="cta" id="shopGo">NEXT LEVEL</button>
+  </div>
+</div>
+
+<div class="overlay" id="ovOffer">
+  <div class="card offer">
+    <div class="eyebrow">LIMITED OFFER</div>
+    <h1>OVERCLOCK</h1>
+    <p><b>Cash pays ×2</b> for your next 3 spins.<br>One extra Whammy joins the board until it ends.</p>
+    <div class="offer-btns">
+      <button class="pass" id="ocNo" data-space>Decline</button>
+      <button class="cta" id="ocYes">ACCEPT</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="ovHelp">
   <div class="card">
     <div class="eyebrow">HOW TO PLAY</div>
@@ -874,6 +1091,8 @@ button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
       <div><b>PASS</b><span>Only your own earned spins can be passed, and only to the current leader.</span></div>
       <div><b>+1 SPIN</b><span>Some faces hand you another spin. Doubles, Add-a-One and Pick a Corner are on the board too.</span></div>
       <div><b>MOVE</b><span>Move One Space shifts the light one square and pays out free.</span></div>
+      <div><b>OVERCLOCK</b><span>Sometimes offered at the start of a turn: cash ×2 for 3 spins, but an extra Whammy sits on the board.</span></div>
+      <div><b>ENDLESS</b><span>Spend your bank on power-ups between levels. Every 5th level is a boss: the light reverses once each spin.</span></div>
     </div>
     <button class="cta" id="helpClose">GOT IT</button>
   </div>
@@ -1501,6 +1720,10 @@ const SFX = (()=>{
       [0,7,12,19,24].forEach((iv,i)=>bell(440*Math.pow(2,iv/12),1.4,.15,t()+1.2+i*.1,3.47));
     },
     boom(){ if(!ready)return; impact(t(),1); },
+    flap(){ if(!ready)return; mech(t(),2.3+Math.random()*.3,.1); },
+    reverse(){ if(!ready)return; mech(t(),.6,.45); impact(t(),.35);
+      bell(988,.16,.13,t(),1.41); bell(740,.2,.12,t()+.07,1.41); },
+    buy(){ if(!ready)return; coins(7,t(),.8); bell(1318.5,.5,.12,t()+.05,3.47); bell(1760,.5,.09,t()+.12,3.47); },
     levelUp(){
       if(!ready)return;
       duck(.45,1.4); whoosh(.5,true); impact(t(),.6);
@@ -1865,6 +2088,7 @@ const S={
   round:1, board:[], faceIdx:0, active:0, phase:'idle',
   lightIdx:0, hopTimer:null, cycleTimer:null, lockedIdx:-1, movePending:false,
   attractTimer:null, nearLabel:'',
+  bought:{}, insured:false, magnetLevel:-1, steadyLevel:-1, overclock:0, ocTile:-1, ocSaved:null, ocOwner:-1, ocEnding:false,
   mode:'classic', level:1, levelSpins:0, valMult:1, shields:0, peak:0, best:0, freeSpin:false,
   hotIdx:-1, dir:1, hopMs:130, spinsTaken:0, totalSpins:0, streak:0, reflipUsed:false
 };
@@ -1888,14 +2112,205 @@ const spins=p=>p.earned+p.passed;
 const alive=()=>players.filter(p=>!p.out);
 
 function setMonitor(eyebrow,main,sub,cls){
+  mon.main._reel=null; mon.main.classList.remove('wait','slideL','slideR');
   mon.eyebrow.textContent=eyebrow;
   mon.main.textContent=main;
   mon.main.className='mon-main'+(cls?' '+cls:'');
   mon.sub.textContent=sub||'';
   mon.el.classList.remove('mon-flash'); void mon.el.offsetWidth; mon.el.classList.add('mon-flash');
 }
+
+/* ============================================================
+   CENTRE SCREEN FX — magnifier while aiming, reveals on results,
+   streak + HOT pointer between spins. Purely visual: nothing here
+   changes game state or timing.
+   ============================================================ */
+const RM = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+const MX = {
+  rays:document.getElementById('monRays'), cv:document.getElementById('monCv'),
+  back:document.getElementById('monBack'), front:document.getElementById('monFront'),
+  mag:document.getElementById('monMag'), streak:document.getElementById('monStreak'),
+  hot:document.getElementById('monHot')
+};
+const restart=(el,cls)=>{ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+
+/* coins + static, drawn on a canvas inside the monitor */
+const MC=(()=>{
+  const cv=MX.cv, cx=cv.getContext&&cv.getContext('2d');
+  const nz=document.createElement('canvas'); nz.width=96; nz.height=64;
+  const nx=nz.getContext&&nz.getContext('2d');
+  let coins=[], staticUntil=0, raf=null, W=0, H=0;
+  function size(){ const r=cv.getBoundingClientRect(), d=Math.min(2,window.devicePixelRatio||1);
+    W=r.width; H=r.height; cv.width=Math.max(1,W*d|0); cv.height=Math.max(1,H*d|0); cx.setTransform(d,0,0,d,0,0); }
+  function loop(t){
+    raf=null; cx.clearRect(0,0,W,H);
+    const now=performance.now();
+    if(now<staticUntil && nx){
+      const img=nx.createImageData(96,64), d=img.data;
+      for(let i=0;i<d.length;i+=4){ const v=Math.random()*255|0; d[i]=v; d[i+1]=v*.5|0; d[i+2]=v*.45|0; d[i+3]=255; }
+      nx.putImageData(img,0,0);
+      cx.save(); cx.globalAlpha=Math.min(.8,(staticUntil-now)/260); cx.imageSmoothingEnabled=false;
+      cx.drawImage(nz,0,0,W,H); cx.restore();
+    }
+    coins=coins.filter(c=>c.y<H+40);
+    for(const c of coins){
+      c.vy+=c.g; c.x+=c.vx; c.y+=c.vy; c.a+=c.va;
+      const sx=Math.abs(Math.cos(c.a))*c.r+.6;
+      cx.save(); cx.translate(c.x,c.y);
+      const g=cx.createLinearGradient(-sx,-c.r,sx,c.r);
+      g.addColorStop(0,'#fff6c8'); g.addColorStop(.45,'#ffc233'); g.addColorStop(1,'#9a5800');
+      cx.fillStyle=g; cx.beginPath(); cx.ellipse(0,0,sx,c.r,0,0,7); cx.fill();
+      cx.strokeStyle='rgba(110,55,0,.75)'; cx.lineWidth=1; cx.stroke(); cx.restore();
+    }
+    if(coins.length||now<staticUntil) raf=requestAnimationFrame(loop);
+  }
+  const kick=()=>{ if(!raf) raf=requestAnimationFrame(loop); };
+  return {
+    coins(n){ if(RM||!cx)return; size(); const R=Math.min(W,H);
+      for(let i=0;i<n;i++) coins.push({x:Math.random()*W,y:-12-Math.random()*H*.7,vx:(Math.random()-.5)*1.2,
+        vy:1+Math.random()*2,g:.2+Math.random()*.08,r:Math.max(5,R*(.035+Math.random()*.025)),a:Math.random()*6,va:.15+Math.random()*.2});
+      kick(); },
+    static(ms){ if(RM||!cx)return; size(); staticUntil=performance.now()+ms; kick(); },
+    clear(){ coins=[]; staticUntil=0; if(cx) cx.clearRect(0,0,W,H); }
+  };
+})();
+
+/* slot-reel digits, or split-flap letters for prize names */
+function reel(el,text,o={}){
+  const flap=!!o.flap, dur=o.dur||(flap?720:600);
+  el._reel=null; el.textContent='';
+  const pool=flap?'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789':'0123456789';
+  const scr=[]; let word=null;
+  for(const ch of String(text)){
+    if(ch===' '){ el.appendChild(document.createTextNode(' ')); word=null; continue; }
+    if(!word){ word=document.createElement('span'); word.className='rw'; el.appendChild(word); }
+    const sp=document.createElement('span'); sp.className='rc'+(flap?' flap':''); sp.textContent=ch; word.appendChild(sp);
+    if(flap ? /[A-Z0-9]/.test(ch) : /[0-9]/.test(ch)) scr.push({sp,ch,done:false});
+  }
+  if(RM||!scr.length) return;
+  const tok={}; el._reel=tok;
+  const t0=performance.now(); let last=-1e9;
+  scr.forEach(q=>q.sp.textContent=pool[(Math.random()*pool.length)|0]);
+  (function step(){
+    if(el._reel!==tok) return;
+    const t=performance.now(), k=(t-t0)/dur;
+    if(t-last>42){ last=t;
+      scr.forEach((q,i)=>{ if(q.done) return;
+        if(k>=(i+1)/scr.length){ q.done=true; q.sp.textContent=q.ch; q.sp.classList.add('lock'); if(flap) SFX.flap(); }
+        else q.sp.textContent=pool[(Math.random()*pool.length)|0]; });
+    }
+    if(scr.some(q=>!q.done)) requestAnimationFrame(step); else el._reel=null;
+  })();
+}
+
+function monClear(){
+  MC.clear(); MX.back.innerHTML=''; MX.front.innerHTML='';
+  MX.rays.classList.remove('on','cyan');
+  mon.main._reel=null; mon.main.classList.remove('wait','slideL','slideR');
+}
+function monRays(cyan){ if(RM)return; MX.rays.classList.toggle('cyan',!!cyan); restart(MX.rays,'on'); }
+function monRing(cls){ if(RM)return; const d=document.createElement('div'); d.className='slam '+(cls||''); MX.back.appendChild(d); setTimeout(()=>d.remove(),700); }
+function monStamp(txt){ const d=document.createElement('div'); d.className='stampchip'; d.textContent=txt; MX.front.appendChild(d); }
+const SHIELD_SVG='<svg viewBox="0 0 100 100" width="100%" height="100%"><path d="M50 6 L88 20 V48 C88 72 70 88 50 95 C30 88 12 72 12 48 V20 Z" fill="rgba(38,232,255,.35)" stroke="#bff6ff" stroke-width="4"/><path d="M50 24 V78 M31 45 H69" stroke="#e8fdff" stroke-width="7" stroke-linecap="round"/></svg>';
+function monShield(broke){
+  const d=document.createElement('div'); d.className='shield'+(broke?' broke':''); d.innerHTML=SHIELD_SVG;
+  MX.back.appendChild(d); monRing('cyan'); if(broke) setTimeout(monCrack,540);
+}
+function monCrack(){
+  const r=mon.el.getBoundingClientRect(), W=100, H=Math.max(30,Math.round(100*(r.height||60)/(r.width||100)));
+  const ox=W*(.38+Math.random()*.24), oy=H*(.38+Math.random()*.24), R=Math.min(W,H);
+  let paths='';
+  const arm=(x,y,a,len,depth,delay)=>{
+    let d=`M${x.toFixed(1)} ${y.toFixed(1)}`;
+    const steps=4+(Math.random()*3|0);
+    for(let k=0;k<steps;k++){
+      a+=(Math.random()-.5)*.8; const L=len/steps*(.6+Math.random()*.8);
+      x+=Math.cos(a)*L; y+=Math.sin(a)*L; d+=` L${x.toFixed(1)} ${y.toFixed(1)}`;
+      if(depth<1 && k===1 && Math.random()<.7) arm(x,y,a+(Math.random()<.5?-1:1)*(.5+Math.random()*.5),len*.45,depth+1,delay+60);
+    }
+    paths+=`<path pathLength="1" d="${d}" style="animation-delay:${delay}ms"/>`;
+  };
+  const n=6+(Math.random()*3|0);
+  for(let i=0;i<n;i++) arm(ox,oy,i/n*Math.PI*2+Math.random()*.5,R*(.32+Math.random()*.3),0,i*18);
+  paths+=`<circle cx="${ox.toFixed(1)}" cy="${oy.toFixed(1)}" r="${(R*.025).toFixed(2)}" fill="rgba(255,255,255,.9)"/>`;
+  MX.front.insertAdjacentHTML('beforeend',`<svg class="crack" viewBox="0 0 ${W} ${H}">${paths}</svg>`);
+}
+function monDouble(from,to){
+  if(RM) return;
+  mon.main.classList.add('wait');
+  ['l','r'].forEach(side=>{ const d=document.createElement('div'); d.className='mon-main win dbl '+side; d.textContent=money(from); MX.front.appendChild(d); });
+  setTimeout(()=>{
+    MX.front.querySelectorAll('.dbl').forEach(e=>e.remove());
+    monRing('gold'); monRays(); MC.coins(14);
+    mon.main.classList.remove('wait'); reel(mon.main,money(to),{dur:420});
+  },440);
+}
+function monAddOne(text){
+  mon.main.textContent=''; let dropped=false;
+  for(const ch of text){ const sp=document.createElement('span'); sp.className='rc'; sp.textContent=ch;
+    if(!dropped && ch==='1'){ sp.classList.add('one'); dropped=true; } mon.main.appendChild(sp); }
+  monRing('cyan');
+}
+
+/* magnifier: the square under the light, shown big while it hops */
+function magSet(idx){
+  const f=currentFace(idx), m=MX.mag;
+  m.innerHTML=`<div class="face ${faceClass(f)}">${faceHTML(f)}</div>`;
+  const big=f.t==='bigbucks'||f.t==='double'||(f.t==='prize'&&f.v>=2200*S.valMult);
+  m.classList.toggle('bad',f.t==='whammy');
+  m.classList.toggle('good',f.t!=='whammy'&&(big||idx===S.hotIdx));
+  m.classList.toggle('hot',idx===S.hotIdx);
+  m.classList.remove('lock'); restart(m,'tick');
+}
+function magStart(){ monClear(); S.mag=true; mon.el.classList.remove('idle'); mon.el.classList.add('magging'); magSet(S.lightIdx); }
+function magLock(){ if(!S.mag) return; magSet(S.lightIdx); MX.mag.classList.remove('tick'); restart(MX.mag,'lock'); }
+function magEnd(){ S.mag=false; mon.el.classList.remove('magging'); }
+
+/* between spins: streak + a pointer toward the HOT square */
+function monIdle(){
+  mon.el.classList.add('idle');
+  const m=multOf(S.streak), nm=multOf(S.streak+1);
+  MX.streak.innerHTML = [
+    S.streak>0 ? (m>1?`STREAK ×${m}`:`STREAK ${S.streak}`)+(nm>m?` <b>· NEXT HIT ×${nm}</b>`:'') : '',
+    S.overclock>0 ? `OVERCLOCK ×2 <b>· ${S.overclock} SPIN${S.overclock>1?'S':''} LEFT</b>` : ''
+  ].filter(Boolean).join('<br>');
+  MX.hot.querySelector('.hx').textContent='HOT ×'+hotX();
+  placeHot();
+}
+function placeHot(){
+  const h=MX.hot; h.classList.remove('placed');
+  if(S.hotIdx<0||!mon.el.classList.contains('idle')) return;
+  requestAnimationFrame(()=>{
+    if(!mon.el.classList.contains('idle')||mon.el.classList.contains('magging')) return;
+    const M=mon.el.getBoundingClientRect(); if(!M.width) return;
+    const T=tileEls[S.hotIdx].getBoundingClientRect();
+    h.style.visibility='hidden'; h.classList.add('placed');
+    const pw=h.offsetWidth, ph=h.offsetHeight, cx=M.width/2, cy=M.height/2;
+    const tx=T.left+T.width/2-M.left, ty=T.top+T.height/2-M.top;
+    let dx=tx-cx, dy=ty-cy; const len=Math.hypot(dx,dy)||1; dx/=len; dy/=len;
+    const hw=cx-pw/2-6, hh=cy-ph/2-6;
+    const k=Math.min(Math.abs(dx)>1e-6?hw/Math.abs(dx):1e9, Math.abs(dy)>1e-6?hh/Math.abs(dy):1e9);
+    let x=cx+dx*k, y=cy+dy*k;
+    let top=1e9,bot=-1e9,lft=1e9,rgt=-1e9;
+    [mon.eyebrow,mon.main,mon.sub,MX.streak,mon.pips].forEach(e=>{ const r=e.getBoundingClientRect(); if(!r.width||!r.height) return;
+      top=Math.min(top,r.top-M.top); bot=Math.max(bot,r.bottom-M.top); lft=Math.min(lft,r.left-M.left); rgt=Math.max(rgt,r.right-M.left); });
+    const pad=6, hit=(X,Y)=>X+pw/2>lft-pad&&X-pw/2<rgt+pad&&Y+ph/2>top-pad&&Y-ph/2<bot+pad;
+    if(hit(x,y)){
+      const above=top-pad-ph/2, below=bot+pad+ph/2, minY=ph/2+6, maxY=M.height-ph/2-6;
+      const pick=(dy<0?[above,below]:[below,above]).find(v=>v>=minY&&v<=maxY);
+      if(pick===undefined){ h.classList.remove('placed'); h.style.visibility=''; return; }
+      y=pick; x=Math.max(pw/2+6,Math.min(M.width-pw/2-6,x));
+    }
+    h.style.left=x+'px'; h.style.top=y+'px';
+    h.querySelector('.arr').style.transform=`rotate(${Math.atan2(ty-y,tx-x)*180/Math.PI}deg)`;
+    h.style.visibility='';
+  });
+}
+addEventListener('resize',()=>placeHot());
+
 function renderPips(){
   const p=players[S.active];
+  mon.pips.className='pips'+(S.mode==='endless'?' bar':'');
   if(!p||S.phase==='over'){mon.pips.innerHTML='';return;}
   let h='';
   if(S.mode==='endless'){
@@ -1936,7 +2351,7 @@ function renderPod(i){
   el.classList.toggle('eliminated', p.out);
   const sp=$(el,'[data-spins]');
   sp.innerHTML = p.out ? 'OUT' : S.mode==='endless'
-    ? `LVL <b>${S.level}</b> · ${LEVEL_SPINS-S.levelSpins} to next · 🛡 <b>${S.shields}</b>`
+    ? `LVL <b>${S.level}</b> · ${LEVEL_SPINS-S.levelSpins} to next · 🛡 <b>${S.shields}</b>${S.insured?' · ☂':''}`
     : (p.passed?`<i>${p.passed} passed</i> · `:'')+`<b>${p.earned}</b> spins`;
   [...$(el,'[data-whammies]').children].forEach((w,k)=>w.classList.toggle('on',k<p.whammies));
   if(p.money===p.shown) $(el,'[data-money]').textContent=money(p.money);
@@ -1948,11 +2363,13 @@ function bumpStreak(){
   el.textContent='×'+m;
   el.classList.toggle('on',m>1);
   if(m>1){ el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+  updateMood();
 }
 function resetStreak(){
   S.streak=0;
   const el=$(podEls[S.active],'[data-mult]');
   el.textContent='×1'; el.classList.remove('on','bump');
+  updateMood();
 }
 function think(i,txt){
   const t=$(podEls[i],'[data-think]');
@@ -2031,6 +2448,7 @@ function moveLight(idx,silent){
   S.lightIdx=idx;
   tileEls[idx].classList.add('lit');
   if(!silent){ SFX.hop(); vibe(6); }
+  if(S.mag) magSet(idx);
 }
 
 /* ============================================================
@@ -2050,21 +2468,25 @@ function speedNow(){
 function coastBase(){ const v=speedNow(); return v>104?2:v>72?3:4; }
 function coastNow(){
   const base=coastBase();
+  if(S.mode==='endless' && S.steadyLevel===S.level) return base;   // Steady Hand perk
   if(Math.random()<.6) return base;
   return Math.max(2, base + (Math.random()<.5?-1:1));
 }
 function speedLabel(){
   const v=speedNow();
-  return 'SPEED '+(v>120?1:v>104?2:v>88?3:v>72?4:5)+' · LEAD BY '+coastNow();
+  return 'SPEED '+(v>120?1:v>104?2:v>88?3:v>72?4:5)+' · LEAD BY '+coastBase();
 }
 function startHopping(){
   S.phase='spinning';
+  magStart();
   SFX.spinStart();
   clearTimeout(S.hopTimer);
   clearInterval(S.cycleTimer);            // board holds still while you aim
   S.dir = Math.random()<.5?1:-1;
   S.hopMs = speedNow();
+  let hops=0; const revAt=isBoss()?3+((Math.random()*10)|0):-1;
   const tickJitter=()=>{
+    if(++hops===revAt){ S.dir*=-1; SFX.reverse(); vibe(40); restart(document.querySelector('.frame'),'revflash'); }
     moveLight((S.lightIdx+S.dir+18)%18);
     S.hopTimer=setTimeout(tickJitter, S.hopMs*(0.85+Math.random()*0.3));
   };
@@ -2116,6 +2538,7 @@ function stopSpin(){
 }
 
 function doLock(){
+  magLock();
   tileEls.forEach(t=>t.classList.remove('anticip','tease'));
   const el=tileEls[S.lightIdx];
   el.classList.remove('locked'); void el.offsetWidth; el.classList.add('locked');
@@ -2179,10 +2602,14 @@ function beginTurn(idx,fresh=true){
   const p=players[idx];
   if(fresh){ S.spinsTaken=0; S.reflipUsed=false; resetStreak(); }
   renderAll(); setControls();
-  const label = S.mode==='endless' ? speedLabel()
+  if(S.overclock>0 && S.ocOwner!==idx) endOverclock(true);
+  document.body.classList.toggle('magnet', hotX()===5);
+  const label = S.mode==='endless' ? speedLabel()+(isBoss()?' · REVERSES ONCE':'')+(S.steadyLevel===S.level?' · STEADY':'')
     : (p.passed>0 ? `${p.passed} PASSED SPIN${p.passed>1?'S':''}` : `${p.earned} SPIN${p.earned>1?'S':''}`)
       + ' · ' + speedLabel();
+  magEnd(); MX.back.innerHTML=''; MX.front.innerHTML='';
   setMonitor(stageLabel(), p.human?'YOUR BOARD':p.name, label);
+  monIdle();
   SFX.turn(p.human);
   SFX.heart(p.whammies===3 && !p.out);
   podEls.forEach((el,i)=>el.classList.toggle('danger', players[i].whammies===3 && !players[i].out));
@@ -2192,6 +2619,8 @@ function beginTurn(idx,fresh=true){
       if(S.phase==='idle' && players[S.active] && players[S.active].human){ SFX.attract(); nag(); }
     }, 7000); })();
   }
+  updateMood();
+  if(p.human) maybeOffer(fresh);
   if(!p.human) setTimeout(cpuTurn, 900);
 }
 
@@ -2260,8 +2689,11 @@ function addMoney(i,amount,dir){
    ============================================================ */
 function resolve(idx, freeMove){
   S.phase='resolving'; setControls();
+  magEnd();
   const p=players[S.active], f=currentFace(idx);
   if(!freeMove && S.mode!=='endless') consumeSpin();
+  const ocX = freeMove ? (S.ocLastX||1) : (S.overclock>0 ? 2 : 1);   // a free Move keeps the spin's multiplier
+  if(!freeMove){ S.ocLastX=ocX; if(S.overclock>0){ S.overclock--; if(S.overclock===0) S.ocEnding=true; } }
 
   const done=(delay=920)=>setTimeout(afterResolve,delay);
   const rect=tileEls[idx].getBoundingClientRect();
@@ -2275,7 +2707,7 @@ function resolve(idx, freeMove){
     case 'cash': case 'bigbucks': case 'prize': {
       bumpStreak();
       const hot = idx===S.hotIdx, mult=multOf(S.streak);
-      const val = Math.round(f.v*mult*(hot?3:1));
+      const val = Math.round(f.v*mult*(hot?hotX():1)*ocX);
       const rel = val/S.valMult;
       const big = f.t==='bigbucks'||rel>=2400||hot||mult>=3;
       const ldw = RIG.on && !big && rel<=650 && Math.random()<.6;
@@ -2284,30 +2716,38 @@ function resolve(idx, freeMove){
       FX.burst(cx,cy,['#ffc233','#fff3c4','#26e8ff'], big?70:(ldw?58:40), big?12:(ldw?11:8));
       if(ldw||hot) FX.confetti(hot?90:45);
       addMoney(S.active,p.money+val,'up');
-      const tags=[]; if(hot)tags.push('HOT ×3'); if(mult>1)tags.push('STREAK ×'+mult);
+      const tags=[]; if(hot)tags.push('HOT ×'+hotX()); if(mult>1)tags.push('STREAK ×'+mult); if(ocX>1)tags.push('OVERCLOCK ×2');
       setMonitor(hot?'HOT SQUARE':(f.t==='prize'?'PRIZE':(f.t==='bigbucks'?'BIG BUCKS':(ldw?'NICE HIT!':'CASH'))),
         f.t==='prize'?f.label:money(val),
         tags.join(' · ') || S.nearLabel || (f.t==='prize'?money(val):''), 'win');
+      if(f.t==='prize') reel(mon.main,f.label,{flap:true}); else reel(mon.main,money(val));
+      if(big){ monRays(); monRing('gold'); MC.coins(26); } else if(ldw){ MC.coins(10); }
+      if(mult>1) monStamp('×'+mult);
       done(); break;
     }
     case 'cash+spin': {
       bumpStreak();
       const hot=idx===S.hotIdx, mult=multOf(S.streak);
-      const val=Math.round(f.v*mult*(hot?3:1));
+      const val=Math.round(f.v*mult*(hot?hotX():1)*ocX);
       SFX.cash(val/S.valMult>=1400?2:1);
       FX.burst(cx,cy,['#ffc233','#26e8ff','#ffffff'],48,9);
       addMoney(S.active,p.money+val,'up'); grantSpin(p);
       const endless=S.mode==='endless';
       setMonitor(endless?(hot?'HOT SQUARE':'CASH'):'CASH + ONE SPIN',money(val),
-        (hot?'HOT ×3 · ':'')+(mult>1?'STREAK ×'+mult+' · ':'')+(endless?'':'ONE MORE SPIN'),'win');
+        (hot?'HOT ×'+hotX()+' · ':'')+(mult>1?'STREAK ×'+mult+' · ':'')+(ocX>1?'OVERCLOCK ×2 · ':'')+(endless?'':'ONE MORE SPIN'),'win');
+      reel(mon.main,money(val));
+      if(hot){ monRays(); monRing('gold'); MC.coins(20); }
+      if(mult>1) monStamp('×'+mult);
       done(); break;
     }
     case 'double': {
       bumpStreak();
       SFX.jackpot();
       FX.burst(cx,cy,['#26e8ff','#ffffff','#ff2f9e'],60,11);
+      const before=p.money;
       addMoney(S.active,p.money*2,'up'); grantSpin(p);
       setMonitor('DOUBLE YOUR $$',money(players[S.active].money),S.mode==='endless'?'BANK DOUBLED':'+ ONE SPIN','win');
+      monDouble(before, players[S.active].money);
       done(); break;
     }
     case 'addone': {
@@ -2318,6 +2758,7 @@ function resolve(idx, freeMove){
       FX.burst(cx,cy,['#26e8ff','#ffffff'],50,10);
       addMoney(S.active,p.money+add,'up'); grantSpin(p);
       setMonitor('ADD A ONE',money(players[S.active].money),S.mode==='endless'?'A ONE ADDED UP FRONT':'+ ONE SPIN','win');
+      monAddOne(money(players[S.active].money));
       done(); break;
     }
     case 'lose1': {
@@ -2331,6 +2772,7 @@ function resolve(idx, freeMove){
         p.whammies=Math.max(0,p.whammies-1);
         setMonitor('LOSE-1-WHAMMY', p.whammies===0?'ALL CLEAR':`${p.whammies} LEFT`, 'ONE WHAMMY ERASED','win');
       }
+      monShield(false);
       renderPod(S.active); done(); break;
     }
     case 'move': {
@@ -2338,6 +2780,7 @@ function resolve(idx, freeMove){
       const dir=Math.random()<.5?-1:1;
       const nxt=(idx+dir+18)%18;
       setMonitor('MOVE ONE SPACE', dir<0?'◀ LEFT':'RIGHT ▶','FREE SPACE');
+      restart(mon.main, dir<0?'slideL':'slideR');
       setTimeout(()=>{ moveLight(nxt); tileEls[nxt].classList.add('locked');
         setTimeout(()=>resolve(nxt,true),620); },900);
       break;
@@ -2351,6 +2794,7 @@ function resolve(idx, freeMove){
 }
 
 function afterResolve(){
+  if(S.ocEnding) endOverclock(true);
   tileEls.forEach(t=>t.classList.remove('locked','lit','miss','anticip','tease'));
   startCycling();
   const p=players[S.active];
@@ -2363,23 +2807,33 @@ function afterResolve(){
 function whammySequence(){
   const p=players[S.active];
   if(S.mode==='endless' && S.shields>0){ shieldBlock(); return; }
+  const insured = S.mode==='endless' && S.insured;
+  if(insured) S.insured=false;
+  const kept = insured ? Math.floor(p.money*.25) : 0;
   if(S.mode==='endless') S.lostAt=p.money;
+  rgbGlitch();
   const layer=document.getElementById('whammyLayer');
   SFX.whammy();
   layer.classList.remove('on'); void layer.offsetWidth; layer.classList.add('on');
   stage.classList.remove('shake'); void stage.offsetWidth; stage.classList.add('shake');
   setMonitor('WHAMMY','WIPED OUT','BANK RESET TO ZERO','bad');
+  MC.static(650); monCrack();
   const r=podEls[S.active].getBoundingClientRect();
   setTimeout(()=>{
     FX.embers(r.left+r.width/2, r.top+r.height/2);
     SFX.boom();
     p.whammies++;
-    addMoney(S.active,0,'down');
+    addMoney(S.active,kept,'down');
     renderPod(S.active);
   },820);
 
   setTimeout(()=>{
     layer.classList.remove('on'); stage.classList.remove('shake');
+    if(insured){
+      setMonitor('INSURANCE PAID','KEPT '+money(kept),'25% OF '+money(S.lostAt)+' · STREAK LOST','win');
+      reel(mon.main,'KEPT '+money(kept)); monShield(false);
+      renderAll(); setTimeout(afterResolve,1300); return;
+    }
     if(S.mode==='endless'){
       p.out=true; SFX.eliminated();
       $(podEls[S.active],'[data-stamp]').classList.add('hit');
@@ -2483,6 +2937,8 @@ function levelParams(L){ return { M:Math.pow(3,L-1), W:Math.min(7, 3+Math.floor(
 function grantSpin(p){ if(S.mode!=='endless') p.earned++; }   // endless: levels are a fixed 4 spins
 
 function loadLevel(){
+  endOverclock(false);
+  document.querySelector('.frame').classList.toggle('boss',isBoss());
   const {M,W}=levelParams(S.level);
   S.valMult=M; S.board=buildFaces(M,W); S.faceIdx=0;
   paintFaces(); startCycling(); rerollHot();
@@ -2491,6 +2947,7 @@ function loadLevel(){
 
 function startEndless(){
   S.level=1; S.shields=0; S.freeSpin=false; S.lostAt=0;
+  S.insured=false; S.magnetLevel=-1; S.steadyLevel=-1; S.bought={};
   players[1].out=players[2].out=true;
   const p=players[0]; p.money=p.shown=1000; p.earned=1;
   $(podEls[0],'[data-money]').textContent=money(1000);
@@ -2502,8 +2959,8 @@ function startEndless(){
   document.getElementById('roundBlurb').textContent='You start with $1,000. Every '+LEVEL_SPINS+' spins — no exceptions — the board levels up.';
   document.getElementById('roundAwards').innerHTML=[
     ['VALUES','×3 every level'],['WHAMMIES','more each level'],
-    ['ONE WHAMMY','bank to $0 — you\'re out'],['SHIELD','blocks one Whammy'],
-    ['CASH OUT','bank it any time']
+    ['ONE WHAMMY','bank to $0 — you\'re out'],['SHOP','spend bank on power-ups'],
+    ['BOSS','every 5th level'],['CASH OUT','bank it any time']
   ].map(([a,b])=>`<div class="award in"><span>${a}</span><b>${b}</b></div>`).join('');
   SFX.open(); SFX.intensity(0);
   document.getElementById('ovRound').classList.add('show');
@@ -2524,9 +2981,12 @@ function levelUp(){
   frame.classList.remove('levelup'); void frame.offsetWidth; frame.classList.add('levelup');
   SFX.levelUp(); FX.confetti(70); vibe([20,40,20]);
   const {W}=levelParams(S.level);
-  setMonitor('LEVEL UP','LEVEL '+S.level, `VALUES ×3 · ${W} WHAMMIES · ${speedLabel()}`,'win');
+  setMonitor(isBoss()?'BOSS LEVEL':'LEVEL UP','LEVEL '+S.level,
+    isBoss()?'THE LIGHT REVERSES ONCE EVERY SPIN':`VALUES ×3 · ${W} WHAMMIES · ${speedLabel()}`, isBoss()?'bad':'win');
+  monClear(); mon.el.classList.remove('idle'); monRays(); monRing('gold'); MC.coins(18); reel(mon.main,'LEVEL '+S.level);
   renderAll();
-  setTimeout(()=>beginTurn(S.active,false),1700);
+  updateMood();
+  setTimeout(openShop,1700);
 }
 
 function shieldBlock(){
@@ -2537,6 +2997,7 @@ function shieldBlock(){
   FX.burst(r.left+r.width/2,r.top+r.height/2,['#26e8ff','#ffffff','#bff6ff'],60,11);
   setMonitor('WHAMMY BLOCKED','SHIELD BROKEN',
     `${S.shields} SHIELD${S.shields===1?'':'S'} LEFT · STREAK LOST`,'bad');
+  monShield(true);
   renderAll();
   setTimeout(()=>{ stage.classList.remove('shake'); afterResolve(); },1400);
 }
@@ -2548,7 +3009,7 @@ function cashOut(){
 }
 
 function endlessOver(kind){
-  S.phase='over';
+  S.phase='over'; magEnd(); mon.el.classList.remove('idle'); endOverclock(false); updateMood();
   clearInterval(S.cycleTimer); clearTimeout(S.attractTimer); SFX.heart(false);
   tileEls.forEach(t=>t.classList.remove('lit','locked'));
   podEls.forEach(el=>el.classList.remove('active','danger'));
@@ -2576,6 +3037,126 @@ function endlessOver(kind){
   SFX.open();
   offerEntry('endless', final, {level:S.level, peak:S.peak});
   document.getElementById('ovEnd').classList.add('show');
+}
+
+/* ============================================================
+   PERKS · OVERCLOCK · BOSS · MOOD · RGB SPLIT
+   ============================================================ */
+const isBoss=()=>S.mode==='endless' && S.level%5===0;
+const hotX=()=>(S.mode==='endless' && S.magnetLevel===S.level)?5:3;
+
+const PERKS=[
+  {id:'shield', icon:'🛡', name:'Shield',      pct:.30, desc:'Blocks your next Whammy completely. Stacks.'},
+  {id:'insure', icon:'☂', name:'Insurance',   pct:.20, desc:'Next Whammy keeps 25% of your bank instead of busting you.'},
+  {id:'magnet', icon:'🧲', name:'Hot Magnet',  pct:.15, desc:'HOT square pays ×5 instead of ×3 this level.'},
+  {id:'steady', icon:'🎯', name:'Steady Hand', pct:.15, desc:'No coast wobble this level: the light always stops at the shown lead.'}
+];
+/* survival perks get pricier every time you buy them, so they can't make a run unlosable */
+function perkPct(k){
+  if(k.id==='shield') return Math.min(.8, k.pct + .1*(S.bought.shield||0));
+  if(k.id==='insure') return Math.min(.6, k.pct + .1*(S.bought.insure||0));
+  return k.pct;
+}
+function perkOwned(id){
+  return id==='insure'?S.insured : id==='magnet'?S.magnetLevel===S.level : id==='steady'?S.steadyLevel===S.level : false;
+}
+function renderShop(){
+  const bank=players[0].money;
+  document.getElementById('shopBank').textContent=money(bank);
+  document.getElementById('perkGrid').innerHTML=PERKS.map(k=>{
+    const owned=perkOwned(k.id), pct=perkPct(k), cost=Math.max(1,Math.round(bank*pct));
+    const stat = owned ? 'ACTIVE' : `−${money(cost)} <i>· ${Math.round(pct*100)}%</i>`;
+    const extra = k.id==='shield' && S.shields ? ` <i>· own ${S.shields}</i>` : '';
+    return `<button class="perk${owned?' bought':''}" data-perk="${k.id}" ${owned?'disabled':''}>
+      <span class="pi">${k.icon}</span><span class="pn">${k.name}</span>
+      <span class="pd">${k.desc}</span><span class="pc">${stat}${extra}</span></button>`;
+  }).join('');
+}
+function buyPerk(id){
+  const p=players[0], k=PERKS.find(x=>x.id===id);
+  if(!k||perkOwned(id)||p.money<=1) return;
+  const cost=Math.max(1,Math.round(p.money*perkPct(k)));
+  addMoney(0,p.money-cost);
+  S.bought[id]=(S.bought[id]||0)+1;
+  if(id==='shield') S.shields++;
+  if(id==='insure') S.insured=true;
+  if(id==='magnet') S.magnetLevel=S.level;
+  if(id==='steady') S.steadyLevel=S.level;
+  SFX.buy(); vibe(15);
+  renderShop(); renderAll();
+  const b=document.querySelector(`[data-perk="${id}"]`); if(b) restart(b,'flash');
+}
+function openShop(){
+  document.getElementById('shopEyebrow').textContent=`LEVEL ${S.level} · SHOP`+(isBoss()?' · BOSS AHEAD':'');
+  renderShop(); SFX.open();
+  document.getElementById('ovShop').classList.add('show');
+}
+document.getElementById('perkGrid').addEventListener('click',e=>{
+  const b=e.target.closest('[data-perk]'); if(b&&!b.disabled) buyPerk(b.dataset.perk);
+});
+document.getElementById('shopGo').onclick=()=>{
+  SFX.click();
+  document.getElementById('ovShop').classList.remove('show');
+  beginTurn(S.active,false);
+};
+
+/* Overclock: an offer, never forced. Cash x2 for 3 spins, one extra Whammy square until it ends. */
+function maybeOffer(fresh){
+  const p=players[S.active];
+  if(!p||!p.human||p.out||S.overclock>0||S.phase!=='idle') return;
+  const eligible = S.mode==='endless' ? (S.levelSpins===0 && S.level>=2 && !isBoss())
+                                      : (fresh && spins(p)>=2);
+  if(!eligible || Math.random()>=.3) return;
+  setTimeout(()=>{
+    if(S.phase!=='idle'||S.active!==players.indexOf(p)||document.querySelector('.overlay.show')) return;
+    SFX.open(); document.getElementById('ovOffer').classList.add('show');
+  },650);
+}
+function startOverclock(){
+  const cands=[];
+  for(let i=0;i<18;i++) if(i!==S.hotIdx && i!==S.lightIdx && currentFace(i).t!=='whammy') cands.push(i);
+  if(!cands.length) return;
+  const t=cands[(Math.random()*cands.length)|0];
+  S.ocTile=t; S.ocSaved=S.board[t]; S.board[t]=[0,1,2,3].map(()=>({t:'whammy'}));
+  S.overclock=3; S.ocOwner=S.active; S.ocEnding=false;
+  paintFaces(); tileEls[t].classList.add('oc');
+  setMonitor('OVERCLOCK','CASH ×2','3 SPINS · ONE EXTRA WHAMMY ON THE BOARD','win');
+  monRays(true); monRing('cyan'); SFX.levelUp(); updateMood();
+  setTimeout(()=>{ if(S.phase==='idle') monIdle(); },1400);
+}
+function endOverclock(restore){
+  if(S.ocTile>=0){
+    if(restore && S.ocSaved) S.board[S.ocTile]=S.ocSaved;
+    tileEls[S.ocTile].classList.remove('oc');
+    if(restore) paintFaces();
+  }
+  S.overclock=0; S.ocTile=-1; S.ocSaved=null; S.ocOwner=-1; S.ocEnding=false;
+  updateMood();
+}
+document.getElementById('ocYes').onclick=()=>{ document.getElementById('ovOffer').classList.remove('show'); startOverclock(); };
+document.getElementById('ocNo').onclick=()=>{ SFX.click(); document.getElementById('ovOffer').classList.remove('show'); };
+
+/* Stage lights: red when one Whammy from elimination or on a boss level, gold on a big streak or Overclock */
+const backdropEl=document.getElementById('backdrop');
+function updateMood(){
+  const p=players[S.active], live=S.phase!=='over' && p && !p.out;
+  const danger=!!(live && ((S.mode==='classic' && p.whammies===3) || isBoss()));
+  const hot=!!(live && !danger && (multOf(S.streak)>=3 || S.overclock>0));
+  backdropEl.classList.toggle('danger',danger);
+  backdropEl.classList.toggle('hot',hot);
+}
+
+/* RGB split on a Whammy: colour channels tear apart for half a second */
+function rgbGlitch(){
+  if(RM) return;
+  const wrap=document.querySelector('.board-wrap'), R=document.getElementById('rgbR'), B=document.getElementById('rgbB');
+  const seq=[[9,0,3],[-7,2,-4],[12,-1,2],[-5,0,-2],[6,1,1],[-3,0,0],[2,0,0],[0,0,0]];
+  wrap.style.filter='url(#rgbsplit)';
+  seq.forEach(([dx,dy,j],i)=>setTimeout(()=>{
+    R.setAttribute('dx',dx); R.setAttribute('dy',dy); B.setAttribute('dx',-dx); B.setAttribute('dy',-dy);
+    wrap.style.transform=j?`translateX(${j}px)`:'';
+    if(i===seq.length-1) wrap.style.filter='';
+  },i*80));
 }
 
 /* --- pick a corner --- */
@@ -2620,6 +3201,7 @@ function pickCorner(p){
         FX.confetti(50);
         addMoney(S.active,players[S.active].money+o.v,'up');
         setMonitor('PICK A CORNER',money(o.v),'GOOD PICK','win');
+        reel(mon.main,money(o.v)); monRing('gold'); MC.coins(14);
         ov.classList.remove('show');
         setTimeout(afterResolve,1100);
       },1100);
@@ -2649,6 +3231,7 @@ function endRound(){
 }
 
 function startRound(){
+  endOverclock(false);
   S.valMult=S.round===2?2:1;
   S.board=buildFaces(S.valMult, S.round===2?5:4); S.faceIdx=0; paintFaces(); startCycling();
   S.totalSpins=0; rerollHot();
@@ -2684,7 +3267,7 @@ function showRoundCard(awards){
 }
 
 function gameOver(){
-  S.phase='over';
+  S.phase='over'; magEnd(); mon.el.classList.remove('idle'); endOverclock(false); updateMood();
   clearTimeout(S.attractTimer); SFX.heart(false);
   podEls.forEach(el=>el.classList.remove('danger'));
   clearInterval(S.cycleTimer);
@@ -2721,7 +3304,7 @@ function humanAct(){
   SFX.unlock();
   if(S.phase==='idle'){
     startHopping(); setControls();
-    setMonitor(stageLabel(),'AIMING','LEAD BY 2 · '+speedLabel());
+    setMonitor(stageLabel(),'AIMING',speedLabel());
   } else if(S.phase==='spinning'){
     stopSpin();
   }
@@ -2741,7 +3324,7 @@ addEventListener('keydown',e=>{
   if(e.code==='Space'){ e.preventDefault();
     const ovs=document.querySelectorAll('.overlay.show');
     if(ovs.length){                                   // act on the TOP popup only
-      const btn=ovs[ovs.length-1].querySelector('.cta'); if(btn) btn.click(); return; }
+      const top=ovs[ovs.length-1], btn=top.querySelector('[data-space]')||top.querySelector('.cta'); if(btn) btn.click(); return; }
     humanAct(); }
   if(document.querySelector('.overlay.show')) return;  // no game keys behind a popup
   if(e.key==='p'||e.key==='P') passBtn.click();
@@ -2797,6 +3380,8 @@ function newGame(mode){
   S.mode=mode||'classic';
   deck.classList.toggle('endless',S.mode==='endless');
   newPlayers(); S.round=1; S.active=0; S.phase='idle'; S.streak=0;
+  endOverclock(false); S.insured=false; S.magnetLevel=-1; S.steadyLevel=-1; S.bought={};
+  document.querySelector('.frame').classList.remove('boss'); document.body.classList.remove('magnet');
   podEls.forEach(el=>{ $(el,'[data-stamp]').classList.remove('hit'); $(el,'[data-mult]').classList.remove('on'); });
   players.forEach((p,i)=>{ $(podEls[i],'[data-money]').textContent='$0'; });
   if(S.mode==='endless'){ startEndless(); return; }
