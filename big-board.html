@@ -19,7 +19,7 @@
   --bone:#f4eeff;
   --dim:#8c7fb5;
   --panel:#0d0a1c;
-  --display:Haettenschweiler,'Arial Narrow Bold','Impact',Impact,'Franklin Gothic Heavy',sans-serif;
+  --display:Haettenschweiler,Impact,'Arial Narrow Bold','AvenirNextCondensed-Heavy','Futura-CondensedExtraBold','sans-serif-condensed','Roboto Condensed','Arial Narrow','Franklin Gothic Heavy',sans-serif;
   --data:ui-monospace,'SF Mono',Consolas,'Roboto Mono',monospace;
   --body:'Segoe UI',system-ui,-apple-system,sans-serif;
   --tile-gap:clamp(4px,.55vw,9px);
@@ -876,6 +876,33 @@ body.magnet .mon-mag.hot::before{content:'HOT ×5'}
   .pod-name{flex-shrink:0}
 }
 @media (max-width:420px){ .perks{gap:7px} .perk{padding:.6em .6em;gap:.1em .5em} .perk .pd{font-size:11px} }
+
+/* ============================================================
+   PHONE FILL + READABLE TILES
+   ============================================================ */
+/* heavy weight where a fallback face has one; never fake-bold Impact */
+.f-amt,.mon-main,.mon-streak,.pod-name{font-weight:800;font-synthesis:style}
+
+/* bigger tile text on phones, still sized to each tile */
+@media (max-width:760px), (max-height:560px){
+  .f-amt{font-size:clamp(13px,min(29cqw,38cqh),44px);line-height:.95}
+  .face.prize .f-amt,.face.special .f-amt{font-size:clamp(10px,min(16.5cqw,22cqh),26px);line-height:1}
+  .f-tag{font-size:clamp(7px,min(9.5cqw,13cqh),13px)}
+  .next{font-size:clamp(7px,min(10cqw,13cqh),12px)}
+}
+
+/* portrait: title moves up beside the buttons, board stretches to the deck, no dead strip */
+@media (orientation:portrait) and (max-width:760px){
+  #stage{justify-content:flex-start;gap:clamp(6px,1.2vh,12px);
+    padding-top:calc(52px + env(safe-area-inset-top));padding-bottom:max(10px,env(safe-area-inset-bottom))}
+  .marquee{display:block;position:absolute;top:calc(13px + env(safe-area-inset-top));left:12px;
+    text-align:left;line-height:1;white-space:nowrap;max-width:calc(100vw - 196px);overflow:hidden}
+  .marquee .l1{display:none}
+  .marquee .l2{font-size:clamp(15px,4.8vw,26px);letter-spacing:0}
+  .board-wrap{flex:1 1 0;min-height:0;max-height:calc(196vw + 20px);display:flex;flex-direction:column}
+  .frame{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+  .grid.tall{flex:1 1 auto;min-height:0;height:auto}
+}
 </style>
 </head>
 <body>
