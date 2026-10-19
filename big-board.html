@@ -1459,103 +1459,163 @@ const SFX = (()=>{
   }
 
   /* ============================================================
-     MUSIC BED — 16-step sequencer, A minor, ~108bpm
+     MUSIC BED — dark minimal techno, 124 BPM, A minor
+     kick + rolling sub always; hats, rim and a dub stab on your turn;
+     ghost hats + clap while spinning; low drone + dropped stab in danger.
+     No bells or chimes anywhere in the bed.
      ============================================================ */
-  const BPM=108, STEP=60/BPM/4;
-  const A=55; // A1
-  const semi=n=>A*Math.pow(2,n/12);
-  const PROG=[0,-4,3,-2];               // Am  F  C  G  (roots, relative)
-  const CHORD=[[0,3,7],[-4,0,3],[3,7,10],[-2,2,5]];
-  const BASSPAT=[1,0,0,1,0,0,1,0,1,0,0,1,0,1,0,0];
-  const HATPAT =[0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1];
-  const KICKPAT=[1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0];
-  const SNRPAT =[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0];
-  const STABPAT=[0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1];
+  const BPM=124, STEP=60/BPM/4;
+  const A1=55, hz=n=>A1*Math.pow(2,n/12);
+  // one bar = 16 steps
+  const SUB  =[0,0,1,1, 0,0,1,0, 0,0,1,1, 0,0,1,0];     // rolling offbeat sub, never on the kick
+  const SUBV =[0,0,1,.6,0,0,.9,0, 0,0,1,.6,0,0,.85,0];
+  const STABA=[0,0,0,1, 0,0,0,0, 0,0,1,0, 0,0,0,0];      // two-bar dub stab figure
+  const STABB=[0,0,0,0, 0,0,1,0, 0,0,0,0, 0,1,0,0];
+  const RIM  =[0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1];
 
-  let musicOn=false, step=0, nextTime=0, sched=null, intensity=0;
+  let musicOn=false, step=0, nextTime=0, sched=null, intensity=0, danger=false;
+  let stabBus=null, kickShape=null, drone=null;
 
-  function mBass(f,when,dur){
-    const o=ctx.createOscillator(), o2=ctx.createOscillator();
-    const flt=ctx.createBiquadFilter(), g=ctx.createGain();
-    o.type='sawtooth'; o2.type='square'; o2.detune.value=-1200;
-    o.frequency.value=f; o2.frequency.value=f;
-    flt.type='lowpass'; flt.Q.value=7;
-    flt.frequency.setValueAtTime(240,when);
-    flt.frequency.exponentialRampToValueAtTime(1500,when+.02);
-    flt.frequency.exponentialRampToValueAtTime(200,when+dur);
+  function musicNodes(){
+    if(stabBus) return;
+    kickShape=clipCurve(2.2);
+    stabBus=ctx.createGain(); stabBus.gain.value=1; stabBus.connect(musicBus);
+    // dub echo: dotted-eighth feedback delay, darkening on every repeat
+    const dl=ctx.createDelay(1), fb=ctx.createGain(), lp=ctx.createBiquadFilter(), wet=ctx.createGain();
+    dl.delayTime.value=STEP*3; fb.gain.value=.44; lp.type='lowpass'; lp.frequency.value=1300; wet.gain.value=.5;
+    stabBus.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(musicBus);
+  }
+  function mKick(when,vel){
+    const o=ctx.createOscillator(), g=ctx.createGain(), sh=ctx.createWaveShaper();
+    sh.curve=kickShape;
+    o.type='sine';
+    o.frequency.setValueAtTime(165,when);
+    o.frequency.exponentialRampToValueAtTime(52,when+.06);
+    o.frequency.exponentialRampToValueAtTime(43,when+.32);
     g.gain.setValueAtTime(.0001,when);
-    g.gain.exponentialRampToValueAtTime(.22,when+.008);
+    g.gain.exponentialRampToValueAtTime(.24*vel,when+.003);
+    g.gain.exponentialRampToValueAtTime(.0001,when+.42);
+    o.connect(sh); sh.connect(g); g.connect(musicBus);
+    o.start(when); o.stop(when+.46);
+    // tiny dry click so it cuts on phone speakers
+    const n=noise(false), f=ctx.createBiquadFilter(), ng=ctx.createGain();
+    f.type='bandpass'; f.frequency.value=2600; f.Q.value=1.2;
+    ng.gain.setValueAtTime(.05*vel,when); ng.gain.exponentialRampToValueAtTime(.0001,when+.012);
+    n.connect(f); f.connect(ng); ng.connect(musicBus); n.start(when); n.stop(when+.03);
+  }
+  function mSub(when,f,dur,vel){
+    const o=ctx.createOscillator(), o2=ctx.createOscillator(), lp=ctx.createBiquadFilter(), g=ctx.createGain();
+    o.type='sine'; o2.type='triangle'; o.frequency.value=f; o2.frequency.value=f*2;
+    const g2=ctx.createGain(); g2.gain.value=.18;
+    lp.type='lowpass'; lp.frequency.value=240; lp.Q.value=.7;
+    g.gain.setValueAtTime(.0001,when);
+    g.gain.exponentialRampToValueAtTime(.11*vel,when+.006);
+    g.gain.setValueAtTime(.11*vel,when+dur*.55);
     g.gain.exponentialRampToValueAtTime(.0001,when+dur);
-    o.connect(flt); o2.connect(flt); flt.connect(g); g.connect(musicBus);
-    o.start(when);o2.start(when);o.stop(when+dur+.05);o2.stop(when+dur+.05);
+    o.connect(lp); o2.connect(g2); g2.connect(lp); lp.connect(g); g.connect(musicBus);
+    o.start(when); o2.start(when); o.stop(when+dur+.02); o2.stop(when+dur+.02);
   }
-  function mKick(when){
-    const o=ctx.createOscillator(), g=ctx.createGain();
-    o.type='sine'; o.frequency.setValueAtTime(128,when);
-    o.frequency.exponentialRampToValueAtTime(42,when+.09);
-    g.gain.setValueAtTime(.0001,when); g.gain.exponentialRampToValueAtTime(.55,when+.004);
-    g.gain.exponentialRampToValueAtTime(.0001,when+.24);
-    o.connect(g); g.connect(musicBus); o.start(when); o.stop(when+.3);
+  function mHat(when,vel,len){
+    const n=noise(false), hp=ctx.createBiquadFilter(), g=ctx.createGain();
+    hp.type='highpass'; hp.frequency.value=5600;
+    g.gain.setValueAtTime(.06*vel,when); g.gain.exponentialRampToValueAtTime(.0001,when+(len||.03));
+    n.connect(hp); hp.connect(g); g.connect(musicBus); n.start(when); n.stop(when+(len||.03)+.02);
   }
-  function mSnare(when){
-    const n=noise(false), f=ctx.createBiquadFilter(), g=ctx.createGain();
-    f.type='highpass'; f.frequency.value=1500;
-    g.gain.setValueAtTime(.3,when); g.gain.exponentialRampToValueAtTime(.0001,when+.14);
-    n.connect(f); f.connect(g); g.connect(musicBus); n.start(when); n.stop(when+.2);
-    const o=ctx.createOscillator(), og=ctx.createGain();
-    o.type='triangle'; o.frequency.setValueAtTime(210,when);
-    o.frequency.exponentialRampToValueAtTime(110,when+.1);
-    og.gain.setValueAtTime(.16,when); og.gain.exponentialRampToValueAtTime(.0001,when+.12);
-    o.connect(og); og.connect(musicBus); o.start(when); o.stop(when+.16);
+  function mRim(when){
+    const n=noise(false), bp=ctx.createBiquadFilter(), g=ctx.createGain();
+    bp.type='bandpass'; bp.frequency.value=1700; bp.Q.value=3;
+    g.gain.setValueAtTime(.11,when); g.gain.exponentialRampToValueAtTime(.0001,when+.035);
+    n.connect(bp); bp.connect(g); g.connect(musicBus); n.start(when); n.stop(when+.05);
   }
-  function mHat(when,open){
-    const n=noise(false), f=ctx.createBiquadFilter(), g=ctx.createGain();
-    f.type='highpass'; f.frequency.value=7200;
-    g.gain.setValueAtTime(open?.12:.07,when);
-    g.gain.exponentialRampToValueAtTime(.0001,when+(open?.13:.035));
-    n.connect(f); f.connect(g); g.connect(musicBus); n.start(when); n.stop(when+.2);
+  function mClap(when){
+    const n=noise(true), bp=ctx.createBiquadFilter(), g=ctx.createGain();
+    bp.type='bandpass'; bp.frequency.value=1150; bp.Q.value=.9;
+    g.gain.setValueAtTime(.0001,when);
+    [0,.011,.022].forEach(o=>{ g.gain.setValueAtTime(.16,when+o); g.gain.exponentialRampToValueAtTime(.03,when+o+.009); });
+    g.gain.exponentialRampToValueAtTime(.0001,when+.16);
+    n.connect(bp); bp.connect(g); g.connect(musicBus); n.start(when); n.stop(when+.2);
   }
-  function mStab(root,when){
-    CHORD[root].forEach(iv=>{
-      const o=ctx.createOscillator(), g=ctx.createGain(), f=ctx.createBiquadFilter();
-      o.type='sawtooth'; o.frequency.value=semi(iv+36)*(1+(Math.random()-.5)*.004);
-      f.type='lowpass'; f.frequency.setValueAtTime(900,when);
-      f.frequency.exponentialRampToValueAtTime(3200,when+.03);
-      f.frequency.exponentialRampToValueAtTime(700,when+.22);
-      g.gain.setValueAtTime(.0001,when); g.gain.exponentialRampToValueAtTime(.075,when+.012);
-      g.gain.exponentialRampToValueAtTime(.0001,when+.24);
-      o.connect(f); f.connect(g); g.connect(musicBus);
-      o.start(when); o.stop(when+.3);
+  function mStab(when,bar){
+    // filter opens and closes over a 16-bar cycle — the only "melody" is this slow sweep
+    const sweep=.5-.5*Math.cos(2*Math.PI*((bar%16)/16));
+    const cut=danger ? 260+420*sweep : 340+1050*sweep;
+    const shift=danger?-12:0;
+    [0,3,7].forEach(iv=>{
+      const f=hz(iv+12+shift);
+      [-7,7].forEach(cents=>{
+        const o=ctx.createOscillator(), lp=ctx.createBiquadFilter(), g=ctx.createGain();
+        o.type='sawtooth'; o.frequency.value=f; o.detune.value=cents;
+        lp.type='lowpass'; lp.Q.value=3.5;
+        lp.frequency.setValueAtTime(cut*1.6,when); lp.frequency.exponentialRampToValueAtTime(cut,when+.06);
+        g.gain.setValueAtTime(.0001,when);
+        g.gain.exponentialRampToValueAtTime(danger?.04:.05,when+.004);
+        g.gain.exponentialRampToValueAtTime(.0001,when+.24);
+        o.connect(lp); lp.connect(g); g.connect(stabBus);
+        o.start(when); o.stop(when+.28);
+      });
     });
   }
+  function droneSet(on){
+    if(!ready||!musicOn) return;
+    if(on && !drone){
+      const g=ctx.createGain(), lp=ctx.createBiquadFilter(), lfo=ctx.createOscillator(), lg=ctx.createGain();
+      lp.type='lowpass'; lp.frequency.value=170; lp.Q.value=6;
+      lfo.frequency.value=.11; lg.gain.value=70; lfo.connect(lg); lg.connect(lp.frequency);
+      const oscs=[[A1,'sawtooth'],[A1*1.006,'sawtooth'],[A1/2,'sine'],[hz(1),'sawtooth']];   // Bb rub = unease
+      const vols=[.5,.5,.8,.18];
+      oscs.forEach(([f,type],i)=>{ const o=ctx.createOscillator(), og=ctx.createGain(); o.type=type; o.frequency.value=f;
+        og.gain.value=vols[i]; o.connect(og); og.connect(lp); o.start(t()); oscs[i]=o; });
+      g.gain.value=.0001; lp.connect(g); g.connect(musicBus);
+      g.gain.setValueAtTime(.0001,t()); g.gain.exponentialRampToValueAtTime(.05,t()+2.5);
+      lfo.start(t()); drone={g,oscs,lfo};
+    } else if(!on && drone){
+      const d=drone; drone=null;
+      d.g.gain.cancelScheduledValues(t()); d.g.gain.setValueAtTime(Math.max(.0001,d.g.gain.value),t());
+      d.g.gain.exponentialRampToValueAtTime(.0001,t()+1.2);
+      d.oscs.forEach(o=>o.stop(t()+1.3)); d.lfo.stop(t()+1.3);
+    }
+  }
   function tick(){
+    // main thread stalled past the lookahead: skip the missed steps and rejoin the grid instead of firing a burst
+    if(nextTime < ctx.currentTime-.03){ const miss=Math.ceil((ctx.currentTime-nextTime)/STEP); step+=miss; nextTime+=miss*STEP; }
     while(nextTime < ctx.currentTime + .12){
-      const bar=Math.floor(step/16)%4, s=step%16;
-      const root=PROG[bar];
-      if(intensity>=1 && BASSPAT[s]) mBass(semi(root+12),nextTime,STEP*1.6);
-      if(intensity>=1 && KICKPAT[s]) mKick(nextTime);
-      if(intensity>=2 && SNRPAT[s])  mSnare(nextTime);
-      if(intensity>=1 && HATPAT[s])  mHat(nextTime,s===14);
-      if(intensity>=2 && STABPAT[s]) mStab(bar,nextTime);
-      if(intensity>=3 && s%2===0)    mHat(nextTime+STEP/2,false);
+      const bar=Math.floor(step/16), s=step%16, w=nextTime;
+      const fill = bar%8===7 && s>=12;                         // every 8th bar the kick drops for a beat
+      if(s%4===0 && !fill) mKick(w, s===0?1:.92);
+      if(SUB[s]){
+        let n=0; if(bar%4===3 && s===14) n=-2; if(bar%8===7 && s===10) n=3;   // G / C pickups keep it moving
+        mSub(w, hz(n), STEP*(SUB[s+1]?1:1.7), SUBV[s]);
+      }
+      if(intensity>=1){
+        if(s%4===2) mHat(w,.9+Math.random()*.1);
+        if((bar%2?STABB:STABA)[s]) mStab(w,bar);
+        if(RIM[s] && bar%2) mRim(w);
+        if(fill && s%2===0) mHat(w,.5,.02);
+      }
+      if(intensity>=2){
+        if(s%4===1||s%4===3) mHat(w,.32+Math.random()*.18,.022);
+        if(s===4||s===12) mClap(w);
+        if(s===8 && bar%2===0) mStab(w,bar);
+      }
       nextTime+=STEP; step++;
     }
   }
   function musicStart(){
-    if(musicOn) return; musicOn=true; step=0; nextTime=ctx.currentTime+.1;
+    if(musicOn) return; musicOn=true; musicNodes(); step=0; nextTime=ctx.currentTime+.1;
     sched=setInterval(tick,25);
     musicGain.gain.cancelScheduledValues(t());
     musicGain.gain.setValueAtTime(musicGain.gain.value,t());
-    musicGain.gain.linearRampToValueAtTime(.55,t()+1.4);
+    musicGain.gain.linearRampToValueAtTime(.55,t()+1.6);
   }
   function setIntensity(n){
     if(!ready) return;
     intensity=n;
-    const target=[420,1300,4200,8000][Math.min(3,n)];
+    const target=[900,7000,14000,16000][Math.min(3,n)];
     musicFilter.frequency.cancelScheduledValues(t());
     musicFilter.frequency.setValueAtTime(musicFilter.frequency.value,t());
-    musicFilter.frequency.exponentialRampToValueAtTime(target,t()+.5);
+    musicFilter.frequency.exponentialRampToValueAtTime(target,t()+(n>=2?.35:.8));
   }
+  function setDanger(on){ on=!!on; if(on===danger) return; danger=on; droneSet(on); }
   function duck(amount,dur){
     if(!ready) return;
     duckGain.gain.cancelScheduledValues(t());
@@ -1614,6 +1674,7 @@ const SFX = (()=>{
     unlock(){ init(); if(ctx.state==='suspended') ctx.resume(); },
     toggle(){ muted=!muted; if(ready) master.gain.setTargetAtTime(muted?0:.9,t(),.02); return muted; },
     music(){ if(!ready)return; musicStart(); },
+    danger:setDanger,
     intensity:setIntensity,
 
     /* --- board --- */
@@ -3170,6 +3231,7 @@ function updateMood(){
   const danger=!!(live && ((S.mode==='classic' && p.whammies===3) || isBoss()));
   const hot=!!(live && !danger && (multOf(S.streak)>=3 || S.overclock>0));
   backdropEl.classList.toggle('danger',danger);
+  SFX.danger(danger);
   backdropEl.classList.toggle('hot',hot);
 }
 
