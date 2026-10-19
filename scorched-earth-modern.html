@@ -8,123 +8,154 @@
 <style>
   :root{
     --steel:#dfe3dc; --panel:rgba(243,244,238,.88); --line:rgba(24,36,40,.26);
-    --hud:#101619; --dim:#5c6c72; --signal:#d1520a; --ok:#2f7d4f; --bad:#c0342a;
+    --hud:#101619; --dim:#41505a; --signal:#a63f05; --ok:#1f5f3a; --bad:#a32218;
+    /* UI text uses a high-legibility system sans: bigger x-height and clearer
+       letterforms than a monospace at the same size. Mono is kept only for the
+       numeric readouts, where digits need to hold a fixed width. */
+    --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+    --t-label:13px;   /* smallest text anywhere */
+    --t-body:15px;
+    --t-item:16px;
+    --t-big:20px;
   }
   :root{--safetop:env(safe-area-inset-top,0px)}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;
     -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   button{touch-action:manipulation}
   html,body{margin:0;height:100%;overflow:hidden;background:var(--steel);
-    font-family:var(--mono);color:var(--hud);overscroll-behavior:none;touch-action:none}
+    font-family:var(--ui);color:var(--hud);overscroll-behavior:none;touch-action:none;
+    -webkit-text-size-adjust:100%}
   #game{position:fixed;inset:0;display:block}
   .hud{position:fixed;left:0;right:0;pointer-events:none;z-index:5}
   /* ---- top ---- */
   #top{top:0;padding:calc(env(safe-area-inset-top) + 8px) 10px 8px;background:linear-gradient(rgba(243,244,238,.9),rgba(243,244,238,0));
     display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start}
   .unit{min-width:0}
-  .unit .tag{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.16em;color:var(--dim)}
+  .unit .tag{display:flex;justify-content:space-between;font-size:var(--t-label);font-weight:600;letter-spacing:.04em;color:var(--dim)}
   .unit.r .tag{flex-direction:row-reverse}
-  .bar{height:5px;margin-top:4px;background:rgba(20,30,34,.14);border:1px solid var(--line);overflow:hidden}
+  .bar{height:7px;margin-top:4px;background:rgba(20,30,34,.14);border:1px solid var(--line);overflow:hidden}
   .fill{height:100%;width:100%;background:var(--ok);transition:width .25s ease}
   .unit.r .fill{float:right}
   .fill.hurt{background:var(--signal)} .fill.crit{background:var(--bad)}
-  #wind{text-align:center;font-size:9px;letter-spacing:.16em;color:var(--dim);white-space:nowrap}
-  #windval{display:block;font-size:14px;letter-spacing:.06em;color:var(--hud);margin-top:2px}
+  #wind{text-align:center;font-size:var(--t-label);font-weight:600;letter-spacing:.04em;color:var(--dim);white-space:nowrap}
+  #windval{display:block;font-family:var(--mono);font-size:var(--t-big);font-weight:700;letter-spacing:0;color:var(--hud);margin-top:1px}
   #srow{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center;
     margin-bottom:5px;pointer-events:auto}
   #mute,#dossierBtn{background:transparent;border:1px solid var(--line);color:var(--dim);
-    font-family:var(--mono);font-size:8px;letter-spacing:.1em;min-height:34px;padding:0 10px;
-    cursor:pointer;white-space:nowrap}
+    font-family:var(--ui);font-size:var(--t-label);font-weight:600;letter-spacing:.02em;
+    min-height:40px;padding:0 12px;cursor:pointer;white-space:nowrap}
 
   #dossier{position:fixed;inset:0;z-index:9;display:none;place-items:center;
     background:rgba(214,219,212,.92)}
   #dossier.on{display:grid}
   .dwrap{width:min(330px,88vw);border:1px solid var(--line);background:var(--panel);padding:18px}
-  .dh{font-size:9px;letter-spacing:.24em;color:var(--dim);margin-bottom:14px}
+  .dh{font-size:var(--t-label);font-weight:700;letter-spacing:.12em;color:var(--dim);margin-bottom:14px}
   .drow{margin-bottom:9px}
-  .dlab{display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.1em;color:var(--hud)}
+  .dlab{display:flex;justify-content:space-between;font-size:var(--t-body);font-weight:600;letter-spacing:0;color:var(--hud)}
   .dlab i{font-style:normal;color:var(--signal)}
-  .dtrack{height:4px;background:rgba(20,30,34,.14);border:1px solid var(--line);margin-top:3px;position:relative}
+  .dtrack{height:6px;background:rgba(20,30,34,.14);border:1px solid var(--line);margin-top:3px;position:relative}
   .dfill{height:100%;background:var(--signal)}
   .dmid{position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:rgba(20,30,34,.35)}
-  .dn{font-size:8.5px;line-height:1.6;color:var(--dim);letter-spacing:.06em;margin:12px 0 14px}
-  .wipe{width:100%;margin-top:7px;min-height:44px;padding:9px;background:transparent;color:var(--dim);
-    border:1px solid var(--line);font-family:var(--mono);font-size:8px;letter-spacing:.16em;cursor:pointer}
+  .dn{font-size:var(--t-body);line-height:1.55;color:var(--dim);letter-spacing:0;margin:12px 0 14px}
+  .wipe{width:100%;margin-top:7px;min-height:46px;padding:9px;background:transparent;color:var(--dim);
+    border:1px solid var(--line);font-family:var(--ui);font-size:var(--t-label);font-weight:600;
+    letter-spacing:.02em;cursor:pointer}
   #theatre{position:fixed;left:0;right:0;bottom:0;z-index:4;text-align:center;pointer-events:none;
-    padding-bottom:calc(env(safe-area-inset-bottom) + 2px);font-size:7.5px;letter-spacing:.2em;color:var(--dim)}
+    padding-bottom:calc(env(safe-area-inset-bottom) + 2px);font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--dim)}
   #thStreak{color:var(--signal);margin-left:10px}
-  .card .t{position:absolute;top:5px;right:6px;font-size:7px;letter-spacing:.1em;color:var(--signal);opacity:.8}
+  .card .t{position:absolute;top:5px;right:7px;font-size:12px;font-weight:700;letter-spacing:0;color:var(--signal)}
   .card{position:relative}
   /* ---- bottom ---- */
   #bottom{bottom:0;padding:10px 8px calc(env(safe-area-inset-bottom) + 8px);background:linear-gradient(rgba(243,244,238,0),rgba(243,244,238,.82) 40%)}
-  #status{font-size:9px;letter-spacing:.12em;color:var(--dim);text-align:center;
-    height:14px;overflow:hidden;text-transform:uppercase}
+  #status{font-size:var(--t-body);letter-spacing:0;color:var(--dim);text-align:center;
+    min-height:20px;overflow:hidden}
   #status b{color:var(--signal);font-weight:400}
   #hand{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;pointer-events:auto}
   #kit{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:center;
     margin-bottom:5px;pointer-events:auto}
-  #kit2{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:6px;pointer-events:auto}
-  .drv{background:var(--panel);border:1px solid var(--line);color:var(--hud);font-family:var(--mono);
-    font-size:15px;min-height:48px;padding:0;cursor:pointer;touch-action:none}
+  #kit2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:6px;pointer-events:auto}
+  .drv{background:var(--panel);border:1px solid var(--line);color:var(--hud);font-family:var(--ui);
+    font-size:22px;font-weight:700;min-height:52px;padding:0;cursor:pointer;touch-action:none}
   .drv:active{background:rgba(209,82,10,.16)}
   #mvL:active,#mvR:active{opacity:.42}
-  .drv.wide{font-size:8px;letter-spacing:.04em;min-height:44px;padding:0 2px;line-height:1.25}
+  .drv.wide{font-size:var(--t-label);font-weight:700;letter-spacing:0;min-height:48px;padding:0 2px;line-height:1.3}
   .drv.on{border-color:var(--signal);color:var(--signal)}
   .drv:disabled{opacity:.35}
   .fuelwrap{padding:0 2px}
-  .flabel{display:flex;justify-content:space-between;font-size:8px;letter-spacing:.14em;color:var(--dim)}
+  .flabel{display:flex;justify-content:space-between;font-size:var(--t-label);font-weight:600;letter-spacing:.02em;color:var(--dim)}
   .card{background:var(--panel);border:1px solid var(--line);padding:8px 7px;min-height:56px;
     text-align:left;cursor:pointer;backdrop-filter:blur(6px);transition:border-color .15s,background .15s;
     touch-action:manipulation}
   .card:disabled{opacity:.35}
-  .card .n{font-size:10.5px;letter-spacing:.04em;line-height:1.2;color:var(--hud)}
-  .card .d{font-size:8.5px;letter-spacing:.06em;color:var(--dim);margin-top:4px;line-height:1.25}
+  .card .n{font-size:var(--t-item);font-weight:700;letter-spacing:0;line-height:1.15;color:var(--hud)}
+  .card .d{font-size:var(--t-label);letter-spacing:0;color:var(--dim);margin-top:5px;line-height:1.3}
   .card.sel{border-color:var(--signal);background:rgba(209,82,10,.13)}
   .card.sel .n{color:var(--signal)}
   /* ---- overlay ---- */
   #over{position:fixed;inset:0;z-index:9;display:none;place-items:center;
     background:radial-gradient(circle at 50% 45%,rgba(226,230,222,.86),rgba(196,203,195,.96))}
   #over.on{display:grid}
-  .card2{width:min(320px,86vw);border:1px solid var(--line);background:var(--panel);padding:22px 20px}
-  .card2 .k{font-size:9px;letter-spacing:.24em;color:var(--dim)}
-  .card2 h1{margin:6px 0 4px;font-size:26px;letter-spacing:.06em;font-weight:500}
-  .card2 p{margin:0 0 18px;font-size:11px;line-height:1.6;color:var(--dim);letter-spacing:.04em}
+  .card2{width:min(360px,90vw);max-height:88vh;overflow-y:auto;border:1px solid var(--line);
+    background:var(--panel);padding:22px 20px}
+  .card2 .k{font-size:var(--t-label);font-weight:700;letter-spacing:.14em;color:var(--dim)}
+  .card2 h1{margin:8px 0 6px;font-size:30px;letter-spacing:.01em;font-weight:700}
+  .card2 p{margin:0 0 18px;font-size:var(--t-body);line-height:1.5;color:var(--dim);letter-spacing:0}
+  .card2 p b{color:var(--hud)}
   .modes{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
-  .mbtn{min-height:46px;padding:4px;background:transparent;border:1px solid var(--line);color:var(--dim);
-    font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;cursor:pointer}
+  .mbtn{min-height:50px;padding:4px;background:transparent;border:1px solid var(--line);color:var(--dim);
+    font-family:var(--ui);font-size:var(--t-body);font-weight:600;letter-spacing:.01em;cursor:pointer}
   .mbtn.on{border-color:var(--signal);color:var(--signal);background:rgba(209,82,10,.1)}
-  .mnote{font-size:8.5px;line-height:1.5;color:var(--dim);letter-spacing:.05em;margin-bottom:14px;min-height:26px}
+  .mnote{font-size:var(--t-label);line-height:1.45;color:var(--dim);letter-spacing:0;margin-bottom:14px;min-height:34px}
   #plan{position:fixed;left:0;right:0;z-index:6;pointer-events:none;
     top:calc(env(safe-area-inset-top) + 132px);text-align:center;display:none}
   #plan.on{display:block}
-  #plan .pbar{width:min(280px,74vw);height:3px;margin:0 auto;background:rgba(20,30,34,.16);
+  #plan .pbar{width:min(300px,78vw);height:6px;margin:0 auto;background:rgba(20,30,34,.16);
     border:1px solid var(--line)}
   #plan .pfill{height:100%;background:var(--signal);width:100%}
-  #plan .ptxt{font-size:8px;letter-spacing:.2em;color:var(--dim);margin-top:4px}
+  #plan .ptxt{font-size:var(--t-body);font-weight:600;letter-spacing:.02em;color:var(--dim);margin-top:5px}
   #plan.urgent .pfill{background:var(--bad)}
   #plan.urgent .ptxt{color:var(--bad)}
-  button.go{width:100%;min-height:48px;padding:12px;background:transparent;color:var(--signal);
-    border:1px solid var(--signal);font-family:var(--mono);font-size:11px;letter-spacing:.2em;cursor:pointer}
+  button.go{width:100%;min-height:52px;padding:12px;background:transparent;color:var(--signal);
+    border:2px solid var(--signal);font-family:var(--ui);font-size:var(--t-item);font-weight:700;
+    letter-spacing:.06em;cursor:pointer}
   button.go:active{background:rgba(209,82,10,.16)}
   .win h1{color:var(--ok)} .lose h1{color:var(--bad)}
   /* Landscape / short screens: stop stacking four rows of HUD and go side-by-side,
      or the battlefield is squeezed into a letterbox. */
+  /* Small phones (SE class): claw back HUD height without dropping below 12px text. */
+  @media (max-height:700px) and (min-height:561px){
+    #status{display:none}
+    .drv{min-height:46px}
+    .drv.wide{min-height:44px}
+    .drv.wide i{font-size:16px}
+    #mute,#dossierBtn{min-height:36px}
+    .card{min-height:50px;padding:6px}
+    .card .d{-webkit-line-clamp:1}
+    #kit{margin-bottom:4px} #kit2{margin-bottom:4px} #srow{margin-bottom:4px}
+    #bottom{padding-top:6px}
+  }
+  /* Landscape / short screens: go side-by-side so the type can stay readable
+     instead of shrinking it back down to fit four stacked rows. */
   @media (max-height:560px){
-    #bottom{display:grid;gap:5px;align-items:end;padding-top:5px;
-      grid-template-columns:140px 1fr 168px;
+    #bottom{display:grid;gap:6px;align-items:end;padding-top:6px;
+      grid-template-columns:150px 1fr 180px;
       grid-template-areas:"kit hand gads" "srow hand gads"}
-    #kit{grid-area:kit;margin:0;grid-template-columns:40px 1fr 40px}
+    #kit{grid-area:kit;margin:0;grid-template-columns:46px 1fr 46px}
     #srow{grid-area:srow;margin:0}
     #hand{grid-area:hand;align-self:stretch}
     #kit2{grid-area:gads;margin:0;grid-template-columns:repeat(2,1fr)}
-    .drv{min-height:38px;font-size:13px}
-    .drv.wide{min-height:34px;font-size:7px}
-    #mute,#dossierBtn{min-height:28px;font-size:7px;padding:0 6px}
-    .card{min-height:40px;padding:5px}
+    .drv{min-height:44px;font-size:20px}
+    .drv.wide{min-height:40px;font-size:12px}
+    #mute,#dossierBtn{min-height:34px;font-size:12px;padding:0 8px}
+    .card{min-height:44px;padding:6px}
     .card .d{display:none}
     #status{display:none}
-    .flabel{font-size:7px}
+  }
+  /* Very narrow phones: keep the weapon name readable, drop the detail line */
+  @media (max-width:340px){
+    .card .d{display:none}
+    .drv.wide{font-size:12px}
   }
 </style>
 </head>
@@ -132,31 +163,31 @@
 <canvas id="game"></canvas>
 
 <div class="hud" id="top">
-  <div class="unit"><div class="tag"><span>YOU</span><span id="hp1t">100</span></div>
+  <div class="unit"><div class="tag"><span>You</span><span id="hp1t">100</span></div>
     <div class="bar"><div class="fill" id="hp1"></div></div></div>
-  <div id="wind">WIND<span id="windval">—</span></div>
-  <div class="unit r"><div class="tag"><span id="zero">HOSTILE</span><span id="hp2t">100</span></div>
+  <div id="wind">Wind<span id="windval">—</span></div>
+  <div class="unit r"><div class="tag"><span id="zero">Enemy</span><span id="hp2t">100</span></div>
     <div class="bar"><div class="fill" id="hp2"></div></div></div>
 </div>
 
-<div id="plan"><div class="pbar"><div class="pfill" id="pFill"></div></div><div class="ptxt" id="pTxt">BOTH SIDES COMMITTED</div></div>
+<div id="plan"><div class="pbar"><div class="pfill" id="pFill"></div></div><div class="ptxt" id="pTxt">Both sides committed</div></div>
 <div id="dossier"><div class="dwrap">
-  <div class="dh">HOSTILE PROFILE OF YOU</div>
+  <div class="dh">What the enemy knows about you</div>
   <div id="dBars"></div>
   <div class="dn" id="dNote"></div>
-  <button class="go" id="dClose">CLOSE</button>
-  <button class="wipe" id="dWipe">PURGE PROFILE</button>
+  <button class="go" id="dClose">Close</button>
+  <button class="wipe" id="dWipe">Erase this profile</button>
 </div></div>
 <div id="theatre"><span id="thName">—</span><span id="thStreak"></span></div>
 <div class="hud" id="bottom">
   <div id="srow">
-    <button id="mute">AUDIO ON</button>
-    <div id="status">select ordnance</div>
-    <button id="dossierBtn">READ</button>
+    <button id="mute">Sound on</button>
+    <div id="status">Pick a weapon</div>
+    <button id="dossierBtn">Profile</button>
   </div>
   <div id="kit">
     <button class="drv" id="mvL">◀</button>
-    <div class="fuelwrap"><div class="flabel"><span>FUEL</span><span id="fuelt">100</span></div>
+    <div class="fuelwrap"><div class="flabel"><span>Fuel</span><span id="fuelt">100</span></div>
       <div class="bar"><div class="fill" id="fuel"></div></div></div>
     <button class="drv" id="mvR">▶</button>
   </div>
@@ -172,13 +203,16 @@
 <div id="over"><div class="card2" id="overcard">
   <div class="k" id="ovk">ENGAGEMENT</div>
   <h1 id="ovh">DEFILADE</h1>
-  <p id="ovp">Pull back anywhere to load, release to fire. Drive with ◀ ▶ on your fuel allowance — sitting still gets you ranged in. The bright band aloft is wind shear and it will throw a high shell sideways. Concrete stops rounds; seismic and bunker rounds don't care. Damage unlocks heavier ordnance mid-fight — tier II at 70 HP, tier III at 40.</p>
+  <p id="ovp">Drag back anywhere on screen to aim, then let go to fire.<br><br>
+  Drive with <b>◀ ▶</b>. Staying put lets the enemy zero in on you.<br><br>
+  Wind pushes your shell. The bright band high up pushes it harder.<br><br>
+  Concrete blocks shots. Heavier weapons unlock as damage piles up.</p>
   <div class="modes">
-    <button class="mbtn on" id="mTurn">TURN-BASED</button>
-    <button class="mbtn" id="mSim">SIMULTANEOUS</button>
+    <button class="mbtn on" id="mTurn">Take turns</button>
+    <button class="mbtn" id="mSim">Same time</button>
   </div>
-  <div class="mnote" id="mNote">Alternating fire. Take your time on every shot.</div>
-  <button class="go" id="ovb">DEPLOY</button>
+  <div class="mnote" id="mNote">You and the enemy take turns. No clock — take as long as you like.</div>
+  <button class="go" id="ovb">Start</button>
 </div></div>
 
 <script>
@@ -195,24 +229,24 @@ let WW=0,WH=0,ZFIT=1;
 /* ---------------- ordnance ---------------- */
 const WEAPONS=[
  // tier 1 — issued from the start
- {id:'kin', n:'M77 KINETIC',   d:'r56 · dmg44 · true flight',  t:1,r:56, dmg:44,wind:1.0, vmul:1.0, weight:3},
- {id:'rai', n:'RAILGUN DART',  d:'flat · fast · ignores wind', t:1,r:26, dmg:42,wind:0.0, vmul:1.55,weight:2,flat:true},
- {id:'mirv',n:'HAWKEYE MIRV',  d:'splits at apex · 4×',        t:1,r:38, dmg:22,wind:1.15,vmul:1.0, weight:2},
- {id:'nap', n:'NAPALM POD',    d:'burns · flows downhill',     t:1,r:34, dmg:16,wind:1.25,vmul:1.0, weight:2},
+ {id:'kin', n:'M77 KINETIC',   d:'Reliable. No tricks.',  t:1,r:56, dmg:44,wind:1.0, vmul:1.0, weight:3},
+ {id:'rai', n:'RAILGUN DART',  d:'Flat, fast, ignores wind.', t:1,r:26, dmg:42,wind:0.0, vmul:1.55,weight:2,flat:true},
+ {id:'mirv',n:'HAWKEYE MIRV',  d:'Splits into 4 at the top.',        t:1,r:38, dmg:22,wind:1.15,vmul:1.0, weight:2},
+ {id:'nap', n:'NAPALM POD',    d:'Fire that runs downhill.',     t:1,r:34, dmg:16,wind:1.25,vmul:1.0, weight:2},
  // tier 2 — released at ESCALATION II
- {id:'thm', n:'THERMOBARIC',   d:'two-stage · mushroom',       t:2,r:96, dmg:52,wind:0.65,vmul:0.92,weight:2},
- {id:'bnk', n:'BUNKER BUSTER', d:'digs in · defeats cover',    t:2,r:78, dmg:50,wind:0.6, vmul:0.9, weight:2},
- {id:'top', n:'LOITER TOP-ATK',d:'climbs · drops vertical',    t:2,r:48, dmg:46,wind:1.3, vmul:1.0, weight:2,loiter:true},
- {id:'mine',n:'SCATTER MINES', d:'seeds the ground · denial',  t:2,r:30, dmg:8, wind:1.2, vmul:1.0, weight:2},
- {id:'spr', n:'TECTONIC SPIRE',d:'heaves them up · caves in',  t:2,r:70, dmg:30,wind:0.9, vmul:1.0, weight:2},
- {id:'swm', n:'DRONE SWARM',   d:'6 drones · they steer',      t:2,r:30, dmg:15,wind:1.1, vmul:1.0, weight:2,swarm:true},
+ {id:'thm', n:'THERMOBARIC',   d:'Two-stage. Huge blast.',       t:2,r:96, dmg:52,wind:0.65,vmul:0.92,weight:2},
+ {id:'bnk', n:'BUNKER BUSTER', d:'Digs in. Beats concrete.',    t:2,r:78, dmg:50,wind:0.6, vmul:0.9, weight:2},
+ {id:'top', n:'LOITER TOP-ATK',d:'Climbs, drops vertically.',    t:2,r:48, dmg:46,wind:1.3, vmul:1.0, weight:2,loiter:true},
+ {id:'mine',n:'SCATTER MINES', d:'Scatters live mines.',  t:2,r:30, dmg:8, wind:1.2, vmul:1.0, weight:2},
+ {id:'spr', n:'TECTONIC SPIRE',d:'Throws them up, ground caves in.',  t:2,r:70, dmg:30,wind:0.9, vmul:1.0, weight:2},
+ {id:'swm', n:'DRONE SWARM',   d:'6 drones that chase.',      t:2,r:30, dmg:15,wind:1.1, vmul:1.0, weight:2,swarm:true},
  // tier 3 — released at ESCALATION III
- {id:'sei', n:'SEISMIC LANCE', d:'no blast · liquefies ground',t:3,r:150,dmg:6, wind:0.55,vmul:0.95,weight:1},
- {id:'orb', n:'ORBITAL LANCE', d:'LOFT OFF-SCREEN · rod falls',t:3,r:74, dmg:62,wind:1.1, vmul:1.0, weight:2,orbital:true},
- {id:'void',n:'SINGULARITY',   d:'drags them out of cover',    t:3,r:112,dmg:54,wind:0.8, vmul:0.95,weight:2},
- {id:'arc', n:'ARC LANCE',     d:'horizontal beam · cuts all', t:3,r:40, dmg:44,wind:0.7, vmul:1.0, weight:2},
+ {id:'sei', n:'SEISMIC LANCE', d:'Collapses the ground.',t:3,r:150,dmg:6, wind:0.55,vmul:0.95,weight:1},
+ {id:'orb', n:'ORBITAL LANCE', d:'Fire off-screen, rod falls.',t:3,r:74, dmg:62,wind:1.1, vmul:1.0, weight:2,orbital:true},
+ {id:'void',n:'SINGULARITY',   d:'Drags them out of cover.',    t:3,r:112,dmg:54,wind:0.8, vmul:0.95,weight:2},
+ {id:'arc', n:'ARC LANCE',     d:'Beam cuts straight through.', t:3,r:40, dmg:44,wind:0.7, vmul:1.0, weight:2},
  {id:'brg', n:"DRAGON'S BREATH",d:'walking barrage · 7 steps', t:3,r:46, dmg:17,wind:0.9, vmul:1.0, weight:2},
- {id:'emp', n:'EMP LANCE',     d:'blinds them for a turn',     t:3,r:140,dmg:12,wind:1.0, vmul:1.0, weight:2},
+ {id:'emp', n:'EMP LANCE',     d:'Blinds them for a turn.',     t:3,r:140,dmg:12,wind:1.0, vmul:1.0, weight:2},
 ];
 const wpn=id=>WEAPONS.find(w=>w.id===id);
 function tierNow(){                                   // the fight escalates as hulls come apart
@@ -665,7 +699,7 @@ function buzz(ms){if(navigator.vibrate&&AU.on)try{navigator.vibrate(Math.round(m
 function toggleAudio(){
   initAudio(); AU.on=!AU.on;
   if(AU.ready)AU.master.gain.setTargetAtTime(AU.on?0.9:0,now(),0.05);
-  $('mute').textContent=AU.on?'AUDIO ON':'AUDIO OFF';
+  $('mute').textContent=AU.on?'Sound on':'Sound off';
   $('mute').style.opacity=AU.on?'1':'.45';
 }
 
@@ -1356,7 +1390,7 @@ function useSmoke(){
   G.tanks[1].zeroX=null;                                  // and voids whatever it had banked
   for(let i=0;i<46;i++)G.fx.push({k:'dust',x:me.x+(Math.random()-.5)*130,y:me.y-Math.random()*70,
     vx:(Math.random()-.5)*40,vy:-14-Math.random()*20,r:14+Math.random()*22,l:0,max:5.5+Math.random()*2});
-  sfxSmoke(me.x); syncKit(); status('smoke deployed');
+  sfxSmoke(me.x); syncKit(); status('Smoke deployed');
 }
 function useDecoy(){
   const me=G.tanks[0];
@@ -1365,12 +1399,12 @@ function useDecoy(){
   const dir=(G.tanks[1].x>me.x?-1:1);                     // set it away from the threat
   const dx=Math.max(16,Math.min(WW-16,me.x+dir*78));
   G.decoy={x:dx,y:ground(dx),hp:1,l:0};
-  sfxDecoy(dx); syncKit(); status('decoy hull deployed');
+  sfxDecoy(dx); syncKit(); status('Decoy deployed');
 }
 function useCIWS(){
   if(G.gadget.ciws<=0||(G.phase!=='aim'&&G.phase!=='plan')||G.ciws)return;
   G.gadget.ciws--; G.ciws=1;
-  sfxCIWS(G.tanks[0].x); syncKit(); status('interceptor armed');
+  sfxCIWS(G.tanks[0].x); syncKit(); status('Interceptor armed');
 }
 function tryIntercept(s){                                 // one shell, swatted out of the sky
   if(!G.ciws||s.owner!==G.tanks[1])return false;
@@ -1734,7 +1768,7 @@ function sfxRead(){ // a cold two-note ident: the machine has decided something 
 }
 function showBriefing(){                       // theatre / weather / modifier live in the bottom strip only
   $('thName').textContent=TH.n+(WX.id==='clear'?'':' · '+WX.n)+(MOD.id==='none'?'':' · '+MOD.n);
-  $('thStreak').textContent=G.streak>0?'STREAK '+G.streak:'';
+  $('thStreak').textContent=G.streak>0?'Streak '+G.streak:'';
   sfxBrief();
 }
 function checkTier(){
@@ -1751,7 +1785,7 @@ function beginPlayerTurn(){
   measureRest();
   G.tanks[0].fuel=100; G.tanks[0].turnStartX=G.tanks[0].x; syncKit();
   CAM.hold=0; CAM.tbars=0; camRest();                    // never move the camera while they're aiming
-  if(G.tanks[0].emp){G.tanks[0].emp--; if(!G.tanks[0].emp)status('fire control restored');}
+  if(G.tanks[0].emp){G.tanks[0].emp--; if(!G.tanks[0].emp)status('Fire control restored');}
   if(--G.podTimer<=0&&G.pods.length<2){G.podTimer=3+((Math.random()*2)|0);dropPod();}
   G.hand=drawHand(); G.sel=0;
   const me0=G.tanks[0];
@@ -1762,7 +1796,7 @@ function beginPlayerTurn(){
   }
   G.phase='aim'; renderHand(); syncWind(); syncWindAudio(); sfxRadio(true);
   railHum(G.hand[0]==='rai');
-  status('pull back to load · release to fire');
+  status('Drag back to aim, release to fire');
 }
 // ---- SIMULTANEOUS (WEGO): both sides commit blind, then everything resolves at once ----
 function beginPlanning(){
@@ -1835,7 +1869,7 @@ function stepSimDrive(dt){
 function endTurn(){
   if(G.tanks[0].hp<=0||G.tanks[1].hp<=0)return finish();
   if(G.mode==='sim')return beginPlanning();
-  if(G.turn===0){G.turn=1;G.phase='cpu';G.cpuTimer=0.9;status('<b>hostile computing firing solution</b>');sfxRadio(false);}
+  if(G.turn===0){G.turn=1;G.phase='cpu';G.cpuTimer=0.9;status('<b>Enemy is aiming…</b>');sfxRadio(false);}
   else{G.turn=0;beginPlayerTurn();}
 }
 // Where the player will probably BE, not where they are. A runner gets led.
@@ -1943,15 +1977,15 @@ function finish(){
   G.streak=win?G.streak+1:0;
   const card=document.getElementById('overcard');
   card.className='card2 '+(draw?'':(win?'win':'lose'));
-  document.getElementById('ovk').textContent=draw?'MUTUAL DESTRUCTION':(win?'TARGET DESTROYED':'POSITION LOST');
-  document.getElementById('ovh').textContent=draw?'BOTH GUNS SILENT':(win?'CONFIRMED KILL':'YOU ARE OUT');
+  document.getElementById('ovk').textContent=draw?'Mutual destruction':(win?'Target destroyed':'Position lost');
+  document.getElementById('ovh').textContent=draw?'Both guns silent':(win?'You win':'You are out');
   document.getElementById('ovp').textContent=draw
     ? 'You killed each other in the same second. Nobody re-ranges from that.'
     : win
     ? 'Hull integrity remaining: '+G.tanks[0].hp+'%.'+(G.streak>1?' Streak: '+G.streak+'.':'')+
       ' Next engagement redeploys to a different theatre.'
     : 'The hostile ranged you in. Cover erodes — move the fight, not the gun.';
-  document.getElementById('ovb').textContent='REDEPLOY';
+  document.getElementById('ovb').textContent='Play again';
   document.getElementById('over').classList.add('on');
 }
 
@@ -1974,20 +2008,18 @@ function syncWind(){
 function syncKit(){
   const me=G.tanks[0]; if(!me)return;
   $('fuel').style.width=me.fuel+'%'; $('fuelt').textContent=Math.round(me.fuel);
-  const b=$('plate');
-  b.textContent=me.shield?'ARMOUR LIVE':'ARMOUR ×'+me.armour;
-  b.className='drv wide'+(me.shield?' on':'');
-  b.disabled=me.shield||me.armour<=0;
-  const gs=$('gSmoke'), gd=$('gDecoy'), gc=$('gCiws');
-  gs.textContent='SMOKE ×'+G.gadget.smoke; gs.disabled=G.gadget.smoke<=0;
-  gs.className='drv wide'+(G.smoke>0?' on':'');
-  gd.textContent='DECOY ×'+G.gadget.decoy; gd.disabled=G.gadget.decoy<=0||!!G.decoy;
-  gd.className='drv wide'+(G.decoy?' on':'');
-  gc.textContent='CIWS ×'+G.gadget.ciws; gc.disabled=G.gadget.ciws<=0||!!G.ciws;
-  gc.className='drv wide'+(G.ciws?' on':'');
-  // tell the player, plainly, how well the enemy has them ranged
+  // Word on one line, count on the next — four buttons across, still readable.
+  const two=(el,word,val,on,off)=>{
+    el.innerHTML='<b>'+word+'</b><i>'+val+'</i>';
+    el.className='drv wide'+(on?' on':''); el.disabled=off;
+  };
+  two($('plate'), 'Armour', me.shield?'ON':me.armour, me.shield, me.shield||me.armour<=0);
+  two($('gSmoke'),'Smoke',  G.gadget.smoke, G.smoke>0, G.gadget.smoke<=0);
+  two($('gDecoy'),'Decoy',  G.gadget.decoy, !!G.decoy, G.gadget.decoy<=0||!!G.decoy);
+  two($('gCiws'), 'CIWS',   G.gadget.ciws,  !!G.ciws,  G.gadget.ciws<=0||!!G.ciws);
+  // how well the enemy has you ranged, in plain words
   const z=$('zero'), e=G.cpuErr;
-  z.textContent=e>0.26?'HOSTILE · RE-RANGING':e>0.14?'HOSTILE · TRACKING':'HOSTILE · ZEROED';
+  z.textContent=e>0.26?'Enemy: re-ranging':e>0.14?'Enemy: tracking':'Enemy: zeroed in';
   z.style.color=e>0.26?'var(--ok)':e>0.14?'var(--dim)':'var(--bad)';
 }
 function renderHand(){
@@ -2015,14 +2047,14 @@ cv.addEventListener('pointermove',e=>{if(drag){drag.x=e.clientX;drag.y=e.clientY
 cv.addEventListener('pointerup',()=>{
   if(!drag||(G.phase!=='aim'&&G.phase!=='plan'))return;
   const s=solutionFrom(drag); drag=null;
-  if(s.pow<0.05){status('pull further — no charge');return;}
+  if(s.pow<0.05){status('Pull back further');return;}
   const me=G.tanks[0]; me.ang=s.ang; me.pow=s.pow;
   const w=wpn(G.hand[G.sel]);
   G.lastShot={ang:s.ang,pow:s.pow,wid:w.id,miss:null,from:me.x};
   obsShot(s.ang,s.pow,w); obsTurn();
   fire(me,s.ang,s.pow,w);
   if(G.mode==='sim'){G.fired=true; resolveSimultaneous();}
-  else{G.phase='flight'; status('shot away');}
+  else{G.phase='flight'; status('Shot away');}
 });
 cv.addEventListener('pointercancel',()=>{drag=null;});
 function solutionFrom(d){
@@ -2302,7 +2334,7 @@ function drawFX(){
       ctx.beginPath();ctx.moveTo(f.x-26,gy-8);ctx.lineTo(f.x+26,gy-8);
       ctx.moveTo(f.x,gy-34);ctx.lineTo(f.x,gy+18);ctx.stroke();
       }
-    else if(f.k==='num'){ctx.font='600 13px ui-monospace,monospace';ctx.textAlign='center';
+    else if(f.k==='num'){ctx.font='700 18px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';ctx.textAlign='center';
       ctx.fillStyle=(f.ai?'rgba(255,150,90,':'rgba(226,86,74,')+Math.min(1,k*1.5)+')';
       ctx.fillText(typeof f.v==='string'?f.v:'-'+f.v,f.x,f.y);ctx.textAlign='left';}
   });
@@ -2415,7 +2447,7 @@ function physStep(){
         if(s.owner===G.tanks[0])obsImpact(s.x);
         detonate(s);
       }
-      else{if(G.phase==='flight'&&!busy()){G.phase='settle';G.settle=.25;status('wide — shot lost');}}
+      else{if(G.phase==='flight'&&!busy()){G.phase='settle';G.settle=.25;status('Wide — shot lost');}}
     }
   }
 }
@@ -2463,7 +2495,7 @@ function loop(now){
   else if(G.phase==='plan'){
     G.planT-=real;
     if(G.planT<=0){                                        // out of time: your gun stays cold, theirs does not
-      if(!G.fired)status('too slow — you held fire');
+      if(!G.fired)status('Too slow — you held fire');
       resolveSimultaneous();
     }
   }
@@ -2473,7 +2505,7 @@ function loop(now){
     $('plan').classList.add('on');
     $('pFill').style.width=(k*100).toFixed(1)+'%';
     $('plan').className=k<0.28?'on urgent':'on';
-    $('pTxt').textContent=G.fired?'ROUND AWAY':'BOTH SIDES COMMITTED · '+G.planT.toFixed(1)+'s';
+    $('pTxt').textContent=G.fired?'Round away':'Fire within '+G.planT.toFixed(1)+'s';
     if(!G.tickT||G.planT<G.tickT-1){G.tickT=Math.ceil(G.planT);if(k<0.34)sfxTick();}
   }else $('plan').classList.remove('on');
   render(); requestAnimationFrame(loop);
@@ -2582,7 +2614,7 @@ $('gCiws').onclick=e=>{e.stopPropagation();initAudio();useCIWS();};
 $('plate').onclick=e=>{
   e.stopPropagation(); const me=G.tanks[0];
   if(me.shield||me.armour<=0||(G.phase!=='aim'&&G.phase!=='plan'))return;
-  me.armour--; me.shield=true; sfxPlate(me.x); syncKit(); status('reactive plate live');
+  me.armour--; me.shield=true; sfxPlate(me.x); syncKit(); status('Armour plate live');
 };
 $('ovb').onclick=()=>{initAudio();document.getElementById('over').classList.remove('on');newGame();};
 let rzPending=0;
