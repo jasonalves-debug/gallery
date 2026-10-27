@@ -325,6 +325,23 @@
   .dmd2{animation-delay:3s}.dmd3{animation-delay:6s}
   @keyframes dmd{0%,32%{opacity:1}33%,100%{opacity:0}}
 
+  /* TORONTO SEER art */
+  .seer{--c:#3dff9a}
+  .seer .art{background:#070b12}
+  .seer text{font-family:"Press Start 2P",monospace}
+  .sweep{transform-box:view-box;transform-origin:160px 62px;animation:spin 4.5s linear infinite}
+  .inc{transform-box:fill-box;transform-origin:center;animation:inc 6s infinite;opacity:0}
+  @keyframes inc{0%{opacity:0;transform:scale(0)}4%{opacity:1;transform:scale(1.8)}8%,100%{opacity:1;transform:scale(1)}}
+  .ping{transform-box:fill-box;transform-origin:center;animation:ping 6s infinite;opacity:0}
+  @keyframes ping{0%{opacity:0;transform:scale(.4)}3%{opacity:.95;transform:scale(.6)}20%,100%{opacity:0;transform:scale(4)}}
+  .crit{transform-box:fill-box;transform-origin:center;animation:crit 1.2s ease-in-out infinite}
+  @keyframes crit{50%{transform:scale(1.5);opacity:.6}}
+  .hot{animation:hot 3s ease-in-out infinite alternate}
+  @keyframes hot{from{opacity:.55}to{opacity:1}}
+  .ctr1,.ctr2,.ctr3{opacity:0;animation:ctr 6s infinite}
+  .ctr2{animation-delay:2s}.ctr3{animation-delay:4s}
+  @keyframes ctr{0%,33%{opacity:1}33.5%,100%{opacity:0}}
+
   /* platform switch */
   .tabs{position:sticky;top:0;z-index:5;margin:0 -16px 6px;padding:10px 16px 14px;
     background:linear-gradient(var(--bg) 72%,transparent)}
@@ -368,7 +385,7 @@
 <nav class="tabs" aria-label="Platform">
   <div class="seg" role="tablist" data-active="mobile">
     <span class="pill" aria-hidden="true"></span>
-    <button role="tab" id="t-mobile" aria-controls="mobile" aria-selected="true" data-tab="mobile"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="10" y="17.5" width="4" height="1.6" fill="currentColor"/></svg>MOBILE<span class="n">11</span></button>
+    <button role="tab" id="t-mobile" aria-controls="mobile" aria-selected="true" data-tab="mobile"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="10" y="17.5" width="4" height="1.6" fill="currentColor"/></svg>MOBILE<span class="n">12</span></button>
     <button role="tab" id="t-desktop" aria-controls="desktop" aria-selected="false" data-tab="desktop"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="8" y="19.5" width="8" height="2" fill="currentColor"/></svg>DESKTOP<span class="n">3</span></button>
   </div>
 </nav>
@@ -785,6 +802,55 @@
     <div class="row"><div class="t">SCARBOROUGH PINBALL</div><span class="play">PLAY</span></div>
     <div class="d">A 3D pinball table built around Scarborough, with 90s airbrushed art and anime cut-ins. Ride the Line 3 ghost train, stop the Bluffs from crumbling, time your shots through 401 traffic, spin the food spinner and hit the STC scoop for comedy modes.</div>
     <div class="tags"><span class="tag">Game</span><span class="tag">Pinball</span><span class="tag">Arcade</span></div>
+  </div>
+</a>
+<a class="card seer" href="https://jasonalves-debug.github.io/TOER/">
+  <div class="art" aria-hidden="true">
+    <svg viewBox="0 0 320 132" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="hotz"><stop offset="0" stop-color="#ff3b4a" stop-opacity=".55"/><stop offset=".5" stop-color="#ff8a2a" stop-opacity=".2"/><stop offset="1" stop-color="#ff8a2a" stop-opacity="0"/></radialGradient>
+        <linearGradient id="swp" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3dff9a" stop-opacity="0"/><stop offset="1" stop-color="#3dff9a" stop-opacity=".28"/></linearGradient>
+        <clipPath id="land"><path d="M0 0 H320 V98 Q300 98 280 96 Q240 92 205 100 Q175 106 150 104 Q115 101 85 106 Q50 112 0 108Z"/></clipPath>
+      </defs>
+      <rect width="320" height="132" fill="#0a1424"/>
+      <g opacity=".35"><path d="M0 116 Q80 110 160 116 T320 112" stroke="#1b3a5c" fill="none"/><path d="M0 124 Q80 118 160 124 T320 120" stroke="#1b3a5c" fill="none"/></g>
+      <g clip-path="url(#land)">
+        <rect width="320" height="132" fill="#0d1119"/>
+        <g stroke="#18202e" stroke-width=".6" transform="rotate(-17 160 66)"><line x1="-80" y1="-40" x2="-80" y2="180"/><line x1="-66" y1="-40" x2="-66" y2="180"/><line x1="-52" y1="-40" x2="-52" y2="180"/><line x1="-38" y1="-40" x2="-38" y2="180"/><line x1="-24" y1="-40" x2="-24" y2="180"/><line x1="-10" y1="-40" x2="-10" y2="180"/><line x1="4" y1="-40" x2="4" y2="180"/><line x1="18" y1="-40" x2="18" y2="180"/><line x1="32" y1="-40" x2="32" y2="180"/><line x1="46" y1="-40" x2="46" y2="180"/><line x1="60" y1="-40" x2="60" y2="180"/><line x1="74" y1="-40" x2="74" y2="180"/><line x1="88" y1="-40" x2="88" y2="180"/><line x1="102" y1="-40" x2="102" y2="180"/><line x1="116" y1="-40" x2="116" y2="180"/><line x1="130" y1="-40" x2="130" y2="180"/><line x1="144" y1="-40" x2="144" y2="180"/><line x1="158" y1="-40" x2="158" y2="180"/><line x1="172" y1="-40" x2="172" y2="180"/><line x1="186" y1="-40" x2="186" y2="180"/><line x1="200" y1="-40" x2="200" y2="180"/><line x1="214" y1="-40" x2="214" y2="180"/><line x1="228" y1="-40" x2="228" y2="180"/><line x1="242" y1="-40" x2="242" y2="180"/><line x1="256" y1="-40" x2="256" y2="180"/><line x1="270" y1="-40" x2="270" y2="180"/><line x1="284" y1="-40" x2="284" y2="180"/><line x1="298" y1="-40" x2="298" y2="180"/><line x1="312" y1="-40" x2="312" y2="180"/><line x1="326" y1="-40" x2="326" y2="180"/><line x1="340" y1="-40" x2="340" y2="180"/><line x1="354" y1="-40" x2="354" y2="180"/><line x1="368" y1="-40" x2="368" y2="180"/><line x1="382" y1="-40" x2="382" y2="180"/><line x1="396" y1="-40" x2="396" y2="180"/><line x1="410" y1="-40" x2="410" y2="180"/><line x1="-80" y1="-40" x2="420" y2="-40"/><line x1="-80" y1="-26" x2="420" y2="-26"/><line x1="-80" y1="-12" x2="420" y2="-12"/><line x1="-80" y1="2" x2="420" y2="2"/><line x1="-80" y1="16" x2="420" y2="16"/><line x1="-80" y1="30" x2="420" y2="30"/><line x1="-80" y1="44" x2="420" y2="44"/><line x1="-80" y1="58" x2="420" y2="58"/><line x1="-80" y1="72" x2="420" y2="72"/><line x1="-80" y1="86" x2="420" y2="86"/><line x1="-80" y1="100" x2="420" y2="100"/><line x1="-80" y1="114" x2="420" y2="114"/><line x1="-80" y1="128" x2="420" y2="128"/><line x1="-80" y1="142" x2="420" y2="142"/><line x1="-80" y1="156" x2="420" y2="156"/><line x1="-80" y1="170" x2="420" y2="170"/></g>
+        <!-- 401, DVP, Gardiner -->
+        <path d="M-5 24 Q90 18 170 22 T325 16" stroke="#2c3a52" stroke-width="2.4" fill="none"/>
+        <path d="M172 22 Q178 50 168 74 Q162 90 170 100" stroke="#2c3a52" stroke-width="1.8" fill="none"/>
+        <path d="M-5 104 Q60 98 120 100 Q150 100 205 96" stroke="#2c3a52" stroke-width="1.6" fill="none"/>
+        <path d="M180 20 Q192 44 186 66 Q180 84 190 100" stroke="#123a5a" stroke-width="1.2" fill="none" opacity=".8"/>
+        <ellipse class="hot" cx="150" cy="86" rx="34" ry="16" fill="url(#hotz)"/>
+        <ellipse class="hot" cx="258" cy="52" rx="30" ry="18" fill="url(#hotz)" style="animation-delay:-1.5s"/>
+        <ellipse class="hot" cx="62" cy="44" rx="20" ry="12" fill="url(#hotz)" style="animation-delay:-.8s" opacity=".7"/>
+        <circle cx="140.6" cy="73.4" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="158.7" cy="70.0" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="279.2" cy="52.2" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="153.6" cy="78.4" r="1.9" fill="#ff8a2a" opacity=".85"/><circle cx="179.5" cy="83.8" r="1.5" fill="#4fa8ff" opacity=".85"/><circle cx="245.7" cy="64.4" r="1.9" fill="#ff8a2a" opacity=".85"/><circle cx="280.8" cy="70.3" r="1.9" fill="#ff8a2a" opacity=".85"/><circle cx="238.9" cy="48.5" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="185.1" cy="87.7" r="1.9" fill="#ff8a2a" opacity=".85"/><circle cx="303.7" cy="47.0" r="1.5" fill="#4fa8ff" opacity=".85"/><circle cx="227.1" cy="27.1" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="298.7" cy="40.4" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="133.1" cy="86.4" r="1.5" fill="#4fa8ff" opacity=".85"/><circle cx="157.9" cy="84.6" r="1.5" fill="#4fa8ff" opacity=".85"/><circle cx="230.2" cy="52.8" r="1.5" fill="#4fa8ff" opacity=".85"/><circle cx="132.2" cy="77.6" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="158.0" cy="90.5" r="1.5" fill="#4fa8ff" opacity=".85"/><circle cx="137.4" cy="80.1" r="1.9" fill="#ff8a2a" opacity=".85"/><circle cx="162.1" cy="71.2" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="276.4" cy="88.9" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="186.4" cy="83.4" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="150.6" cy="96.0" r="1.9" fill="#ff8a2a" opacity=".85"/><circle cx="160.6" cy="71.0" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="257.1" cy="61.9" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="164.8" cy="87.1" r="1.5" fill="#4fa8ff" opacity=".85"/><circle cx="153.9" cy="36.7" r="1.5" fill="#4fa8ff" opacity=".85"/><circle cx="22.3" cy="33.7" r="1.5" fill="#4fa8ff" opacity=".85"/><circle cx="189.6" cy="49.5" r="1.5" fill="#ffd23f" opacity=".85"/><circle cx="240.7" cy="49.9" r="1.5" fill="#4fa8ff" opacity=".85"/><circle cx="132.3" cy="65.8" r="1.9" fill="#ff3b4a" opacity=".85"/><circle class="crit" cx="132.3" cy="65.8" r="2.3" fill="#ff3b4a"/><circle class="ping" cx="262.7" cy="61.2" r="3" fill="none" stroke="#ff8a2a" stroke-width="1" style="animation-delay:0.00s"/><circle class="inc" cx="262.7" cy="61.2" r="2" fill="#ff8a2a" style="animation-delay:0.00s"/><circle class="ping" cx="187.8" cy="79.5" r="3" fill="none" stroke="#ff8a2a" stroke-width="1" style="animation-delay:0.38s"/><circle class="inc" cx="187.8" cy="79.5" r="2" fill="#ff8a2a" style="animation-delay:0.38s"/><circle class="ping" cx="153.4" cy="85.0" r="3" fill="none" stroke="#ffd23f" stroke-width="1" style="animation-delay:0.75s"/><circle class="inc" cx="153.4" cy="85.0" r="2" fill="#ffd23f" style="animation-delay:0.75s"/><circle class="ping" cx="167.7" cy="75.4" r="3" fill="none" stroke="#ff8a2a" stroke-width="1" style="animation-delay:1.12s"/><circle class="inc" cx="167.7" cy="75.4" r="2" fill="#ff8a2a" style="animation-delay:1.12s"/><circle class="ping" cx="242.5" cy="52.3" r="3" fill="none" stroke="#ff8a2a" stroke-width="1" style="animation-delay:1.50s"/><circle class="inc" cx="242.5" cy="52.3" r="2" fill="#ff8a2a" style="animation-delay:1.50s"/><circle class="ping" cx="129.6" cy="92.7" r="3" fill="none" stroke="#ffd23f" stroke-width="1" style="animation-delay:1.88s"/><circle class="inc" cx="129.6" cy="92.7" r="2" fill="#ffd23f" style="animation-delay:1.88s"/><circle class="ping" cx="141.1" cy="68.2" r="3" fill="none" stroke="#4fa8ff" stroke-width="1" style="animation-delay:2.25s"/><circle class="inc" cx="141.1" cy="68.2" r="2" fill="#4fa8ff" style="animation-delay:2.25s"/><circle class="ping" cx="250.2" cy="53.0" r="3" fill="none" stroke="#4fa8ff" stroke-width="1" style="animation-delay:2.62s"/><circle class="inc" cx="250.2" cy="53.0" r="2" fill="#4fa8ff" style="animation-delay:2.62s"/><circle class="ping" cx="146.7" cy="78.1" r="3" fill="none" stroke="#4fa8ff" stroke-width="1" style="animation-delay:3.00s"/><circle class="inc" cx="146.7" cy="78.1" r="2" fill="#4fa8ff" style="animation-delay:3.00s"/><circle class="ping" cx="167.2" cy="86.1" r="3" fill="none" stroke="#ff8a2a" stroke-width="1" style="animation-delay:3.38s"/><circle class="inc" cx="167.2" cy="86.1" r="2" fill="#ff8a2a" style="animation-delay:3.38s"/><circle class="ping" cx="230.2" cy="51.7" r="3" fill="none" stroke="#4fa8ff" stroke-width="1" style="animation-delay:3.75s"/><circle class="inc" cx="230.2" cy="51.7" r="2" fill="#4fa8ff" style="animation-delay:3.75s"/><circle class="ping" cx="132.7" cy="78.3" r="3" fill="none" stroke="#4fa8ff" stroke-width="1" style="animation-delay:4.12s"/><circle class="inc" cx="132.7" cy="78.3" r="2" fill="#4fa8ff" style="animation-delay:4.12s"/><circle class="ping" cx="249.6" cy="38.1" r="3" fill="none" stroke="#ffd23f" stroke-width="1" style="animation-delay:4.50s"/><circle class="inc" cx="249.6" cy="38.1" r="2" fill="#ffd23f" style="animation-delay:4.50s"/><circle class="ping" cx="169.5" cy="63.8" r="3" fill="none" stroke="#ffd23f" stroke-width="1" style="animation-delay:4.88s"/><circle class="inc" cx="169.5" cy="63.8" r="2" fill="#ffd23f" style="animation-delay:4.88s"/><circle class="ping" cx="158.6" cy="83.8" r="3" fill="none" stroke="#ff3b4a" stroke-width="1" style="animation-delay:5.25s"/><circle class="inc" cx="158.6" cy="83.8" r="2" fill="#ff3b4a" style="animation-delay:5.25s"/><circle class="ping" cx="162.0" cy="71.6" r="3" fill="none" stroke="#ffd23f" stroke-width="1" style="animation-delay:5.62s"/><circle class="inc" cx="162.0" cy="71.6" r="2" fill="#ffd23f" style="animation-delay:5.62s"/>
+        <g class="sweep"><path d="M160 62 L340 62 A180 180 0 0 0 315 -28 Z" fill="url(#swp)"/><line x1="160" y1="62" x2="340" y2="62" stroke="#3dff9a" stroke-width=".8" opacity=".7"/></g>
+      </g>
+      <path d="M0 108 Q50 112 85 106 Q115 101 150 104 Q175 106 205 100 Q240 92 280 96 Q300 98 320 98" stroke="#3dff9a" stroke-width=".8" fill="none" opacity=".45"/>
+      <path d="M138 112 Q150 108 162 112 Q150 115 138 112Z" fill="#1a2434" stroke="#3dff9a" stroke-width=".4" opacity=".7"/>
+      <g font-size="4.5" fill="#6d7c96" style="font-family:'Press Start 2P',monospace">
+        <text x="20" y="62">ETOBICOKE</text><text x="112" y="40">NORTH YORK</text><text x="236" y="80">SCARBOROUGH</text><text x="124" y="97">DOWNTOWN</text>
+      </g>
+      <!-- HUD -->
+      <rect x="5" y="4" width="112" height="13" rx="2" fill="#000" opacity=".7"/>
+      <circle cx="12" cy="10.5" r="2.2" fill="#3dff9a" class="siren"/><text x="18" y="13" font-size="5.5" fill="#3dff9a">SURVEILLANCE ACTIVE</text>
+      <rect x="250" y="4" width="65" height="20" rx="2" fill="#000" opacity=".7"/>
+      <text x="309" y="11" text-anchor="end" font-size="4.5" fill="#8d8ca6">LAST 24H</text>
+      <g font-size="8" fill="#fff"><text class="ctr1" x="309" y="21" text-anchor="end">212</text><text class="ctr2" x="309" y="21" text-anchor="end">213</text><text class="ctr3" x="309" y="21" text-anchor="end">215</text></g>
+      <g font-size="4.5">
+        <rect x="5" y="117" width="22" height="10" rx="2" fill="#3dff9a"/><text x="16" y="124" text-anchor="middle" fill="#04110a">ALL</text>
+        <rect x="30" y="117" width="34" height="10" rx="2" fill="#000" opacity=".7" stroke="#4fa8ff" stroke-width=".6"/><text x="47" y="124" text-anchor="middle" fill="#4fa8ff">POLICE</text>
+        <rect x="67" y="117" width="26" height="10" rx="2" fill="#000" opacity=".7" stroke="#ff8a2a" stroke-width=".6"/><text x="80" y="124" text-anchor="middle" fill="#ff8a2a">FIRE</text>
+      </g>
+      <g font-size="4" fill="#c9c8db"><circle cx="232" cy="122" r="1.8" fill="#ff3b4a"/><text x="236" y="123.5">CRIT</text><circle cx="256" cy="122" r="1.8" fill="#ff8a2a"/><text x="260" y="123.5">HIGH</text><circle cx="280" cy="122" r="1.8" fill="#ffd23f"/><text x="284" y="123.5">MED</text><circle cx="300" cy="122" r="1.8" fill="#4fa8ff"/><text x="304" y="123.5">LOW</text></g>
+    </svg>
+  </div>
+  <div class="body">
+    <div class="row"><div class="t">TORONTO SEER</div><span class="play">OPEN</span></div>
+    <div class="d">A live map of police and fire activity across Toronto over the last 24 hours, refreshed about every 15 minutes. Incidents are colour-coded by severity, busy areas glow as hot zones, and you can filter to just police or just fire.</div>
+    <div class="tags"><span class="tag">App</span><span class="tag">Live Map</span><span class="tag">Toronto</span></div>
   </div>
 </a>
 </div>
