@@ -1,3 +1,6 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Myriad</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1878,7 +1881,17 @@ function mixHex(h, f, t) { const c = hexRGB(h); return `rgb(${[0, 1, 2].map(i =>
    AUDIO — everything synthesised
    ===================================================================== */
 const AU = { ctx: null, on: true, ready: false };
+let landTried = false;
+function tryLandscape() {
+  if (landTried) return; landTried = true;
+  try {
+    if (!matchMedia('(pointer:coarse)').matches) return;
+    const d = document.documentElement;
+    Promise.resolve(d.requestFullscreen ? d.requestFullscreen() : 0).catch(() => {}).then(() => screen.orientation && screen.orientation.lock ? screen.orientation.lock('landscape') : 0).catch(() => {});
+  } catch (e) {}
+}
 function auInit() {
+  tryLandscape();
   if (AU.ctx || TEST) return;
   const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
   let ctx; try { ctx = new AC({ latencyHint: 0.06 }); } catch (e) { ctx = new AC(); }
