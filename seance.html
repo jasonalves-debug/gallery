@@ -4175,6 +4175,7 @@ function phoneMain() {
     bodyEl.querySelectorAll('.iv button[data-q]').forEach(b => b.addEventListener('click', () => {
       if (b.disabled) return; b.disabled = true; b.classList.add('wait');
       net.send({ t: 'ask', sus: iv.sus, q: b.dataset.q, ev: b.dataset.ev });
+      setTimeout(() => { if (b.isConnected && b.classList.contains('wait')) { bodyKey = ''; render(); } }, 2500);   // never leave a tap hanging
     }));
     const dn = bodyEl.querySelector('.iv .done'); if (dn) dn.addEventListener('click', () => net.send({ t: 'end' }));
     if (iv && renderDet.lastIv !== iv.sus) { const el = bodyEl.querySelector('.iv'); if (el) el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
