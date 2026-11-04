@@ -167,6 +167,24 @@ body.phone.gho{background:#06070d;color:#cfeaf2}
 .mem{display:grid;grid-template-columns:1fr 1fr;gap:.2rem 1rem}
 .mem>div:first-child{grid-column:1/-1}
 .mem .v{margin:.1rem 0 .5rem}
+/* accessibility: large, high-contrast phone text */
+html:has(body.phone){font-size:20px}
+body.phone{font-size:1.1rem;line-height:1.5}
+body.phone,.ph{--minfs:.95rem}
+.ph .eyebrow,.ph .stat,.ph .clock small,.ph h2 small,.card h3 small,.card dt,.ev b,.stats span,.log time,.ivh .k,.mem .k,.lines .q,.iv h3 small,.asks button i,.row .nq,.card .tg,.tell{font-size:.95rem!important;opacity:1!important;letter-spacing:.06em!important}
+.card dl,.card blockquote,.card .nq,.log p,.help p,.lines .a,.legend,.wait p{font-size:1.1rem!important;opacity:1!important}
+.card dt{opacity:.8!important}
+.ph h2{font-size:1.2rem}
+.iv h3{font-size:1.1rem}
+.card h3{font-size:1.35rem}
+.ph .clock b{font-size:2rem}
+.asks button{font-size:1.15rem;min-height:3.4rem;padding:.8rem .9rem}
+.asks button:disabled{opacity:.55}
+.done{font-size:1.2rem;min-height:3rem}
+.card .pt-slot{width:64px}.card .pt{width:64px;height:98px}
+.mem .v{font-size:1.5rem}.mem .v.big{font-size:2.6rem}
+.stats b{font-size:1.9rem}.stats em{font-size:1.5rem}
+.lts{font-size:2.2rem}
 body.buzz .ph header{animation:buzz .9s ease-out}
 @keyframes buzz{0%{background:rgba(122,26,24,.35)}100%{background:transparent}}
 .gho.buzz .ph header{animation-name:buzzg}
@@ -4211,7 +4229,7 @@ function phoneMain() {
     g.fillStyle = 'rgba(140,220,255,.13)'; for (const o of OBS) g.fillRect(o[0], o[1], o[2], o[3]);
     g.fillRect(318, 12, 174, 156); g.fillRect(880, 8, 54, 172); g.fillRect(556, 62, 168, 110);
     g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.font = '30px "IM Fell English", Georgia, serif'; g.fillStyle = 'rgba(227,210,169,.45)'; g.fillText('✝', 640, 452);
+    g.font = '46px "IM Fell English", Georgia, serif'; g.fillStyle = 'rgba(227,210,169,.45)'; g.fillText('✝', 640, 452);
     for (const h of HIDES) { g.fillStyle = 'rgba(140,220,255,.28)'; ell(g, h.x, h.y - 30, 7, 7); g.fill(); }
     if (!pos) return;
     const ease = (id, x, y) => { const d = disp[id] || (disp[id] = { x, y }); d.x += (x - d.x) * .25; d.y += (y - d.y) * .25; return d; };
@@ -4220,8 +4238,8 @@ function phoneMain() {
       const d = ease('w', pos.w[0], pos.w[1]), pz = 1 + Math.sin(T * 4) * .25;
       const gr = g.createRadialGradient(d.x, d.y, 0, d.x, d.y, 70 * pz); gr.addColorStop(0, 'rgba(210,250,255,.9)'); gr.addColorStop(1, 'rgba(210,250,255,0)');
       g.fillStyle = gr; g.fillRect(d.x - 80, d.y - 80, 160, 160);
-      g.fillStyle = '#eafcff'; g.font = '44px "IM Fell English", Georgia, serif'; g.fillText('†', d.x, d.y);
-      g.font = 'italic 32px "IM Fell English", Georgia, serif'; g.fillStyle = 'rgba(220,250,255,.9)';
+      g.fillStyle = '#eafcff'; g.font = '64px "IM Fell English", Georgia, serif'; g.fillText('†', d.x, d.y);
+      g.font = 'italic 48px "IM Fell English", Georgia, serif'; g.fillStyle = 'rgba(220,250,255,.9)';
       g.fillText(pos.carrier ? 'being carried' : 'the weapon', d.x, d.y + (d.y > 600 ? -54 : 50));
     }
     for (const [id, x, y, fz] of pos.s) {
@@ -4233,18 +4251,18 @@ function phoneMain() {
         for (let i = 0; i < 3; i++) { const a = T * 1.5 + i * 2.1; g.beginPath(); g.moveTo(d.x + Math.cos(a) * 20, d.y - 70); g.quadraticCurveTo(d.x + Math.cos(a + 1) * 34, d.y - 100, d.x + Math.cos(a + 2) * 16, d.y - 126); g.stroke(); }
       }
       if (carry) { g.strokeStyle = 'rgba(255,120,110,.9)'; g.lineWidth = 5; ell(g, d.x, d.y - 30, 52 + Math.sin(T * 8) * 6, 52 + Math.sin(T * 8) * 6); g.stroke(); }
-      g.fillStyle = tw ? '#dff8ff' : 'rgba(200,220,230,.75)';
+      g.fillStyle = tw ? '#dff8ff' : 'rgba(225,240,248,.95)';
       ell(g, d.x, d.y - 62, 11, 12); g.fill();
       g.beginPath(); g.moveTo(d.x - 9, d.y - 50); g.lineTo(d.x + 9, d.y - 50); g.lineTo(d.x + 17, d.y); g.lineTo(d.x - 17, d.y); g.closePath(); g.fill();
       if (fz) { g.strokeStyle = 'rgba(170,240,255,.9)'; g.lineWidth = 3; g.setLineDash([6, 8]); ell(g, d.x, d.y - 30, 46, 46); g.stroke(); g.setLineDash([]); }
-      g.font = '34px "IM Fell English", Georgia, serif'; g.fillStyle = tw ? '#bff3ff' : 'rgba(200,220,230,.75)';
+      g.font = '50px "IM Fell English", Georgia, serif'; g.fillStyle = tw ? '#bff3ff' : 'rgba(225,240,248,.95)';
       g.fillText(sp.name, d.x, d.y + 26);
     }
     const dd = ease('det', pos.d[0], pos.d[1]);
     const lgr = g.createRadialGradient(dd.x, dd.y - 30, 0, dd.x, dd.y - 30, 70); lgr.addColorStop(0, 'rgba(255,200,120,.8)'); lgr.addColorStop(1, 'rgba(255,200,120,0)');
     g.fillStyle = lgr; g.fillRect(dd.x - 80, dd.y - 110, 160, 160);
     g.fillStyle = '#ffd59a'; ell(g, dd.x, dd.y - 30, 12, 12); g.fill();
-    g.font = 'italic 32px "IM Fell English", Georgia, serif'; g.fillText('detective', dd.x, dd.y + 24);
+    g.font = 'italic 48px "IM Fell English", Georgia, serif'; g.fillText('detective', dd.x, dd.y + 24);
     const gd = ease('gho', pos.g[0], pos.g[1]);
     g.fillStyle = 'rgba(160,235,255,.85)'; g.beginPath(); g.arc(gd.x, gd.y - 60, 16, Math.PI, 0); g.lineTo(gd.x + 18, gd.y - 12); g.lineTo(gd.x - 18, gd.y - 12); g.closePath(); g.fill();
     g.fillStyle = '#070a12'; ell(g, gd.x - 6, gd.y - 60, 3, 4); g.fill(); ell(g, gd.x + 6, gd.y - 60, 3, 4); g.fill();
