@@ -39,6 +39,14 @@ body:not(.phone){overflow:hidden;cursor:none}
 .seat .link.ok{color:var(--acc)}
 .rdy{font:1.05em var(--display);letter-spacing:.24em;margin:.5em 0 0;color:var(--paper);animation:breathe 2.6s ease-in-out infinite}
 .rdy.ok{animation:none;color:var(--acc)}
+.seat .set{font:.62em/1.5 var(--mono);color:var(--dim);margin:.35em 0 0}
+.menu{position:absolute;left:50%;bottom:2.2em;transform:translateX(-50%);width:34em;padding:1em 1.4em 1.1em;background:rgba(5,4,8,.94);border-top:1px solid color-mix(in srgb,var(--acc) 55%,transparent);border-bottom:1px solid color-mix(in srgb,var(--acc) 55%,transparent);z-index:4}
+.menu h3{font:400 1.5em var(--display);letter-spacing:.14em;margin:0 0 .5em;color:var(--acc);text-align:center}
+.menu p{display:flex;justify-content:space-between;gap:1em;margin:0;padding:.42em .7em;font:1.08em var(--body);color:var(--paper2)}
+.menu p b{font:400 1em var(--display);letter-spacing:.06em;color:var(--paper);font-variant-numeric:tabular-nums}
+.menu p.on{background:color-mix(in srgb,var(--acc) 16%,transparent);color:var(--paper);box-shadow:inset 3px 0 0 var(--acc)}
+.menu p.on b{color:var(--acc)}
+.menu .hint{display:block;text-align:center;font:italic .85em var(--body);color:var(--dim);background:none;box-shadow:none;margin-top:.6em}
 @keyframes breathe{50%{opacity:.35}}
 #center{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;pointer-events:none}
 #center h1{font:400 4.6em/1 var(--display);letter-spacing:.08em;margin:0;color:var(--paper);text-shadow:0 0 .35em rgba(143,230,255,.35),0 0 1em #000}
@@ -2734,19 +2742,20 @@ function clientLink(code, seat, h) {
 /* ======================= CAB ======================= */
 function cabMain() {
 const LS = 'seance-cab';
-let qMode = 'auto', qLvl = 'high', rot = 0, swapped = false, hudOn = true, code = null;
+let qMode = 'auto', qLvl = 'high', rot = 0, swapped = false, hudOn = true, code = null, fullOn = true;
 try {
   const st = JSON.parse(localStorage.getItem(LS) || '{}');
   if ([0, 90, 180, 270].includes(st.rot)) rot = st.rot;
   if (typeof st.swapped === 'boolean') swapped = st.swapped;
   if (['auto', 'high', 'low'].includes(st.qMode)) qMode = st.qMode;
   if (typeof st.hudOn === 'boolean') hudOn = st.hudOn;
+  if (typeof st.fullOn === 'boolean') fullOn = st.fullOn;
   if (/^[A-Z]{4}$/.test(st.code || '')) code = st.code;
 } catch (e) {}
 if (Q.get('code') && /^[A-Za-z]{4}$/.test(Q.get('code'))) code = Q.get('code').toUpperCase();
 if (!code) code = newCode();
 if (qMode !== 'auto') qLvl = qMode;
-function save() { try { localStorage.setItem(LS, JSON.stringify({ rot, swapped, qMode, hudOn, code })); } catch (e) {} }
+function save() { try { localStorage.setItem(LS, JSON.stringify({ rot, swapped, qMode, hudOn, code, fullOn })); } catch (e) {} }
 save();
 
 const cv = document.getElementById('c'), ctx = cv.getContext('2d', { alpha: false });
@@ -3281,9 +3290,10 @@ const KEYS = [
   { u: ['ArrowUp'], d: ['ArrowDown'], l: ['ArrowLeft'], r: ['ArrowRight'], b: [['ControlLeft', 'ControlRight'], ['AltLeft', 'AltRight'], ['Space']] }
 ];
 const STOP = new Set(['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'AltLeft', 'AltRight', 'ControlLeft', 'ControlRight', 'Tab']);
+function goFull() { if (fullOn && !document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {}); }
 addEventListener('keydown', e => {
   if (STOP.has(e.code)) e.preventDefault();
-  initAudio();
+  initAudio(); goFull();
   if (e.repeat) return;
   keys.add(e.code); tapped.add(e.code);
   if (e.code === 'Digit1') { qMode = qMode === 'auto' ? 'high' : qMode === 'high' ? 'low' : 'auto'; qLvl = qMode === 'auto' ? 'high' : qMode; setupBuffers(); save(); say(`Quality: ${qMode}`); return; }
@@ -3294,7 +3304,7 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => { if (STOP.has(e.code)) e.preventDefault(); keys.delete(e.code); });
 addEventListener('blur', () => keys.clear());
-addEventListener('pointerdown', () => initAudio());
+addEventListener('pointerdown', () => { initAudio(); goFull(); });
 function readCtrl(which) {
   const k = KEYS[which], has = a => a.some(c => keys.has(c) || tapped.has(c));
   let x = (has(k.r) ? 1 : 0) - (has(k.l) ? 1 : 0), y = (has(k.d) ? 1 : 0) - (has(k.u) ? 1 : 0);
@@ -3324,22 +3334,24 @@ function seatHTML(role) {
       <p class="how">${d ? 'Stick: walk with the lantern<br>Button 1: question a suspect, search a hiding place<br>Your phone: the interrogation, your casebook<br>Hold Button 2: raise the lantern · Hold Button 3: accuse' : 'Stick: drift through walls · Button 1: haunt what is nearby<br>Button 2: chill a suspect in place<br>Hold Button 3: the planchette (spell a letter)<br>Your phone: your ghost sight. You may not speak.'}</p>
       <p class="link"></p>
       <p class="rdy">Press Button 1 when ready</p>
+      <p class="set"></p>
     </div></div>
   <div class="cap"></div>
   <div class="banner"><b></b><span></span></div>
   <div class="note" hidden></div>
   <div class="look" hidden></div>
-  <div class="endp" hidden></div>`;
+  <div class="endp" hidden></div>
+  <div class="menu" hidden></div>`;
 }
 function buildLayers() {
   LB.innerHTML = ''; LT.innerHTML = '';
   for (const role of ['det', 'gho']) {
     const L = roleLayer(role); L.innerHTML = seatHTML(role); L.dataset.role = role;
     const q = s => L.querySelector(s);
-    lay[role] = { L, seat: q('.seat'), qr: q('.qr'), link: q('.link'), rdy: q('.rdy'), cap: q('.cap'), ban: q('.banner'), note: q('.note'), look: q('.look'), endp: q('.endp'), capT: 0, banT: 0 };
+    lay[role] = { L, seat: q('.seat'), qr: q('.qr'), link: q('.link'), rdy: q('.rdy'), set: q('.set'), cap: q('.cap'), ban: q('.banner'), note: q('.note'), look: q('.look'), endp: q('.endp'), menu: q('.menu'), capT: 0, banT: 0 };
     drawQR(role);
   }
-  refreshSeats(); if (state === 'end') fillEnd(); if (state === 'memory') showMemory();
+  refreshSeats(); if (state === 'end') fillEnd(); if (menu) drawMenu();
 }
 function phoneURL(role) { return `${PHONE_BASE}?join=${link.code}&seat=${role}`; }
 function drawQR(role) {
@@ -3355,18 +3367,49 @@ let linkStatus = 'off';
 function refreshSeats() {
   for (const role of ['det', 'gho']) {
     const l = lay[role]; if (!l.seat) continue;
-    l.seat.hidden = state !== 'title';
+    l.seat.hidden = state !== 'title' || !!(menu && menu.role === role);
     const linked = link.linked(role);
     l.link.textContent = linked ? 'Phone linked.' : linkStatus === 'off' || linkStatus === 'offline' ? 'No internet here. Séance needs the internet and both phones.' : `Scan with your phone to join · room ${link.code}`;
     l.link.classList.toggle('ok', linked);
     l.qr.style.opacity = linked ? .25 : 1;
     l.rdy.textContent = ready[role] ? 'Ready.' : linked ? 'Press Button 1 when ready' : 'Waiting for your phone';
+    l.set.textContent = 'Button 2: settings (screen rotation, sides, graphics)';
     l.rdy.classList.toggle('ok', !!ready[role]);
   }
 }
 function say(text, d = 3.6, role = 'det') { const l = lay[role]; if (!l.cap) return; l.cap.innerHTML = text; l.cap.classList.add('on'); l.capT = d; }
 function banner(big, small = '', d = 3.2, roles = ['det', 'gho']) {
   for (const r of roles) { const l = lay[r]; if (!l.ban) continue; l.ban.querySelector('b').textContent = big; l.ban.querySelector('span').textContent = small; l.ban.classList.add('on'); l.banT = d; }
+}
+
+/* ---------------- settings menu (stick + buttons, no keyboard needed) ---------------- */
+let menu = null;
+const MENU = [
+  { label: 'Screen rotation', val: () => `${rot}°`, step: d => { rot = (rot + (d < 0 ? 270 : 90)) % 360; fit(); } },
+  { label: 'Sides', val: () => swapped ? 'Detective on 2P side' : 'Detective on 1P side', step: () => { swapped = !swapped; const r = menu.role; buildLayers(); menu = { role: r === 'det' ? 'gho' : 'det', i: menu.i, dir: 1 }; } },
+  { label: 'Graphics', val: () => qMode === 'auto' ? 'Auto' : qMode === 'high' ? 'High' : 'Low', step: d => { const o = ['auto', 'high', 'low']; qMode = o[(o.indexOf(qMode) + (d < 0 ? 2 : 1)) % 3]; qLvl = qMode === 'auto' ? 'high' : qMode; setupBuffers(); } },
+  { label: 'Fullscreen', val: () => fullOn ? 'On' : 'Off', step: () => { fullOn = !fullOn; if (fullOn) goFull(); else if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } },
+  { label: 'Frame-rate readout', val: () => hudOn ? 'Shown' : 'Hidden', step: () => { hudOn = !hudOn; perfEl.textContent = ''; } },
+  { label: 'Done', val: () => '', step: () => closeMenu() }
+];
+function openMenu(role) { menu = { role, i: 0, dir: 0 }; SFX.rustle(); drawMenu(); }
+function closeMenu() { menu = null; save(); for (const r of ['det', 'gho']) if (lay[r].menu) lay[r].menu.hidden = true; SFX.rustle(); refreshSeats(); }
+function drawMenu() {
+  for (const r of ['det', 'gho']) if (lay[r].menu) lay[r].menu.hidden = true;
+  if (!menu) return;
+  const m = lay[menu.role].menu;
+  m.innerHTML = `<h3>Settings</h3>${MENU.map((it, i) => `<p class="${i === menu.i ? 'on' : ''}"><span>${it.label}</span><b>${it.val() ? `‹ ${esc(it.val())} ›` : ''}</b></p>`).join('')}<p class="hint">Stick up and down to choose · left, right or Button 1 to change · Button 2 to close</p>`;
+  m.hidden = false; lay[menu.role].seat.hidden = true;
+}
+function menuInput(inp, e1, e2) {
+  const dy = inp.y > .6 ? 1 : inp.y < -.6 ? -1 : 0, dx = inp.x > .6 ? 1 : inp.x < -.6 ? -1 : 0, d = dy || dx * 10;
+  if (d !== menu.dir) {
+    menu.dir = d;
+    if (dy) { menu.i = (menu.i + dy + MENU.length) % MENU.length; SFX.tickSel(); drawMenu(); }
+    else if (dx && MENU[menu.i].label !== 'Done') { MENU[menu.i].step(dx); SFX.tickSel(); save(); if (menu) drawMenu(); }
+  }
+  if (e1) { MENU[menu.i].step(1); SFX.tickSel(); save(); if (menu) drawMenu(); }
+  else if (e2) closeMenu();
 }
 
 /* ---------------- game state ---------------- */
@@ -3686,8 +3729,12 @@ function update(dt) {
   T += dt;
   const dI = readCtrl(swapped ? 1 : 0), gI = readCtrl(swapped ? 0 : 1);
   const edge = (role, b, i) => b[i] && !prevB[role][i];
-  if (state === 'title') {
-    for (const [role, inp] of [['det', dI], ['gho', gI]]) if (edge(role, inp.b, 0) && !ready[role] && (link.linked(role) || devStart)) { ready[role] = true; SFX.ready(); refreshSeats(); }
+  if (state === 'title' && menu) {
+    const inp = menu.role === 'det' ? dI : gI;
+    menuInput(inp, edge(menu.role, inp.b, 0), edge(menu.role, inp.b, 1));
+  } else if (state === 'title') {
+    for (const [role, inp] of [['det', dI], ['gho', gI]]) if (edge(role, inp.b, 1)) { openMenu(role); break; }
+    if (!menu) for (const [role, inp] of [['det', dI], ['gho', gI]]) if (edge(role, inp.b, 0) && !ready[role] && (link.linked(role) || devStart)) { ready[role] = true; SFX.ready(); refreshSeats(); }
     if (ready.det && ready.gho) beginNight();
   } else if (state === 'end') {
     endT += dt;
@@ -3734,7 +3781,7 @@ function update(dt) {
     ghost.x = clamp(ghost.x + ghost.vx * dt, 30, 1250); ghost.y = clamp(ghost.y + ghost.vy * dt, 90, 712);
     const dark = lightAt(ghost.x, ghost.y, lastL) < .35;
     ghost.energy = Math.min(100, ghost.energy + (dark ? 7 : 2.5) * dt);
-  } else if (state === 'title') {
+  } else if (state === 'title' && !menu) {
     ghost.vx += (gI.x * 190 - ghost.vx) * Math.min(1, dt * 4); ghost.vy += (gI.y * 190 - ghost.vy) * Math.min(1, dt * 4);
     ghost.x = clamp(ghost.x + ghost.vx * dt, 30, 1250); ghost.y = clamp(ghost.y + ghost.vy * dt, 90, 712);
     const ox = det.x, oy = det.y; tryMove(det, dI.x * 150 * dt, dI.y * 150 * dt);
