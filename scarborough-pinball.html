@@ -6679,8 +6679,8 @@ addEventListener('keydown',e=>{
   const k=e.code;
   if(state==='entry'&&entry){if(k==='ArrowUp')entryStep(entry.slot,1);else if(k==='ArrowDown')entryStep(entry.slot,-1);else if(k==='ArrowLeft')entry.slot=Math.max(0,entry.slot-1);else if(k==='ArrowRight')entry.slot=Math.min(2,entry.slot+1);else if(k==='Enter')entryDone();e.preventDefault();return;}
   if(tryStart()&&(k==='Space'||k==='Enter'))return;
-  if(k==='KeyZ'||k==='ShiftLeft'||k==='ArrowLeft'){keys.L=true;setFlip(0,true);}
-  else if(k==='Slash'||k==='ShiftRight'||k==='ArrowRight'||k==='KeyM'){keys.R=true;setFlip(1,true);}
+  if(k==='KeyZ'||k==='ShiftLeft'||k==='ArrowLeft'){keys.L=true;if(modeSel)modeSelPick(-1);setFlip(0,true);}
+  else if(k==='Slash'||k==='ShiftRight'||k==='ArrowRight'||k==='KeyM'){keys.R=true;if(modeSel)modeSelPick(1);setFlip(1,true);}
   else if(k==='Space'||k==='Enter'||k==='ArrowDown'){keys.P=true;plunger.held=true;plunger.t0=performance.now();snd.pull();}
   else if(k==='KeyN'||k==='ArrowUp')nudge(rnd(-120,120),-260);
   else if(k==='KeyA')nudge(260,-80);
@@ -7023,6 +7023,182 @@ function drawModeSelect(g){
   g.fillStyle=m.c;g.fillRect(x,y+H-4,W*clamp(S.t/MODE_SEL_TIME,0,1),4);
 }
 
+const fmtN=n=>(Math.floor(n)).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+// ===================================================================== PRO RULES + LIGHT SHOWS (cocktail)
+const R2={jpN:0,superLit:false,superLvl:2,addLit:false,addUsed:0,lastShot:null,lastShotAt:-99,bestCombo:0,named:0,miniW:null,miniDone:false,mysteryEB:false,lcd:null,lampQ:[],lastDmd:null};
+function r2ResetMB(){R2.jpN=0;R2.superLit=false;R2.superLvl=2;R2.addLit=false;R2.addUsed=0;}
+function cutImgSafe(type){const d=CUTS[type];try{return d?cutImg(type,d):null;}catch(e){return null;}}
+// ---- lamp shows: sequences, a point of origin, and smooth fades
+lamp=function(type,dur=1.2,o){R2.lampQ=[];lampShow={type,t:0,dur,o:o||null};};
+function lampSeq(steps){const s=steps[0];lamp(s[0],s[1],s[2]);R2.lampQ=steps.slice(1);}
+{const _sv=showVal;showVal=function(type,p,t,ins){const o=(lampShow&&lampShow.o)||{};
+  switch(type){
+    case 'radial':{const d=Math.hypot(ins.x-(o.x??240),ins.y-(o.y??600));return Math.max(0,1-Math.abs(d-p*950)/130);}
+    case 'spiral':{const a=Math.atan2(ins.y-560,ins.x-240),d=Math.hypot(ins.x-240,ins.y-560);return Math.sin(a*3+d*0.02-t*16)>0.3?1:0.12;}
+    case 'chase':{const i=INSERTS.indexOf(ins),n=INSERTS.length;return ((((t*34)|0)-i)%n+n)%n<4?1:0;}
+    case 'flicker':return Math.random()<0.45?1:0.1;
+    case 'wipe':{const v=(ins.x+ins.y)/1580;return Math.max(0,1-Math.abs(v-p)/0.1);}
+    case 'pulse':return 0.35+0.65*(0.5+0.5*Math.sin(t*9+ins.y*0.01));
+  }
+  return _sv(type,p,t,ins);};}
+function r2Frame(){
+  if(!lampShow&&R2.lampQ.length){const s=R2.lampQ.shift(),q=R2.lampQ;lamp(s[0],s[1],s[2]);R2.lampQ=q;}
+  if(!lampShow&&R2.miniW&&state==='play')lampShow={type:'pulse',t:0,dur:1,o:null};
+}
+// ---- animated LCD card on the left panel for every event
+function lcdEvent(title,sub,c1,c2,img,dur){R2.lcd={kind:'card',title,sub:sub||'',c1:c1||'#3a0a6a',c2:c2||'#ffb02e',img:img||null,t0:tnow,dur:dur||3};}
+{const _ds=dmd.show.bind(dmd);dmd.show=function(a,b,...r){R2.lastDmd={a,b,t:tnow};return _ds(a,b,...r);};}
+{const _ci=cutin;cutin=function(type){const def=CUTS[type];
+  if(def&&state==='play'){const ld=R2.lastDmd,sub=ld&&tnow-ld.t<0.1&&ld.b&&ld.b!==def.title?ld.b:'';
+    lcdEvent(def.title||'',sub,def.c1,def.c2,cutImgSafe(type),3.2);}
+  return _ci(type);};}
+function r2DrawLCD(g,W){
+  const L=R2.lcd;if(!L)return;const e=tnow-L.t0;if(e>L.dur||e<0){R2.lcd=null;return;}
+  const x=14,y=12,w=W-28,h=240,cx=x+w/2,cy=y+h/2;
+  g.save();g.beginPath();g.roundRect?g.roundRect(x,y,w,h,12):g.rect(x,y,w,h);g.clip();
+  const gr=g.createLinearGradient(x,y,x+w,y+h);gr.addColorStop(0,L.c1);gr.addColorStop(1,'#05060c');g.fillStyle=gr;g.fillRect(x,y,w,h);
+  g.globalAlpha=0.16;g.fillStyle=L.c2;for(let i=0;i<14;i++){const a=e*0.9+i*TAU/14;g.beginPath();g.moveTo(cx+70,cy);g.arc(cx+70,cy,640,a,a+0.12);g.closePath();g.fill();}
+  g.globalAlpha=0.28;g.fillStyle='#fff';for(let i=0;i<9;i++){const ly=y+((i*53)%h),lx=x+w-((i*137+e*1100)%(w+300));g.fillRect(lx,ly,120+(i%3)*60,2);}g.globalAlpha=1;
+  g.textAlign='center';g.textBaseline='alphabetic';
+  if(L.kind==='reel'){
+    g.fillStyle=L.c2;fitText(g,L.title,w-40,34);g.fillText(L.title,cx,y+40);
+    const N=L.items.length,k=Math.min(1,e/L.spin),ease=1-Math.pow(1-k,3),s=(N*3+L.pick)*ease,base=Math.floor(s),fr=s-base,rowH=52,my=y+140;
+    g.fillStyle='rgba(255,255,255,.10)';g.fillRect(x+10,my-rowH/2,w-20,rowH);
+    for(let j=-2;j<=2;j++){const it=L.items[((base+j)%N+N)%N],ry=my+(j-fr)*rowH,dist=Math.abs(j-fr);
+      g.globalAlpha=Math.max(0,1-dist*0.42);g.fillStyle=dist<0.5&&k>=1?(((e*8)|0)%2?'#fff':L.c2):'#fff';fitText(g,it,w-60,dist<0.5?40:30);g.fillText(it,cx,ry+13);}
+    g.globalAlpha=1;
+  }else{
+    const img=L.img;
+    if(img&&(img.naturalWidth||img.width)){const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height,ch2=h*1.18,cw2=ch2*iw/ih,k=Math.min(1,e/0.28),ease=1-Math.pow(1-k,3);
+      g.drawImage(img,x-cw2+ease*cw2*0.92,y+h-ch2+14+Math.sin(e*3)*3,cw2,ch2);}
+    const tx=img?x+w*0.64:cx,tw=img?w*0.56:w-40,k2=Math.min(1,Math.max(0,(e-0.08)/0.18)),sc=1+0.18*(1-k2);
+    g.save();g.translate(tx,y+h*0.48);g.scale(sc,sc);fitText(g,L.title,tw,54);g.lineWidth=8;g.strokeStyle='rgba(0,0,0,.85)';g.strokeText(L.title,0,0);g.fillStyle='#fff';g.fillText(L.title,0,0);g.restore();
+    if(L.sub&&e>0.25){g.fillStyle=L.c2;fitText(g,L.sub,tw,34);g.lineWidth=6;g.strokeStyle='rgba(0,0,0,.8)';g.strokeText(L.sub,tx,y+h*0.74);g.fillText(L.sub,tx,y+h*0.74);}
+  }
+  if(e<0.12){g.fillStyle='rgba(255,255,255,'+(1-e/0.12).toFixed(2)+')';g.fillRect(x,y,w,h);}
+  g.restore();cabBox(g,x,y,w,h,12,null,L.c2,3);
+}
+// ---- jackpot ladder, stacking, add-a-ball
+{const _ar=awardRamp;awardRamp=function(){
+  if(state==='play'&&multiball){
+    const stack=!!(mode||hurry),j0=jp;if(stack)jp=Math.round(j0*1.5/1000)*1000;
+    _ar();
+    if(stack){jp=j0+100000;dmd.show('STACKED JACKPOT',fmt(Math.round(j0*1.5/1000)*1000*mult),2,true);R2.lcd&&(R2.lcd.title='STACKED JACKPOT');}
+    R2.jpN++;
+    lampSeq([['drain',0.2],['radial',0.6,{x:194,y:652}],['strobe',0.5]].concat(stack?[['rainbow',0.8]]:[]));
+    if(!R2.superLit&&R2.jpN%2===0){R2.superLit=true;setTimeout(()=>{if(multiball&&state==='play'){dmd.show('SUPER JACKPOT','IS LIT  SHOOT 401',2,true);lcdEvent('SUPER JACKPOT LIT','SHOOT THE 401','#7a0050','#ff4fd8',null,2.4);lampSeq([['chase',1.2]]);vox.play('superlit');}},1700);}
+    const need=R2.addUsed===0?3:6;
+    if(!R2.addLit&&R2.addUsed<(wizard?2:1)&&R2.jpN>=need){R2.addLit=true;setTimeout(()=>{if(multiball&&state==='play'){dmd.show('ADD-A-BALL','IS LIT  SHOOT STC',2,true);lcdEvent('ADD-A-BALL LIT','SHOOT THE MALL','#0d4a1c','#5dff7a',null,2.4);}},3400);}
+  }else _ar();
+  r2Shot('ramp');
+};}
+{const _ae=awardExpress;awardExpress=function(){
+  if(state==='play'&&multiball&&!R2.superLit){
+    ST.express++;bonusShots++;expressFlash=1;modeShot('rorb');add(75000,400,300);
+    const left=2-R2.jpN%2;dmd.show('SUPER NOT LIT',left+' MORE JACKPOT'+(left>1?'S':''),1.6,false);snd.express();
+    gantryMsg('EXPRESS!',2);combo('express');subwayAdd(4,'EXPRESS');lampSeq([['radial',0.5,{x:447,y:604}]]);r2Shot('express');return;}
+  if(state==='play'&&multiball&&R2.superLit){
+    const j0=jp,lvl=R2.superLvl;jp=Math.round(j0*lvl/2/1000)*1000;
+    _ae();jp=j0;R2.superLit=false;R2.superLvl=Math.min(6,lvl+1);
+    const v=Math.round(j0*lvl/1000)*1000;dmd.show(lvl>2?'SUPER JACKPOT x'+lvl:'SUPER JACKPOT',fmt(v*mult),2.5,true);
+    if(R2.lcd&&lvl>2)R2.lcd.title='SUPER JACKPOT x'+lvl;
+    lampSeq([['drain',0.35],['spiral',1.2],['strobe',0.6],['rainbow',1]]);r2Shot('express');return;}
+  _ae();r2Shot('express');
+};}
+{const _ao=awardOrbit;awardOrbit=function(dir){_ao(dir);r2Shot(dir==='L'?'lorb':'rorb');};}
+{const _cs=canStartMode;canStartMode=function(){return state==='play'&&!mode&&!hurry&&!wizard&&!eob&&!R2.miniW&&modesAvailable().length>0;};}
+{const _om=openModeSelect;openModeSelect=function(b){_om(b);if(multiball&&modeSel)modeSel.t=Math.min(modeSel.t,3);};}
+{const _sm=startMode;startMode=function(m){_sm(m);lampSeq([['drain',0.2],['wipe',0.7],['rainbow',0.9]]);
+  if(multiball)setTimeout(()=>{if(state==='play'&&mode&&multiball){dmd.show('STACKED!','JACKPOTS +50%',1.6,true);lcdEvent('STACKED!','MODE + MULTIBALL  JACKPOTS +50%','#7a0050','#ffcf3a',null,2.4);}},2600);};}
+{const _smb=startMultiball;startMultiball=function(){_smb();r2ResetMB();lampSeq([['drain',0.3],['chase',1],['rainbow',1.6]]);};}
+{const _sw=startWizard;startWizard=function(){_sw();r2ResetMB();R2.miniW=null;lampSeq([['drain',0.5],['spiral',1.4],['rainbow',2.5]]);};}
+{const _em=endMultiball;endMultiball=function(){_em();r2ResetMB();};}
+{const _eb=endOfBall;endOfBall=function(){r2ResetMB();R2.miniW=null;_eb();};}
+{const _sg=startGame;startGame=function(){_sg();r2ResetMB();Object.assign(R2,{lastShot:null,lastShotAt:-99,bestCombo:0,named:0,miniW:null,miniDone:false,mysteryEB:false,lcd:null,lampQ:[]});};}
+// ---- mystery award at the mall, with a spinning reel on the LCD
+function r2Mystery(b){
+  const P=[[30,'50,000',()=>add(50000,389,300)],[18,'150,000',()=>add(150000,389,300)],[5,'500,000',()=>add(500000,389,300)],
+    [14,'BONUS X+1',()=>{bonusX=Math.min(5,bonusX+1);}],[12,'BALL SAVE 20s',()=>{ballSave=Math.max(ballSave,20);}],
+    [12,'LIGHT A STATION',()=>{if(multiball)jp+=100000;else addStation(1);}],[10,'EAST END EATS',()=>foodRollStart()],
+    [10,'SUBWAY +10%',()=>subwayAdd(10,'MYSTERY')],[8,'DOUBLE SCORING 20s',()=>{rushT=Math.max(rushT,20);}],
+    [R2.mysteryEB||extraBalls>0?0:3,'EXTRA BALL',()=>{R2.mysteryEB=true;extraBalls++;vox.play('extraball');confetti(240,700,120);edgeGlow('#5dff7a',1.6);}]];
+  const live=P.filter(p=>p[0]>0);let tot=0;for(const p of live)tot+=p[0];let r=Math.random()*tot,pi=0;
+  for(;pi<live.length-1;pi++){r-=live[pi][0];if(r<=0)break;}
+  b.holdT=Math.max(b.holdT,2.0);
+  R2.lcd={kind:'reel',items:live.map(p=>p[1]),pick:pi,t0:tnow,dur:3.4,spin:1.7,c1:'#3a0a6a',c2:'#d86bff',title:'MALL DIRECTORY'};
+  dmd.show('MALL DIRECTORY','SPINNING...',1.7,false);if(typeof cabSides!=='function')r2DmdReel(live.map(p=>p[1]),pi);lampSeq([['flicker',1.6]]);if(!vox.play('mystery'))vox.play('scoop');
+  setTimeout(()=>{if(state!=='play')return;live[pi][2]();dmd.show('MALL DIRECTORY',live[pi][1],1.8,true);lampSeq([['radial',0.6,{x:389,y:362}],['sweepDown',0.6]]);fire(1,3);snd.chime(0);},1750);
+}
+scoopAward=function(b){
+  if(state!=='play')return;
+  if(multiball&&R2.addLit){R2.addLit=false;R2.addUsed++;ST.scoop++;snd.scoop();vib([20,30,20]);launchQueue++;launchTimer=Math.max(launchTimer,0.8);ballSave=Math.max(ballSave,8);
+    dmd.show('ADD-A-BALL','ONE MORE BALL',2,true,'confetti');lcdEvent('ADD-A-BALL','ONE MORE BALL','#0d4a1c','#5dff7a',cutImgSafe('multiball'),3);
+    if(!vox.play('addaball'))vox.play('multiball');lampSeq([['drain',0.2],['wipe',0.6],['chase',1.2]]);fire(0,4);fire(1,4);fire(2,4);edgeGlow('#5dff7a',1.2);combo('scoop');r2Shot('scoop');return;}
+  ST.scoop++;stcVisits++;bonusShots++;snd.scoop();vib([20,30,20]);combo('scoop');r2Shot('scoop');
+  if(modeShot('scoop'))return;
+  if(canStartMode()){openModeSelect(b);return;}
+  if(stcVisits%3===0){ST.rush++;rushT=30;subwayAdd(8,'RUSH');add(50000,389,300);dmd.show('BOXING DAY RUSH','ALL SCORES x2  30s',2.4,true);cutin('rush');vox.play('rush');edgeGlow('#ff3030',1.3);rushHurry=0;lampSeq([['drain',0.2],['strobe',0.6],['rainbow',1.4]]);fire(1,6);return;}
+  r2Mystery(b);
+};
+// ---- named combos and the super combo
+const NAMED={'ramp>express':['GARDINER GETAWAY',100000],'express>ramp':['SCARBOROUGH SHUFFLE',100000],'lorb>ramp':['DVP DOUBLE',60000],'rorb>ramp':['DVP DOUBLE',60000],
+  'ramp>ramp':['LINE 3 LOOP',75000],'lorb>express':['FULL ORBIT',60000],'express>lorb':['FULL ORBIT',60000],'scoop>ramp':['MALL RUN',50000],'ramp>scoop':['TRANSIT TO STC',50000]};
+const SHOTXY={ramp:[194,652],express:[447,604],lorb:[38,486],rorb:[447,604],scoop:[389,362]};
+function r2Shot(kind){
+  if(state!=='play')return;
+  const within=gclock-R2.lastShotAt<4;
+  if(within&&R2.lastShot){const nm=NAMED[R2.lastShot+'>'+kind];
+    if(nm){R2.named++;add(nm[1]);const p=SHOTXY[kind]||[240,600];
+      setTimeout(()=>{if(state==='play')dmd.show(nm[0],fmt(nm[1]*mult)+'  COMBO',1.6,true);},350);
+      lcdEvent(nm[0],'NAMED COMBO  '+fmtN(nm[1]*mult),'#003a7a','#3ad6ff',null,2.2);
+      lampSeq([['radial',0.5,{x:p[0],y:p[1]}],['sweepUp',0.5]]);fire(2,2);
+      if(!vox.play('namedcombo'))vox.play('sting');}}
+  if(within&&comboN+1>R2.bestCombo)R2.bestCombo=comboN+1;
+  if(within&&comboN===4){add(250000);setTimeout(()=>{if(state==='play')dmd.show('SUPER COMBO','5-WAY  '+fmt(250000*mult),2,true,'confetti');},700);
+    lcdEvent('SUPER COMBO','5-WAY  '+fmtN(250000*mult),'#7a0050','#ffcf3a',null,2.6);lampSeq([['drain',0.2],['spiral',0.9],['rainbow',1]]);confetti(240,520,100);}
+  R2.lastShot=kind;R2.lastShotAt=gclock;
+}
+// ---- mini-wizard after 3 modes: City Hall Frenzy (2 balls, every shot lit, values climb)
+{const _cm=completeMode;completeMode=function(d,collected){_cm(d,collected);
+  lampSeq([['radial',0.7,{x:240,y:600}],['spiral',1.0],['rainbow',0.8]]);
+  if(!R2.miniDone&&!wizard&&modesDone.size===3){R2.miniDone=true;setTimeout(()=>{if(state==='play'&&!wizard&&!eob)r2StartMini();},3200);}};}
+function r2StartMini(){
+  R2.miniW={t:30,v:100000,tot:0};launchQueue++;launchTimer=Math.max(launchTimer,0.8);ballSave=Math.max(ballSave,12);
+  dmd.show('CITY HALL FRENZY','ALL SHOTS LIT  30s',2.6,true,'confetti');lcdEvent('CITY HALL FRENZY','MINI-WIZARD  EVERY SHOT LIT','#5a4400','#ffd23b',cutImgSafe('mode_council'),3.2);
+  if(!vox.play('miniwizard'))vox.play('modeintro');edgeGlow('#ffd23b',1.8);confetti(240,520,140,30);lampSeq([['drain',0.4],['spiral',1.2],['rainbow',1]]);fire(0,8);fire(1,8);fire(2,8);snd.whistle();
+}
+{const _ms=modeShot;modeShot=function(key){const r=_ms(key);
+  if(R2.miniW&&state==='play'){const M=R2.miniW,S=SHOTS[key],small=key==='tgt'||key==='bin',v=small?M.v/2:M.v;
+    add(v,S.x,S.y-30);M.tot+=v*mult*(rushT>0?2:1);if(!small)M.v+=25000;
+    if(dmd.idle())dmd.show('CITY HALL',fmt(v*mult),0.9,false);snd.combo(Math.min(6,1+(((M.v-100000)/25000)|0)));fire(1,1);edgeGlow('#ffd23b',0.5,0.6);}
+  return r;};}
+{const _mt=modeTick;modeTick=function(dt){_mt(dt);
+  if(R2.miniW&&state==='play'&&!eob){R2.miniW.t-=dt;
+    if(R2.miniW.t<=0){const tot=R2.miniW.tot;R2.miniW=null;dmd.show('CITY HALL TOTAL',fmt(tot),2.4,true,'confetti');lcdEvent('FRENZY TOTAL',fmtN(tot),'#5a4400','#ffd23b',null,2.6);lampSeq([['radial',0.6,{x:240,y:600}],['rainbow',0.8]]);}}};}
+// ---- arrows: jackpot / super / add-a-ball / frenzy
+{const _ln=litNow;litNow=function(){
+  if(R2.miniW&&state==='play'){const L={},C=['#ffd23b','#ff4fd8','#3ad6ff','#5dff7a','#ff8a3a','#ffffff'];SHOT_KEYS.forEach((k,i)=>{L[k]={c:C[i%C.length],v:(k==='tgt'||k==='bin')?R2.miniW.v/2:R2.miniW.v};});return L;}
+  const L=_ln();
+  if(multiball&&state==='play'){
+    if(!L.ramp)L.ramp={c:'#ffc03a',txt:((mode||hurry)?'STACKED ':'')+'JACKPOT'};
+    if(R2.superLit&&!L.rorb)L.rorb={c:'#ff4fd8',txt:'SUPER x'+R2.superLvl,h:1};
+    if(R2.addLit)L.scoop={c:'#5dff7a',txt:'ADD-A-BALL',h:1};}
+  return L;};}
+
+// phone: no side panel, so the reel spins on the DMD and frenzy gets a top bar
+function r2DmdReel(items,pick){const N=items.length,ts=[];let t=0,d=55;while(t<1500){ts.push(t);t+=d;d*=1.13;}
+  const n=ts.length;ts.forEach((tt,k)=>{const name=items[((pick-(n-1)+k)%N+N*99)%N];setTimeout(()=>{if(state==='play')dmd.show('MALL DIRECTORY',name,0.5,false);},tt);});}
+
+function r2PhoneHUD(){
+  if(state!=='play'||RP.on||CUT||!R2.miniW)return;const g=hx;g.setTransform(dpr,0,0,dpr,0,0);
+  const M=R2.miniW,top=safeTop+34+((mode||hurry)?32:0),W=Math.min(cw-24,330),x=(cw-W)/2;
+  g.globalAlpha=0.85;g.fillStyle='#000';g.fillRect(x,top,W,26);g.globalAlpha=1;
+  g.fillStyle='#ffd23b';g.globalAlpha=0.35;g.fillRect(x,top,W*clamp(M.t/30,0,1),26);g.globalAlpha=1;g.strokeStyle='#ffd23b';g.lineWidth=1.5;g.strokeRect(x,top,W,26);
+  g.textBaseline='middle';g.font='700 15px PinDisplay,"Arial Narrow",Arial';g.fillStyle='#fff';g.textAlign='left';g.fillText('CITY HALL FRENZY  '+shortVal(M.v*mult),x+8,top+14);
+  g.textAlign='right';g.fillText('0:'+String(Math.ceil(M.t)).padStart(2,'0'),x+W-8,top+14);g.textAlign='center';g.textBaseline='alphabetic';
+}
+{const __dh=drawHUD;drawHUD=function(){__dh();r2Frame();r2PhoneHUD();};}
+
 let lastRdt=0.016;
 function frame(now){
   requestAnimationFrame(frame);
@@ -7073,7 +7249,7 @@ requestAnimationFrame(frame);
 window.__pb={get balls(){return balls},get state(){return state},get score(){return score},set score(v){score=v},get stations(){return stations},get erosion(){return erosion},
   get multiball(){return multiball},get mult(){return mult},fl,startGame,launchBall,newBall,physicsStep,updateLogic,spinner,plunger,cars,
   setFlip,pushBall:b=>balls.push(b),get ballSave(){return ballSave},set ballSave(v){ballSave=v},get bt(){return bt},get ballNum(){return ballNum},
-  railPos,RAIL_LEN,segs,ST,snd,dmd,camera,cycleView,bgm,music,RP,requestReplay,confetti,endCut(){CUT=null;cutQ.length=0;},cutin,MODES,modeShot,openModeSelect,modeSelPick,startMode,get mode(){return mode},get hurry(){return hurry},get modeSel(){return modeSel},get modesDone(){return [...modesDone]},edgeGlow,ballSaveAngel,cycleSkin,get skin(){return SKINS[skinI].name},get shownScore(){return shownScore},get bgmLast(){return bgmLast},get rushT(){return rushT},set rushT(v){rushT=v},get view(){return VIEWS[viewI].name},get dmdR(){return dmdR},get bloomOn(){return useBloom},get shadows(){return key.castShadow},vox,startShuttle,spawnPotholes,startWizard,get subway(){return subway},set subway(v){subway=v},get shuttle(){return shuttle},get potholes(){return potholes},gameOver,get entry(){return entry},music,cutin,get cut(){return CUT},CHARS,scene,renderer,key,STC3,INSERTS,circs,STCP,RAIL,fl,FL_LEN,FR0,FR1,raidNow:()=>raccoonRaid(),get lanesLit(){return lanesLit},get bonusX(){return bonusX},get pr(){return pixelRatio},shooterResting,get eob(){return eob}};
+  railPos,RAIL_LEN,segs,ST,snd,dmd,camera,cycleView,bgm,music,RP,requestReplay,confetti,endCut(){CUT=null;cutQ.length=0;},cutin,MODES,modeShot,openModeSelect,modeSelPick,startMode,get mode(){return mode},get hurry(){return hurry},get modeSel(){return modeSel},get modesDone(){return [...modesDone]},edgeGlow,ballSaveAngel,cycleSkin,get skin(){return SKINS[skinI].name},get shownScore(){return shownScore},get bgmLast(){return bgmLast},get rushT(){return rushT},set rushT(v){rushT=v},get view(){return VIEWS[viewI].name},get dmdR(){return dmdR},get bloomOn(){return useBloom},get shadows(){return key.castShadow},vox,startShuttle,spawnPotholes,startWizard,get subway(){return subway},set subway(v){subway=v},get shuttle(){return shuttle},get potholes(){return potholes},gameOver,get entry(){return entry},music,cutin,get cut(){return CUT},CHARS,scene,renderer,key,STC3,INSERTS,circs,STCP,RAIL,fl,FL_LEN,FR0,FR1,raidNow:()=>raccoonRaid(),get lanesLit(){return lanesLit},get bonusX(){return bonusX},get pr(){return pixelRatio},shooterResting,get eob(){return eob},R2,r2StartMini,aRamp:()=>awardRamp(),aExp:()=>awardExpress(),aScoop:x=>scoopAward(x),cMode:(d,c)=>completeMode(d,c),sMB:()=>startMultiball(),get launchQueue(){return launchQueue},get score(){return score}};
 })();
 </script>
 <script>
