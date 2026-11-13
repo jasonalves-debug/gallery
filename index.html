@@ -391,6 +391,39 @@
   .wsel{animation:wsel 1s ease-in-out infinite alternate}
   @keyframes wsel{to{filter:brightness(1.5)}}
 
+  /* BAYSIDE TV art */
+  .bay{--c:#e9bc73}
+  .bay .art{background:#101410}
+  .bay text{font-family:"Press Start 2P",monospace}
+  .bsc{opacity:0;animation:bsc 9s infinite}
+  .bsc2{animation-delay:3s}.bsc3{animation-delay:6s}
+  @keyframes bsc{0%,31%{opacity:1}34%,100%{opacity:0}}
+  .bnoise{animation:bnoise 3s infinite;opacity:0}
+  @keyframes bnoise{0%{opacity:1}3%{opacity:.35}6%{opacity:.9}11%,100%{opacity:0}}
+  .bosd{opacity:0;animation:bosd 9s infinite}
+  .bosd2{animation-delay:3s}.bosd3{animation-delay:6s}
+  @keyframes bosd{0%,12%{opacity:1}14%,100%{opacity:0}}
+  .blt{opacity:0;animation:blt 9s infinite}
+  .blt2{animation-delay:3s}.blt3{animation-delay:6s}
+  @keyframes blt{0%,13%{opacity:0;transform:translateX(-14px)}17%,29%{opacity:1;transform:translateX(0)}32%,100%{opacity:0;transform:translateX(0)}}
+  .bprog{transform-box:fill-box;transform-origin:left center;animation:bprog 3s linear infinite}
+  @keyframes bprog{from{transform:scaleX(.08)}to{transform:scaleX(1)}}
+  .bwalk{animation:bwalk 3s ease-in infinite;opacity:0}
+  .bwalk2{animation-delay:-1.5s}
+  @keyframes bwalk{0%{opacity:0;transform:translate(90px,73px) scale(.2)}12%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translate(62px,104px) scale(1.15)}}
+  .bwalkb{animation-name:bwalkb}
+  @keyframes bwalkb{0%{opacity:0;transform:translate(92px,73px) scale(.2)}12%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translate(122px,104px) scale(1.15)}}
+  .bhl{animation:bhl 9s steps(1,end) infinite}
+  @keyframes bhl{0%{transform:translateY(0)}33.3%{transform:translateY(17px)}66.6%{transform:translateY(34px)}100%{transform:translateY(34px)}}
+  .bgr{animation:bgr 16s linear infinite}
+  @keyframes bgr{to{transform:translateX(-164px)}}
+  .bair{animation:bair 1.2s steps(2) infinite}
+  @keyframes bair{50%{opacity:.15}}
+  .bflick{animation:bflick 4.7s steps(1) infinite}
+  @keyframes bflick{0%,90%,94%,100%{opacity:1}92%{opacity:.88}96%{opacity:.94}}
+  .btick{animation:btick 18s linear infinite}
+  @keyframes btick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
   /* platform switch */
   .tabs{position:sticky;top:0;z-index:5;margin:0 -16px 6px;padding:10px 16px 14px;
     background:linear-gradient(var(--bg) 72%,transparent)}
@@ -434,7 +467,7 @@
 <nav class="tabs" aria-label="Platform">
   <div class="seg" role="tablist" data-active="mobile">
     <span class="pill" aria-hidden="true"></span>
-    <button role="tab" id="t-mobile" aria-controls="mobile" aria-selected="true" data-tab="mobile"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="10" y="17.5" width="4" height="1.6" fill="currentColor"/></svg>MOBILE<span class="n">14</span></button>
+    <button role="tab" id="t-mobile" aria-controls="mobile" aria-selected="true" data-tab="mobile"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="10" y="17.5" width="4" height="1.6" fill="currentColor"/></svg>MOBILE<span class="n">15</span></button>
     <button role="tab" id="t-desktop" aria-controls="desktop" aria-selected="false" data-tab="desktop"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="8" y="19.5" width="8" height="2" fill="currentColor"/></svg>DESKTOP<span class="n">3</span></button>
   </div>
 </nav>
@@ -999,6 +1032,87 @@
     <div class="row"><div class="t">MYRIAD</div><span class="play">PLAY</span></div>
     <div class="d">Thousands of soldiers on screen at once, in a world that bred beasts instead of forging iron. Hold the line with your army and unleash Arrow Storms, War Hounds, stampedes and Earthshakers across three ages, from spearmen to tower-backed rhinos against oak-and-iron walkers.</div>
     <div class="tags"><span class="tag">Game</span><span class="tag">Strategy</span><span class="tag">Mass Battle</span></div>
+  </div>
+</a>
+<a class="card bay" href="baysidetv.html">
+  <div class="art" aria-hidden="true">
+    <svg viewBox="0 0 320 132" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <clipPath id="bayclip"><rect x="15" y="12" width="150" height="84" rx="3"/></clipPath>
+        <clipPath id="bayguide"><rect x="230" y="24" width="84" height="88"/></clipPath>
+        <clipPath id="baytick"><rect width="320" height="132"/></clipPath>
+        <pattern id="baysl" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height=".8" fill="#000" opacity=".4"/></pattern>
+        <radialGradient id="bayvig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".7"/></radialGradient>
+        <radialGradient id="bayglow" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#e9bc73" stop-opacity=".22"/><stop offset="1" stop-color="#e9bc73" stop-opacity="0"/></radialGradient>
+        
+<g id="bayhall">
+  <rect x="15" y="12" width="150" height="84" fill="#1d241d"/>
+  <polygon points="15,12 70,34 110,34 165,12" fill="#171c17"/>
+  <polygon points="15,96 70,74 110,74 165,96" fill="#2b3128"/>
+  <g stroke="#3a4136" stroke-width=".5"><line x1="74" y1="74" x2="46.8" y2="96"/><line x1="80" y1="74" x2="63.0" y2="96"/><line x1="86" y1="74" x2="79.2" y2="96"/><line x1="92" y1="74" x2="95.4" y2="96"/><line x1="98" y1="74" x2="111.6" y2="96"/><line x1="104" y1="74" x2="127.8" y2="96"/><line x1="40" y1="85" x2="140" y2="85"/><line x1="58" y1="79" x2="122" y2="79"/></g>
+  <rect x="70" y="34" width="40" height="40" fill="#222a22"/>
+  <rect x="80" y="44" width="20" height="30" fill="#eef5d2" opacity=".85"/>
+  <polygon points="15,12 70,34 70,74 15,96" fill="var(--lk)"/>
+  <polygon points="165,12 110,34 110,74 165,96" fill="var(--lk)"/>
+  <polygon points="15,12 70,34 70,74 15,96" fill="#000" opacity=".18"/>
+  <g stroke="#000" stroke-opacity=".38" stroke-width=".7"><line x1="25" y1="16.0" x2="25" y2="92.0"/><line x1="36" y1="20.4" x2="36" y2="87.6"/><line x1="48" y1="25.2" x2="48" y2="82.8"/><line x1="59" y1="29.6" x2="59" y2="78.4"/><line x1="155" y1="16.0" x2="155" y2="92.0"/><line x1="144" y1="20.4" x2="144" y2="87.6"/><line x1="132" y1="25.2" x2="132" y2="82.8"/><line x1="121" y1="29.6" x2="121" y2="78.4"/></g>
+  <rect x="29" y="53.0" width="1.6" height="4" fill="#e8e2c8" opacity=".7"/><rect x="40" y="53.0" width="1.6" height="4" fill="#e8e2c8" opacity=".7"/><rect x="52" y="53.0" width="1.6" height="4" fill="#e8e2c8" opacity=".7"/><rect x="149.4" y="53.0" width="1.6" height="4" fill="#e8e2c8" opacity=".7"/><rect x="138.4" y="53.0" width="1.6" height="4" fill="#e8e2c8" opacity=".7"/><rect x="126.4" y="53.0" width="1.6" height="4" fill="#e8e2c8" opacity=".7"/><rect x="38" y="19" width="14" height="2.4" fill="#fffbe0" opacity=".55"/><rect x="127" y="19" width="14" height="2.4" fill="#fffbe0" opacity=".55"/><rect x="78" y="31" width="24" height="1.6" fill="#fffbe0" opacity=".7"/>
+</g>
+      </defs>
+      <rect width="320" height="132" fill="#101410"/>
+      <ellipse cx="96" cy="58" rx="110" ry="62" fill="url(#bayglow)"/>
+      <!-- TV set -->
+      <rect x="8" y="6" width="178" height="106" rx="8" fill="#232a22" stroke="#444b3d" stroke-width="1"/>
+      <rect x="13" y="10" width="154" height="88" rx="5" fill="#050706"/>
+      <g class="bflick" clip-path="url(#bayclip)">
+        <g class="bsc bsc1"><use href="#bayhall" style="--lk:#3f8f86"/>
+      <g class="bwalk" style="animation-delay:-0.4s"><circle cx="0" cy="-26" r="4.3" fill="#0b0e0b"/><path d="M-5.5 -21 H5.5 L6.5 -8 H-6.5Z" fill="#0b0e0b"/><path d="M-5 -8 L-5.5 0 M5 -8 L5.5 0" stroke="#0b0e0b" stroke-width="3.2" stroke-linecap="round"/></g>
+      </g><g class="bsc bsc2"><use href="#bayhall" style="--lk:#c88a3a"/>
+      <g class="bwalk" style="animation-delay:2.6s"><circle cx="0" cy="-26" r="4.3" fill="#0b0e0b"/><path d="M-5.5 -21 H5.5 L6.5 -8 H-6.5Z" fill="#0b0e0b"/><path d="M-5 -8 L-5.5 0 M5 -8 L5.5 0" stroke="#0b0e0b" stroke-width="3.2" stroke-linecap="round"/></g>
+      </g><g class="bsc bsc3"><use href="#bayhall" style="--lk:#7a63b4"/>
+      <g class="bwalk" style="animation-delay:5.6s"><circle cx="0" cy="-26" r="4.3" fill="#0b0e0b"/><path d="M-5.5 -21 H5.5 L6.5 -8 H-6.5Z" fill="#0b0e0b"/><path d="M-5 -8 L-5.5 0 M5 -8 L5.5 0" stroke="#0b0e0b" stroke-width="3.2" stroke-linecap="round"/></g>
+      </g>
+        <g class="bwalk bwalkb" style="animation-delay:-1.1s"><circle cx="0" cy="-26" r="4.3" fill="#0b0e0b"/><path d="M-5.5 -21 H5.5 L6.5 -8 H-6.5Z" fill="#0b0e0b"/><path d="M-5 -8 L-5.5 0 M5 -8 L5.5 0" stroke="#0b0e0b" stroke-width="3.2" stroke-linecap="round"/></g>
+        <g class="bnoise"><rect x="50.0" y="68.9" width="29.9" height="1" fill="#fff" opacity="0.9"/><rect x="46.1" y="24.2" width="15.2" height="2.2" fill="#fff" opacity="0.5"/><rect x="32.6" y="56.1" width="14.8" height="1.4" fill="#fff" opacity="0.5"/><rect x="73.3" y="81.5" width="27.5" height="1" fill="#fff" opacity="0.7"/><rect x="127.6" y="19.1" width="33.4" height="1.4" fill="#fff" opacity="0.7"/><rect x="115.5" y="90.8" width="33.4" height="1.4" fill="#fff" opacity="0.7"/><rect x="129.7" y="52.4" width="32.2" height="2.2" fill="#fff" opacity="0.7"/><rect x="105.5" y="85.8" width="28.4" height="2.2" fill="#fff" opacity="0.5"/><rect x="61.7" y="61.4" width="28.3" height="1.4" fill="#fff" opacity="0.9"/><rect x="75.5" y="62.7" width="39.6" height="1.4" fill="#fff" opacity="0.9"/><rect x="113.4" y="56.5" width="17.4" height="1" fill="#fff" opacity="0.9"/><rect x="63.1" y="42.8" width="16.4" height="1.4" fill="#fff" opacity="0.7"/><rect x="135.1" y="59.9" width="25.6" height="2.2" fill="#fff" opacity="0.5"/><rect x="134.7" y="70.2" width="12.2" height="1.4" fill="#fff" opacity="0.9"/><rect x="99.9" y="50.5" width="8.1" height="1.4" fill="#fff" opacity="0.5"/><rect x="45.4" y="53.3" width="30.3" height="1.4" fill="#fff" opacity="0.9"/><rect x="49.2" y="72.9" width="31.6" height="1.4" fill="#fff" opacity="0.7"/><rect x="42.4" y="82.9" width="20.0" height="2.2" fill="#fff" opacity="0.9"/><rect x="33.5" y="92.6" width="27.3" height="2.2" fill="#fff" opacity="0.7"/><rect x="43.6" y="63.2" width="26.6" height="2.2" fill="#fff" opacity="0.5"/><rect x="63.5" y="72.4" width="18.9" height="1.4" fill="#fff" opacity="0.5"/><rect x="37.2" y="68.8" width="11.6" height="1" fill="#fff" opacity="0.5"/><rect x="24.3" y="65.4" width="25.8" height="2.2" fill="#fff" opacity="0.9"/><rect x="20.2" y="48.5" width="19.0" height="1" fill="#fff" opacity="0.9"/><rect x="15.4" y="94.8" width="11.9" height="1.4" fill="#fff" opacity="0.7"/><rect x="91.3" y="70.0" width="38.0" height="2.2" fill="#fff" opacity="0.7"/><rect x="130.0" y="15.0" width="18.2" height="1" fill="#fff" opacity="0.7"/><rect x="90.6" y="56.2" width="34.4" height="1" fill="#fff" opacity="0.9"/><rect x="43.0" y="78.3" width="20.0" height="2.2" fill="#fff" opacity="0.5"/><rect x="114.7" y="33.4" width="29.9" height="1" fill="#fff" opacity="0.7"/><rect x="72.4" y="31.6" width="32.7" height="2.2" fill="#fff" opacity="0.7"/><rect x="72.8" y="65.2" width="21.6" height="1.4" fill="#fff" opacity="0.7"/><rect x="77.2" y="17.7" width="9.5" height="1" fill="#fff" opacity="0.9"/><rect x="119.5" y="27.8" width="23.4" height="2.2" fill="#fff" opacity="0.7"/></g>
+        <rect x="15" y="12" width="150" height="84" fill="url(#baysl)"/>
+        <rect x="15" y="12" width="150" height="84" fill="url(#bayvig)"/>
+        <rect class="bprog" x="15" y="93.5" width="150" height="2.5" fill="#e9bc73" opacity=".9"/>
+        <!-- station bug -->
+        <g opacity=".85"><circle cx="24" cy="21" r="5.2" fill="none" stroke="#eee8d8" stroke-width=".8"/><text x="21.2" y="23.4" font-size="6" fill="#e9bc73" style="font-family:Georgia,serif;font-style:italic">b</text><text x="32" y="23" font-size="4.6" fill="#eee8d8">BAYSIDE</text></g>
+        <!-- channel OSD -->
+        <g font-size="8" fill="#9dff8a" style="filter:drop-shadow(0 0 2px #38c92a)"><text class="bosd bosd1" x="156" y="24" text-anchor="end">CH 01</text><text class="bosd bosd2" x="156" y="24" text-anchor="end">CH 02</text><text class="bosd bosd3" x="156" y="24" text-anchor="end">CH 03</text></g>
+        <!-- lower third -->
+        <g font-size="4.8">
+          <g class="blt blt1"><rect x="15" y="76" width="92" height="13" fill="#000" opacity=".7"/><rect x="15" y="76" width="2" height="13" fill="#e9bc73"/><text x="21" y="82" fill="#e9bc73">NOW PLAYING</text><text x="21" y="87.5" fill="#eee8d8">SEASON 1</text></g>
+          <g class="blt blt2"><rect x="15" y="76" width="92" height="13" fill="#000" opacity=".7"/><rect x="15" y="76" width="2" height="13" fill="#e9bc73"/><text x="21" y="82" fill="#e9bc73">NOW PLAYING</text><text x="21" y="87.5" fill="#eee8d8">SEASON 3</text></g>
+          <g class="blt blt3"><rect x="15" y="76" width="92" height="13" fill="#000" opacity=".7"/><rect x="15" y="76" width="2" height="13" fill="#e9bc73"/><text x="21" y="82" fill="#e9bc73">NOW PLAYING</text><text x="21" y="87.5" fill="#eee8d8">SEASON 4</text></g>
+        </g>
+      </g>
+      <!-- bezel details -->
+      <rect x="13" y="10" width="154" height="88" rx="5" fill="none" stroke="#000" stroke-width="1.4" opacity=".8"/>
+      <circle cx="176" cy="22" r="5" fill="#161b15" stroke="#555d4c" stroke-width=".8"/><line x1="176" y1="22" x2="179" y2="19" stroke="#e9bc73" stroke-width="1"/>
+      <circle cx="176" cy="40" r="5" fill="#161b15" stroke="#555d4c" stroke-width=".8"/><line x1="176" y1="40" x2="173" y2="37" stroke="#e9bc73" stroke-width="1"/>
+      <g stroke="#10140f" stroke-width="1.2"><line x1="172" y1="58" x2="181" y2="58"/><line x1="172" y1="62" x2="181" y2="62"/><line x1="172" y1="66" x2="181" y2="66"/><line x1="172" y1="70" x2="181" y2="70"/><line x1="172" y1="74" x2="181" y2="74"/></g>
+      <circle cx="30" cy="105" r="1.8" fill="#ff6b5a" class="bair"/><text x="36" y="107" font-size="4.4" fill="#a0a69b">ON AIR</text>
+      <!-- guide -->
+      <rect x="192" y="6" width="124" height="106" rx="4" fill="#0b0f0c" stroke="#343b32"/>
+      <text x="198" y="16" font-size="5.5" fill="#eee8d8">TV GUIDE</text>
+      <circle cx="262" cy="14" r="1.8" fill="#ff6b5a" class="bair"/><text x="312" y="16" text-anchor="end" font-size="4.4" fill="#a0a69b">LIVE LOOPS</text>
+      <line x1="194" y1="21" x2="314" y2="21" stroke="#343b32" stroke-width=".6"/>
+      <rect x="196" y="26" width="30" height="15" rx="2" fill="#1b201c" stroke="#343b32" stroke-width=".5"/><text x="200" y="36" font-size="5.5" fill="#d7b98b">S1</text><g clip-path="url(#bayguide)"><g transform="translate(230 0)"><g class="bgr" style="animation-duration:16s"><rect x="0.8" y="26" width="36.4" height="15" rx="2" fill="#d7b98b" opacity="0.9"/><rect x="38.8" y="26" width="36.4" height="15" rx="2" fill="#d7b98b" opacity="0.55"/><rect x="76.8" y="26" width="24.4" height="15" rx="2" fill="#d7b98b" opacity="0.9"/><rect x="102.8" y="26" width="28.4" height="15" rx="2" fill="#d7b98b" opacity="0.9"/><rect x="132.8" y="26" width="20.4" height="15" rx="2" fill="#d7b98b" opacity="0.7"/><rect x="154.8" y="26" width="8.4" height="15" rx="2" fill="#d7b98b" opacity="0.9"/><g transform="translate(164 0)"><rect x="0.8" y="26" width="36.4" height="15" rx="2" fill="#d7b98b" opacity="0.9"/><rect x="38.8" y="26" width="36.4" height="15" rx="2" fill="#d7b98b" opacity="0.55"/><rect x="76.8" y="26" width="24.4" height="15" rx="2" fill="#d7b98b" opacity="0.9"/><rect x="102.8" y="26" width="28.4" height="15" rx="2" fill="#d7b98b" opacity="0.9"/><rect x="132.8" y="26" width="20.4" height="15" rx="2" fill="#d7b98b" opacity="0.7"/><rect x="154.8" y="26" width="8.4" height="15" rx="2" fill="#d7b98b" opacity="0.9"/></g></g></g></g><rect x="196" y="43" width="30" height="15" rx="2" fill="#1b201c" stroke="#343b32" stroke-width=".5"/><text x="200" y="53" font-size="5.5" fill="#7fb7a4">S2</text><g clip-path="url(#bayguide)"><g transform="translate(230 0)"><g class="bgr" style="animation-duration:21s"><rect x="0.8" y="43" width="36.4" height="15" rx="2" fill="#7fb7a4" opacity="0.7"/><rect x="38.8" y="43" width="42.4" height="15" rx="2" fill="#7fb7a4" opacity="0.7"/><rect x="82.8" y="43" width="36.4" height="15" rx="2" fill="#7fb7a4" opacity="0.9"/><rect x="120.8" y="43" width="36.4" height="15" rx="2" fill="#7fb7a4" opacity="0.9"/><rect x="158.8" y="43" width="4.4" height="15" rx="2" fill="#7fb7a4" opacity="0.7"/><g transform="translate(164 0)"><rect x="0.8" y="43" width="36.4" height="15" rx="2" fill="#7fb7a4" opacity="0.7"/><rect x="38.8" y="43" width="42.4" height="15" rx="2" fill="#7fb7a4" opacity="0.7"/><rect x="82.8" y="43" width="36.4" height="15" rx="2" fill="#7fb7a4" opacity="0.9"/><rect x="120.8" y="43" width="36.4" height="15" rx="2" fill="#7fb7a4" opacity="0.9"/><rect x="158.8" y="43" width="4.4" height="15" rx="2" fill="#7fb7a4" opacity="0.7"/></g></g></g></g><rect x="196" y="60" width="30" height="15" rx="2" fill="#1b201c" stroke="#343b32" stroke-width=".5"/><text x="200" y="70" font-size="5.5" fill="#e9bc73">S3</text><g clip-path="url(#bayguide)"><g transform="translate(230 0)"><g class="bgr" style="animation-duration:13s"><rect x="0.8" y="60" width="24.4" height="15" rx="2" fill="#e9bc73" opacity="0.7"/><rect x="26.8" y="60" width="42.4" height="15" rx="2" fill="#e9bc73" opacity="0.55"/><rect x="70.8" y="60" width="24.4" height="15" rx="2" fill="#e9bc73" opacity="0.9"/><rect x="96.8" y="60" width="36.4" height="15" rx="2" fill="#e9bc73" opacity="0.55"/><rect x="134.8" y="60" width="28.4" height="15" rx="2" fill="#e9bc73" opacity="0.9"/><g transform="translate(164 0)"><rect x="0.8" y="60" width="24.4" height="15" rx="2" fill="#e9bc73" opacity="0.7"/><rect x="26.8" y="60" width="42.4" height="15" rx="2" fill="#e9bc73" opacity="0.55"/><rect x="70.8" y="60" width="24.4" height="15" rx="2" fill="#e9bc73" opacity="0.9"/><rect x="96.8" y="60" width="36.4" height="15" rx="2" fill="#e9bc73" opacity="0.55"/><rect x="134.8" y="60" width="28.4" height="15" rx="2" fill="#e9bc73" opacity="0.9"/></g></g></g></g><rect x="196" y="77" width="30" height="15" rx="2" fill="#1b201c" stroke="#343b32" stroke-width=".5"/><text x="200" y="87" font-size="5.5" fill="#c98aa0">S4</text><g clip-path="url(#bayguide)"><g transform="translate(230 0)"><g class="bgr" style="animation-duration:24s"><rect x="0.8" y="77" width="20.4" height="15" rx="2" fill="#c98aa0" opacity="0.7"/><rect x="22.8" y="77" width="28.4" height="15" rx="2" fill="#c98aa0" opacity="0.55"/><rect x="52.8" y="77" width="32.4" height="15" rx="2" fill="#c98aa0" opacity="0.9"/><rect x="86.8" y="77" width="20.4" height="15" rx="2" fill="#c98aa0" opacity="0.9"/><rect x="108.8" y="77" width="32.4" height="15" rx="2" fill="#c98aa0" opacity="0.9"/><rect x="142.8" y="77" width="20.4" height="15" rx="2" fill="#c98aa0" opacity="0.7"/><g transform="translate(164 0)"><rect x="0.8" y="77" width="20.4" height="15" rx="2" fill="#c98aa0" opacity="0.7"/><rect x="22.8" y="77" width="28.4" height="15" rx="2" fill="#c98aa0" opacity="0.55"/><rect x="52.8" y="77" width="32.4" height="15" rx="2" fill="#c98aa0" opacity="0.9"/><rect x="86.8" y="77" width="20.4" height="15" rx="2" fill="#c98aa0" opacity="0.9"/><rect x="108.8" y="77" width="32.4" height="15" rx="2" fill="#c98aa0" opacity="0.9"/><rect x="142.8" y="77" width="20.4" height="15" rx="2" fill="#c98aa0" opacity="0.7"/></g></g></g></g><rect x="196" y="94" width="30" height="15" rx="2" fill="#1b201c" stroke="#343b32" stroke-width=".5"/><text x="200" y="104" font-size="5.5" fill="#8ea0d8">ALL</text><g clip-path="url(#bayguide)"><g transform="translate(230 0)"><g class="bgr" style="animation-duration:18s"><rect x="0.8" y="94" width="36.4" height="15" rx="2" fill="#8ea0d8" opacity="0.9"/><rect x="38.8" y="94" width="36.4" height="15" rx="2" fill="#8ea0d8" opacity="0.7"/><rect x="76.8" y="94" width="28.4" height="15" rx="2" fill="#8ea0d8" opacity="0.9"/><rect x="106.8" y="94" width="32.4" height="15" rx="2" fill="#8ea0d8" opacity="0.9"/><rect x="140.8" y="94" width="22.4" height="15" rx="2" fill="#8ea0d8" opacity="0.9"/><g transform="translate(164 0)"><rect x="0.8" y="94" width="36.4" height="15" rx="2" fill="#8ea0d8" opacity="0.9"/><rect x="38.8" y="94" width="36.4" height="15" rx="2" fill="#8ea0d8" opacity="0.7"/><rect x="76.8" y="94" width="28.4" height="15" rx="2" fill="#8ea0d8" opacity="0.9"/><rect x="106.8" y="94" width="32.4" height="15" rx="2" fill="#8ea0d8" opacity="0.9"/><rect x="140.8" y="94" width="22.4" height="15" rx="2" fill="#8ea0d8" opacity="0.9"/></g></g></g></g>
+      <rect class="bhl" x="194" y="25" width="120" height="17" rx="2.5" fill="none" stroke="#e9bc73" stroke-width=".9"/>
+      <line x1="252" y1="22" x2="252" y2="111" stroke="#ff6b5a" stroke-width=".8" opacity=".85"/>
+      <polygon points="249,22 255,22 252,26" fill="#ff6b5a"/>
+      <!-- ticker -->
+      <rect x="0" y="118" width="320" height="14" fill="#000" opacity=".82"/>
+      <rect x="0" y="118" width="320" height=".8" fill="#e9bc73" opacity=".6"/>
+      <g clip-path="url(#baytick)"><g class="btick"><text x="6" y="127.5" font-size="5" fill="#e9bc73">SAVED BY THE BELL ◆ AROUND THE CLOCK ◆ SEASONS 1-4 ◆ FLIP CHANNELS ◆ BUILD YOUR OWN ◆ CRT MODE ◆ FULL SCREEN ◆ SAVED BY THE BELL ◆ AROUND THE CLOCK ◆ SEASONS 1-4 ◆ FLIP CHANNELS ◆ BUILD YOUR OWN ◆ CRT MODE ◆ FULL SCREEN ◆ </text></g></g>
+    </svg>
+  </div>
+  <div class="body">
+    <div class="row"><div class="t">BAYSIDE TV</div><span class="play">WATCH</span></div>
+    <div class="d">Saved by the Bell, on a TV schedule that never stops. Pick a channel and everyone lands on the same spot in its looping lineup, like real broadcast TV. Flip channels, browse the guide, build your own from Internet Archive links, and turn on CRT scanlines for the full 90s feel.</div>
+    <div class="tags"><span class="tag">App</span><span class="tag">Retro TV</span><span class="tag">Streaming</span></div>
   </div>
 </a>
 </div>
