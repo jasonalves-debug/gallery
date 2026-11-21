@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Gridlock Report</title>
+<meta name="description" content="A 90-second local report for your part of Scarborough: police and fire calls near you, the top Toronto stories, 401 and DVP traffic and the weather.">
+<meta name="theme-color" content="#101a30">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gridlock Report">
+<link rel="apple-touch-icon" href="gridlock-report-cover.png">
+<link rel="icon" href="gridlock-report-cover.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root { --navy: #1b2a4a; --ink: #101a30; --cream: #f4ead2; --gold: #e9c46a; --red: #b3261e; --dim: #c9bfa6; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--ink); color: var(--cream); font: 500 18px/1.45 system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-text-size-adjust: 100%; }
+body { min-height: 100vh; background: radial-gradient(ellipse at 50% 0%, #2a3b62 0%, var(--ink) 65%); padding: env(safe-area-inset-top, 0) 16px calc(env(safe-area-inset-bottom, 0px) + 32px); }
+body::after { content: ''; position: fixed; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 1px, rgba(0,0,0,0) 1px 3px); }
+main { max-width: 620px; margin: 0 auto; }
+.mast { text-align: center; padding: 26px 0 8px; }
+.mast .k { font: 700 15px 'Special Elite', 'Courier New', monospace; letter-spacing: .25em; color: var(--gold); }
+.mast h1 { margin: 6px 0 4px; font: 400 clamp(40px, 12vw, 64px)/.95 'Alfa Slab One', Rockwell, Georgia, serif; color: var(--cream); text-shadow: 0 4px 0 var(--red), 0 8px 20px rgba(0,0,0,.5); }
+.area { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 14px 0 6px; font: 700 20px 'Special Elite', 'Courier New', monospace; }
+.area b { color: var(--gold); font-weight: 700; }
+button { font: inherit; cursor: pointer; }
+.link { background: none; border: 0; color: var(--cream); text-decoration: underline; text-underline-offset: 4px; font: 600 17px system-ui, sans-serif; padding: 6px; }
+.stage { display: flex; flex-direction: column; align-items: center; margin: 18px 0 8px; }
+.play { position: relative; width: min(64vw, 260px); aspect-ratio: 1; border-radius: 50%; border: 0; background: radial-gradient(circle at 35% 30%, #fff6dc, var(--cream) 45%, #d8ccb0); color: var(--navy); box-shadow: 0 0 0 10px var(--navy), 0 0 0 14px var(--gold), 0 18px 40px rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; }
+.play svg { width: 42%; height: 42%; }
+.play:active { transform: scale(.98); } .play:disabled { opacity: .5; }
+.ring { position: absolute; inset: -14px; border-radius: 50%; background: conic-gradient(var(--red) var(--p, 0%), rgba(0,0,0,0) 0); -webkit-mask: radial-gradient(circle, transparent 66%, #000 67%); mask: radial-gradient(circle, transparent 66%, #000 67%); pointer-events: none; }
+.time { margin-top: 26px; font: 700 22px 'Special Elite', 'Courier New', monospace; }
+.meta { margin-top: 4px; color: var(--dim); font-size: 17px; text-align: center; }
+.onair { display: inline-block; margin-top: 10px; background: var(--red); color: #fff; padding: 4px 10px; font: 800 14px system-ui, sans-serif; letter-spacing: .1em; visibility: hidden; }
+.playing .onair { visibility: visible; animation: air 1.6s ease-in-out infinite; } @keyframes air { 50% { background: #7d1a14; } }
+.note { margin: 12px auto; padding: 12px 14px; background: rgba(233,196,106,.12); border-left: 4px solid var(--gold); font-size: 17px; }
+.note[hidden] { display: none; }
+.script { margin-top: 22px; }
+.seg { padding: 12px 14px; margin: 10px 0; background: rgba(244,234,210,.05); border-left: 4px solid rgba(244,234,210,.2); font-size: 18px; line-height: 1.5; transition: background .3s, border-color .3s; }
+.seg .who { display: block; font: 800 13px system-ui, sans-serif; letter-spacing: .12em; color: var(--gold); margin-bottom: 4px; }
+.seg.now { background: rgba(233,196,106,.14); border-left-color: var(--gold); }
+details { margin-top: 26px; background: rgba(244,234,210,.05); padding: 12px 14px; }
+summary { font-weight: 700; cursor: pointer; font-size: 18px; }
+.chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin: 12px 0 4px; }
+.chip { text-align: left; background: rgba(244,234,210,.06); color: var(--cream); border: 1px solid rgba(244,234,210,.25); border-radius: 8px; padding: 10px; font-size: 16px; }
+.chip b { display: block; font-family: 'Special Elite', 'Courier New', monospace; color: var(--gold); }
+.chip[aria-pressed="true"] { background: var(--gold); color: var(--navy); border-color: var(--gold); } .chip[aria-pressed="true"] b { color: var(--navy); }
+.btn { background: var(--cream); color: var(--navy); border: 0; border-radius: 10px; padding: 12px 16px; font-weight: 800; font-size: 17px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.feed { word-break: break-all; font: 600 14px 'Courier New', monospace; color: var(--dim); margin-top: 8px; }
+.foot { text-align: center; margin-top: 28px; color: var(--dim); font-size: 15px; }
+.foot a { color: var(--cream); }
+</style>
+</head>
+<body>
+<main>
+  <div class="mast"><div class="k">SCARBOROUGH EDITION</div><h1>THE GRIDLOCK<br>REPORT</h1></div>
+  <div class="area"><span id="areaName">Finding your area…</span><button class="link" id="changeBtn" type="button">Change</button></div>
+  <div class="stage" id="stage">
+    <button class="play" id="play" type="button" aria-label="Play the report" disabled><span class="ring" id="ring"></span><svg id="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></button>
+    <div class="time" id="time">--:--</div>
+    <div class="meta" id="meta">Loading the latest report…</div>
+    <span class="onair">ON AIR</span>
+  </div>
+  <div class="note" id="note" hidden></div>
+  <div class="script" id="script"></div>
+  <details id="pick"><summary>Pick your area</summary><div class="chips" id="chips"></div><div class="row"><button class="btn" id="locBtn" type="button">Use my location</button></div></details>
+  <details><summary>Get it in your podcast app</summary>
+    <p>Subscribe once and your area's report shows up in your podcast app, on the lock screen and in the car. It's refreshed through the day; open the app to pull the newest one.</p>
+    <div class="row"><button class="btn" id="copyFeed" type="button">Copy feed link</button><a class="btn" id="applePod" href="#" style="text-decoration:none">Apple Podcasts</a><a class="btn" id="pcPod" href="#" style="text-decoration:none">Pocket Casts</a></div>
+    <div class="feed" id="feedUrl"></div>
+  </details>
+  <div class="foot">Prefer the picture? <a href="gridlock.html#news">Watch it on the live map</a>.<br>Unofficial. Built from public Toronto Police, Toronto Fire, Ontario 511 and weather data, plus headlines from local outlets.</div>
+</main>
+<audio id="au" preload="none"></audio>
+<script>
+const RAW = 'https://raw.githubusercontent.com/jasonalves-debug/gridlock/data/';
+const $ = id => document.getElementById(id), au = $('au');
+const store = { get(k, d) { try { const v = localStorage.getItem('glr.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('glr.' + k, JSON.stringify(v)); } catch (e) {} } };
+let EP = null, area = store.get('area', null), loadedFile = null, tried = false;
+const fmt = s => isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '--:--';
+const ago = t => { const m = Math.round((Date.now() / 1000 - t) / 60); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : Math.round(m / 60) + ' h ago'; };
+async function load() {
+  try { const r = await fetch(RAW + 'episodes.json?t=' + Date.now(), { cache: 'no-store' }); EP = await r.json(); } catch (e) { $('meta').textContent = "Couldn't reach the newsroom. Check your connection and reload."; return; }
+  chips();
+  if (!area) locate(true); else show();
+}
+function nearest(lat, lng) { let best = null, bd = 1e9; for (const [f, P] of Object.entries(EP.points || {})) for (const [a, b] of P) { const d = (a - lat) ** 2 + ((b - lng) * 0.72) ** 2; if (d < bd) { bd = d; best = f; } } return bd < 0.0009 ? best : null; } // within about 3 km of a known point
+function locate(first) {
+  if (!navigator.geolocation) { pickOpen(); return; }
+  $('areaName').textContent = 'Finding your area…';
+  navigator.geolocation.getCurrentPosition(p => { const f = nearest(p.coords.latitude, p.coords.longitude); if (f) { setArea(f); } else { note("You're outside Scarborough, so pick the area you want."); pickOpen(); show(); } },
+    () => { if (first) note('Pick your area once and it will be remembered.'); pickOpen(); show(); }, { timeout: 9000, maximumAge: 30 * 60000 });
+}
+function pickOpen() { $('pick').open = true; if (!area) $('areaName').textContent = 'Pick your area below'; }
+function setArea(f) { area = f; store.set('area', f); $('pick').open = false; chips(); show(); }
+function note(t) { const n = $('note'); n.textContent = t; n.hidden = !t; }
+function chips() { if (!EP) return; $('chips').innerHTML = Object.entries(EP.names || {}).map(([f, n]) => `<button class="chip" type="button" data-f="${f}" aria-pressed="${f === area}"><b>${f}</b>${n}</button>`).join(''); }
+$('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) setArea(b.dataset.f); });
+$('locBtn').onclick = () => locate(false);
+$('changeBtn').onclick = () => { $('pick').open = !$('pick').open; if ($('pick').open) $('pick').scrollIntoView({ behavior: 'smooth' }); };
+function show() {
+  if (!EP || !area) { $('play').disabled = true; return; }
+  const e = (EP.fsa || {})[area], name = (EP.names || {})[area] || area;
+  $('areaName').innerHTML = `<b>${name}</b>&nbsp;· ${area}`;
+  const feed = RAW + 'podcast/' + area + '.xml'; $('feedUrl').textContent = feed;
+  $('applePod').href = 'podcast://' + feed.replace(/^https:\/\//, ''); $('pcPod').href = 'pktc://subscribe/' + feed.replace(/^https:\/\//, '');
+  if (!e || !e.file) { $('play').disabled = true; $('meta').textContent = "Your area's first report is being produced. Try again in a few minutes."; $('script').innerHTML = ''; return; }
+  note(''); $('play').disabled = false;
+  $('meta').textContent = `Updated ${new Date(e.at * 1000).toLocaleTimeString('en-CA', { hour: 'numeric', minute: '2-digit' }).replace('a.m.', 'AM').replace('p.m.', 'PM')} (${ago(e.at)}) · ${fmt(e.dur)}`;
+  if (loadedFile !== e.file) { const playing = !au.paused; if (!playing) { au.src = RAW + e.file; loadedFile = e.file; $('time').textContent = '0:00 / ' + fmt(e.dur); } else note('A newer report is ready. It will play next time.'); }
+  const total = e.script.reduce((s, x) => s + x.t.length, 0); let acc = 0;
+  $('script').innerHTML = e.script.map((x, i) => { const a = acc / total; acc += x.t.length; return `<div class="seg" data-a="${a}" data-b="${acc / total}"><span class="who">${x.v === 'desk' ? 'PEGGY LANE · TRAFFIC & WEATHER' : 'GORDON HALE'}</span>${x.t.replace(/</g, '&lt;')}</div>`; }).join('');
+  if ('mediaSession' in navigator) navigator.mediaSession.metadata = new MediaMetadata({ title: 'The Gridlock Report: ' + name, artist: 'GRIDLOCK · Scarborough', album: new Date(e.at * 1000).toDateString(), artwork: [{ src: 'gridlock-report-cover.png', sizes: '1400x1400', type: 'image/png' }] });
+}
+$('play').onclick = () => { if (au.paused) { au.play().catch(() => note("Couldn't start playback. Tap again.")); } else au.pause(); };
+au.onplay = () => { document.body.classList.add('playing'); $('icon').innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>'; };
+au.onpause = au.onended = () => { document.body.classList.remove('playing'); $('icon').innerHTML = '<path d="M7 4.5v15l13-7.5z"/>'; };
+au.onended = () => { document.body.classList.remove('playing'); $('icon').innerHTML = '<path d="M7 4.5v15l13-7.5z"/>'; au.currentTime = 0; load(); };
+au.ontimeupdate = () => { const d = au.duration || ((EP.fsa[area] || {}).dur) || 1, p = au.currentTime / d; $('ring').style.setProperty('--p', (p * 100).toFixed(1) + '%'); $('time').textContent = fmt(au.currentTime) + ' / ' + fmt(d);
+  // the opening jingle runs about 5 s before the voice starts
+  const v = Math.max(0, (au.currentTime - 5) / Math.max(1, d - 10)); document.querySelectorAll('.seg').forEach(s => s.classList.toggle('now', v >= +s.dataset.a && v < +s.dataset.b)); };
+au.onerror = () => { if (!tried) { tried = true; load(); } else note("That report didn't load. Pull to refresh in a minute."); };
+$('copyFeed').onclick = async () => { try { await navigator.clipboard.writeText($('feedUrl').textContent); $('copyFeed').textContent = 'Copied'; } catch (e) { $('copyFeed').textContent = 'Copy failed: select the link below'; } };
+document.addEventListener('visibilitychange', () => { if (!document.hidden && au.paused) load(); });
+load();
+</script>
+</body>
+</html>
