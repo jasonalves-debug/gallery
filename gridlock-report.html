@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Gridlock Report</title>
-<meta name="description" content="A 90-second local report for your part of Scarborough: police and fire calls near you, the top Toronto stories, 401 and DVP traffic and the weather.">
+<meta name="description" content="A short local report for your part of Scarborough: the weather and traffic, then the news, starting with police and fire calls in your area, then the top Toronto stories.">
 <meta name="theme-color" content="#101a30">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Gridlock Report">
@@ -112,7 +112,7 @@ function show() {
   $('meta').textContent = `Updated ${new Date(e.at * 1000).toLocaleTimeString('en-CA', { hour: 'numeric', minute: '2-digit' }).replace('a.m.', 'AM').replace('p.m.', 'PM')} (${ago(e.at)}) · ${fmt(e.dur)}`;
   if (loadedFile !== e.file) { const playing = !au.paused; if (!playing) { au.src = RAW + e.file; loadedFile = e.file; $('time').textContent = '0:00 / ' + fmt(e.dur); } else note('A newer report is ready. It will play next time.'); }
   const total = e.script.reduce((s, x) => s + x.t.length, 0); let acc = 0;
-  $('script').innerHTML = e.script.map((x, i) => { const a = acc / total; acc += x.t.length; return `<div class="seg" data-a="${a}" data-b="${acc / total}"><span class="who">${x.v === 'desk' ? 'PEGGY LANE · TRAFFIC & WEATHER' : 'GORDON HALE'}</span>${x.t.replace(/</g, '&lt;')}</div>`; }).join('');
+  $('script').innerHTML = e.script.map((x, i) => { const a = acc / total; acc += x.t.length; return `<div class="seg" data-a="${a}" data-b="${acc / total}"><span class="who">${x.v === 'desk' ? 'RUTH AVERY · WEATHER & TRAFFIC' : 'PEGGY LANE'}</span>${x.t.replace(/</g, '&lt;')}</div>`; }).join('');
   if ('mediaSession' in navigator) navigator.mediaSession.metadata = new MediaMetadata({ title: 'The Gridlock Report: ' + name, artist: 'GRIDLOCK · Scarborough', album: new Date(e.at * 1000).toDateString(), artwork: [{ src: 'gridlock-report-cover.png', sizes: '1400x1400', type: 'image/png' }] });
 }
 $('play').onclick = () => { if (au.paused) { au.play().catch(() => note("Couldn't start playback. Tap again.")); } else au.pause(); };
